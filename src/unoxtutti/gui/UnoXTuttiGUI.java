@@ -6,6 +6,7 @@
 package unoxtutti.gui;
 
 import java.awt.CardLayout;
+import java.awt.Cursor;
 import java.awt.Rectangle;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
@@ -17,7 +18,7 @@ import unoxtutti.UnoXTutti;
 public class UnoXTuttiGUI extends javax.swing.JFrame {
 
 	private GUIState guiState;
-	private final TransitionDialog transDialog;
+	private Cursor cursor;
 
 	public enum GUIState {
 		OUTSIDE_ROOM("outside room", new OutsideRoomPanel()),
@@ -58,19 +59,19 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
 			mainPanel.add(s.getPanel(), s.getName());
 		}
 		setGuiState(GUIState.OUTSIDE_ROOM);
-		transDialog = new TransitionDialog(this, true);
 
 	}
 
-	public synchronized void showTransitionDialog(String message) {
-		transDialog.setMessage(message);
-		Rectangle rect = this.getBounds();
-		transDialog.setBounds((int) rect.getCenterX() - 150, (int) rect.getCenterY() - 100, 300, 200);
-		transDialog.setVisible(true);
-	}
-
-	public void hideTransitionDialog() {
-		transDialog.dispose();
+	public void setWaiting(boolean waiting) {
+		if (waiting) {
+			if (cursor == null) {
+				cursor = this.getCursor();
+				this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			}
+		} else if (cursor != null) {
+			this.setCursor(cursor);
+			cursor = null;
+		}
 	}
 
 	public void showMessage(String message) {
@@ -111,7 +112,7 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
         userNameLabel.setOpaque(true);
         getContentPane().add(userNameLabel, java.awt.BorderLayout.PAGE_START);
 
-        mainPanel.setLayout(new java.awt.CardLayout());
+        mainPanel.setLayout(new CardLayout());
         getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         pack();

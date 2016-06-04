@@ -130,7 +130,7 @@ public class DBController {
 		String[] cols = new String[]{"username", "email", "password"};
 		String[] vals = new String[]{"'" + reg.getUserName() + "'", 
 			"'" + reg.getEmail() + "'", 
-			"'" + reg.getUserName() + "'"};
+			"'" + reg.getPassword()+ "'"};
 		helper.insertValues("App.RegisteredPlayers", cols, vals, this);
 	}
 

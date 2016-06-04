@@ -48,7 +48,7 @@ public class TransitionDialog extends javax.swing.JDialog {
 
         messagePane = new javax.swing.JTextPane();
 
-        setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
+        setModalityType(ModalityType.APPLICATION_MODAL);
         setSize(new java.awt.Dimension(400, 300));
 
         messagePane.setEditable(false);

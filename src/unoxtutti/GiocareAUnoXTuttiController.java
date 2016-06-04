@@ -183,7 +183,8 @@ public class GiocareAUnoXTuttiController {
 	public void roomEntranceCompleted(RemoteRoom room) {
 		synchronized (entranceWaiting) {
 		roomInLimbo = room;
-		entranceWaiting.notifyAll();}
+		entranceWaiting.notifyAll();
+		}
 	}
 
 	/**
@@ -234,5 +235,9 @@ public class GiocareAUnoXTuttiController {
 			currentRoom.exit();
 			currentRoom = null;
 		}
+	}
+
+	public boolean inStanza() {
+		return (currentRoom != null);
 	}
 }

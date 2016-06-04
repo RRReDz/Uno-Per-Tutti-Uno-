@@ -15,7 +15,6 @@ import unoxtutti.domain.ServerRoom;
  * @author picardi
  */
 public class OutsideRoomPanel extends MainWindowSubPanel {
-
 	/**
 	 * Creates new form OutsideRoomPanel
 	 */
@@ -219,8 +218,12 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
 		if (roomPort < 1024 || roomPort > 65535) {
 			JOptionPane.showMessageDialog(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
 		} else {
-			UnoXTutti.theUxtController.entraInStanza(roomName, roomAddr, roomPort);
-
+			this.mainWindow.setWaiting(true);
+			UnoXTutti.theUxtController.entraInStanza(roomName, roomAddr, roomPort);			
+			this.mainWindow.setWaiting(false);
+			if (UnoXTutti.theUxtController.inStanza()) {
+				this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
+			}
 		}
     }//GEN-LAST:event_entraButtonActionPerformed
 
