@@ -7,6 +7,7 @@ package unoxtutti;
 
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RegisteredPlayer;
+import unoxtutti.gui.AutenticarsiGUI;
 import unoxtutti.gui.UnoXTuttiGUI;
 
 /**
@@ -47,7 +48,6 @@ public class UnoXTutti {
 	public static void main(String[] args) {
 		// PRIMO PASSO: inizializzare il controller di Autenticarsi e mostrare la GUI
 		
-		/* REMOVED FOR DEBUG 
 		theAutController = AutenticarsiController.getInstance();
 		boolean ok = theAutController.initialize();
 		if (!ok) {
@@ -67,12 +67,12 @@ public class UnoXTutti {
 		// Autenticazione riuscita. Ora attiviamo il GiocareAUnoXTuttiController e 
 		// tiriamo su la GUI principale dell'applicazione
 		
-		theUxtController = GiocareAUnoXTuttiController.getInstance(theAutController.getPlayer());		
-		END OF REMOVED FOR DEBUG */
+		theUxtController = GiocareAUnoXTuttiController.getInstance(theAutController.getPlayer());
 		
-		//ADDED FOR DEBUG:
+		/*To add for DEBUG:
 		theUxtController = GiocareAUnoXTuttiController.getInstance(Player.createPlayer(new RegisteredPlayer(0,"beatrice","","")));
-		
+		*/
+                
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
