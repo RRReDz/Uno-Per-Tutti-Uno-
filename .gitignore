@@ -1,6 +1,8 @@
 /build/
 
 /nbproject/
+/dist/
 
 build.xml
 manifest.mf
+derby.log
