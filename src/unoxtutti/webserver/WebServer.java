@@ -72,7 +72,7 @@ public class WebServer implements Runnable {
 					boolean conflict = false;
 					for (WebRequestHandler wrh : requestHandlers) {
 						if (wrh.canHandle(req)) {
-							if (theHandler == null) {
+							if (theHandler == null) { 
 								theHandler = wrh;
 							} else {
 								conflict = true;
@@ -88,7 +88,6 @@ public class WebServer implements Runnable {
 						theHandler.handle(req, sockOut);
 					}
 				}
-
 				stop();
 				System.out.println("Helper thread terminated");
 
@@ -155,6 +154,9 @@ public class WebServer implements Runnable {
 	public void run() {
 		try {
 			ssocket = new ServerSocket(WEBSERVER_PORT);
+                        /**
+                         * HA SENSO? -> con "false" non esegue mai il suo metodo, in più "stopped" è inizializzato a "true"
+                         */
 			setStopSuggested(false);
 			setStopped(false);
 			while (!isStopSuggested()) {
@@ -180,11 +182,11 @@ public class WebServer implements Runnable {
 	public static void main(String[] args) {
 		try {
 			DBController dbc = new DBController();
-			dbc.connect();
+                        dbc.connect();                    
 			WebServer app = new WebServer(dbc);
 
 			/* Aggiungere qui altri request handler */
-			app.registerRequestHandler(new AuthRequestHandler());
+			app.registerRequestHandler(new AuthRequestHandler());  //Handler dell'autenticazione(verifica user e aggiungi user)
 
 			(new Thread(app)).start();
 

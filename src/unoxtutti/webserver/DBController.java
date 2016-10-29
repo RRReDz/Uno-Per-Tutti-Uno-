@@ -36,7 +36,12 @@ public class DBController {
 	public DBController() {
 		helper = new DBHelper();
 	}
-	
+        
+        /**
+         * Si connette al DB creato in locale tramite derby e jdbc
+         * @return
+         * @throws SQLException 
+         */
 	public boolean connect() throws SQLException {
 		try {
 			if (currentConnection != null) {
