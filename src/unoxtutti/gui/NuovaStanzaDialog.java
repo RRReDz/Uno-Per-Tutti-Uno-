@@ -116,6 +116,7 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         result = JOptionPane.CANCEL_OPTION;
+        this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
 	
