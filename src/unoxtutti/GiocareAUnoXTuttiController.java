@@ -139,7 +139,7 @@ public class GiocareAUnoXTuttiController {
 
 	/**
 	 * Operazione utente definita nei contratti. Il thread viene sospeso
-	 * sinch&eacute; l'ingresso nella stanza non &egrave; avvenuto.
+	 * sinche' l'ingresso nella stanza non e'; avvenuto.
 	 *
 	 * @param roomName Il nome della stanza in cui entrare
 	 * @param roomAddr L'indirizzo della stanza in cui entrare
@@ -174,7 +174,7 @@ public class GiocareAUnoXTuttiController {
 
 	/**
 	 * Metodo invocato dalle classi del "model" quando il server comunica che
-	 * l'ingresso nella stanza &egrave, completato (si tratta di un evento
+	 * l'ingresso nella stanza e', completato (si tratta di un evento
 	 * asincrono). Sveglia il thread che era stato messo in attesa durante
 	 * "entraInRoom".
 	 *
@@ -189,7 +189,7 @@ public class GiocareAUnoXTuttiController {
 
 	/**
 	 * Metodo invocato dalle classi del "model" quando il server comunica che
-	 * l'ingresso nella stanza &egrave, fallito (si tratta di un evento
+	 * l'ingresso nella stanza e' fallito (si tratta di un evento
 	 * asincrono). Sveglia il thread che era stato messo in attesa durante
 	 * "entraInRoom".
 	 *

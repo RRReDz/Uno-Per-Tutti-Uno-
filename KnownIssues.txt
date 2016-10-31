@@ -1,0 +1,1 @@
+- InetAddress.getLocalHost().getHostAddress() mi restituisce l'indirizzo IPv4 dell'adapter di VirtualBox invece del mio indirizzo IP locale.
