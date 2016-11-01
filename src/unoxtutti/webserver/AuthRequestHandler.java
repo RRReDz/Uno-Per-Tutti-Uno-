@@ -20,15 +20,15 @@ import unoxtutti.domain.RegisteredPlayer;
 public class AuthRequestHandler extends WebRequestHandler {
 
 	/* Questo campo elenca i nomi delle richieste che venogon accettate.
-	 * Per ciascuna c'e' in questa classe un corrispondente metodo.
+	 * Per ciascuna c'è in questa classe un corrispondente metodo.
 	*/
 	private static final String[] accepted = new String[]{"verify", "createUser"}; 
 	
 	public AuthRequestHandler() {
 	}
 
-	/* Il metodo canHandle e' richiesto da WebRequestHandler
-	 * dice se una certa richiesta puo' essere gestita da questo Handler
+	/* Il metodo canHandle è richiesto da WebRequestHandler
+	 * dice se una certa richiesta può essere gestita da questo Handler
 	 * per stabilirlo si basa sul NOME della richiesta
 	 */
 	@Override
@@ -41,7 +41,7 @@ public class AuthRequestHandler extends WebRequestHandler {
 		return false;
 	}
 
-	/* Il metodo handle e' richiesto da WebRequestHandler
+	/* Il metodo handle è richiesto da WebRequestHandler
 	 * gestisce effettivamente la richiesta, inoltrandola al metodo corrispondente
 	 * si occupa anche di fare il casting dei parametri Object ricevuti con la richiesta
 	 * nelle classi o tipi base richiesti dal metodo in questione.

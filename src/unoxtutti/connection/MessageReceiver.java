@@ -12,7 +12,7 @@ package unoxtutti.connection;
  * istanze devono registrarsi presso la P2PConnection tramite il metodo addMessageReceivedObserver,
  * specificando a quale tipo di messaggio sono interessate. 
  * Ogni tipo di messaggio (identificato tramite il <em>name</em> dell'oggetto P2PMessage)
- * ha una lista di osservatori separata. Un oggetto puo' registrarsi pi&ugrave; volte
+ * ha una lista di osservatori separata. Un oggetto può registrarsi pi&ugrave; volte
  * per pi&ugrave; tipi di messaggi, cos&igrave; come pu&ograve; smettere di osservare
  * un certo tipo di messaggio tramite il metodo removeMessageReceivedObserver di 
  * P2PConnection.
@@ -20,7 +20,7 @@ package unoxtutti.connection;
  */
 public interface MessageReceiver {
 	/** Questo metodo viene invocato dal soggetto osservato (un'istanza di P2PConnection)
-	 * quando arriva un messaggio del tipo a cui il MessageReceiver si e' dichiarato
+	 * quando arriva un messaggio del tipo a cui il MessageReceiver si è dichiarato
 	 * interessato.
 	 * @param msg Il messaggio ricevuto.
 	 */

@@ -6,3 +6,9 @@
 build.xml
 manifest.mf
 derby.log
+
+# IntelliJ
+.idea/
+# Compilazione
+UnoXTutti.iml
+out/

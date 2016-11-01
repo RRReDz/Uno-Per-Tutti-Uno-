@@ -21,7 +21,7 @@ import unoxtutti.domain.dialogue.DialogueHandler;
 import unoxtutti.domain.dialogue.DialogueObserver;
 
 /**
- * Rappresenta una stanza dal punto di vista del client (per questa ragione "remote": perche'
+ * Rappresenta una stanza dal punto di vista del client (per questa ragione "remote": perchè
  * la stanza dal suo punto di vista si trova in remoto).
  * Questo oggetto riceve messaggi di tipo "roomUpdate" per essere notificato di modifiche 
  * alla stanza. Inoltre partecipa nei dialoghi di tipo "RoomEntrance" (di cui riceve le 

@@ -12,7 +12,7 @@ import unoxtutti.webclient.WebClientConnection;
 
 /**
  * Controller GRASP per l'UC "Autenticarsi".
- * E' un singleton, quindi l'unica istanza di questa
+ * È un singleton, quindi l'unica istanza di questa
  * classe viene ottenuta tramite il metodo statico getInstance
  * @author picardi
  */
@@ -38,7 +38,7 @@ public class AutenticarsiController {
 	 * @param userName Il nome utente da usare nel gioco
 	 * @param email L'indirizzo email da usare per l'autenticazione
 	 * @param password La password da usare per l'autenticazione
-	 * @return true se la registrazione e' andata a buon fine, false altrimenti
+	 * @return true se la registrazione è andata a buon fine, false altrimenti
 	 */
 	public boolean registra(String userName, String email, String password) {
 		return webCliConn.createUser(userName, email, password);
@@ -47,7 +47,7 @@ public class AutenticarsiController {
 	/** Operazione utente definita nei contratti
 	 * @param email L'indirizzo email fornito al momento della registrazione
 	 * @param password La password scelta al momento dell'autenticazione
-	 * @return l'oggetto Player relativo al giocatore che si e' autenticato
+	 * @return l'oggetto Player relativo al giocatore che si è autenticato
 	 */
 	public Player accedi(String email, String password) {
 		thePlayer = webCliConn.verify(email, password);
@@ -57,7 +57,7 @@ public class AutenticarsiController {
 	/**
 	 * Inizializza il controller connettendolo al Web Server Simulato. 
 	 * Indirizzo e porta sono definiti come variabili statiche di UnoXTutti
-	 * @return true se la connessione e' stata possibile, false altrimenti
+	 * @return true se la connessione è stata possibile, false altrimenti
 	 */
 	boolean initialize() {
 		try {
@@ -71,7 +71,7 @@ public class AutenticarsiController {
 
 	/**
 	 * @return l'oggetto Player che rappresenta il giocatore autenticato, 
-	 * null se l'autenticazione non e' ancora avvenuta o e' fallita.
+	 * null se l'autenticazione non è ancora avvenuta o è fallita.
 	 */
 	public Player getPlayer() {
 		return thePlayer;

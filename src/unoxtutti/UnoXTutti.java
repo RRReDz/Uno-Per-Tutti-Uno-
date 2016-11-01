@@ -81,8 +81,8 @@ public class UnoXTutti {
 			}
 		});
 
-		// Attenzione: la MainWindow e' settata su DISPOSE ON CLOSE invece che EXIT ON CLOSE
-		// perche' se la finestra viene chiusa invece che uscire bruscamente e' meglio chiudere
+		// Attenzione: la MainWindow è settata su DISPOSE ON CLOSE invece che EXIT ON CLOSE
+		// perchè se la finestra viene chiusa invece che uscire bruscamente è meglio chiudere
 		// i thread in modo graceful.
 		// Quindi bisogna poi mettere un listener sulla finestra (presumibilmente lo stesso
 		// GiocareAUnoXTuttiController) che gestisca la chiusura di tutto quanto.

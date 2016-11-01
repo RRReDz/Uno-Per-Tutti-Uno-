@@ -15,7 +15,7 @@ import unoxtutti.domain.dialogue.BasicDialogueHandler;
  * Questa classe gestisce un dialogo di ingresso in una stanza. Tale dialogo
  * è costituito da una richiesta di ingresso e dall'attesa di una
  * risposta (positiva o negativa). La richiesta ("roomEntranceRequestMsg") ha
- * come parametri il nome della stanza (a mo' di verifica) e il giocatore che
+ * come parametri il nome della stanza (a mò di verifica) e il giocatore che
  * vuole entrare. La risposta ("roomEntranceReplyMsg") ha come unico parametro
  * la risposta (true o false, accettata o rifiutata) alla richiesta.
  *

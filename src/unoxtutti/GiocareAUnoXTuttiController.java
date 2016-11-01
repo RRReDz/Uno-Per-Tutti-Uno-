@@ -16,7 +16,7 @@ import unoxtutti.connection.ServerCreationException;
 import unoxtutti.domain.ServerRoom;
 
 /**
- * Controller GRASP per l'UC "GiocareAUnoXTutti". E' un singleton, quindi
+ * Controller GRASP per l'UC "GiocareAUnoXTutti". È un singleton, quindi
  * l'unica istanza di questa classe viene ottenuta tramite il metodo statico
  * getInstance * @author picardi
  */
@@ -99,7 +99,7 @@ public class GiocareAUnoXTuttiController {
 	 * Operazione utente definita nei contratti
 	 *
 	 * @param aRoom la stanza (server) da chiudere
-	 * @return true se la chiusura e' andata a buon fine, false altrimenti.
+	 * @return true se la chiusura è andata a buon fine, false altrimenti.
 	 */
 	public boolean chiudiStanza(ServerRoom aRoom) {
 		aRoom.shouldClose();
@@ -139,7 +139,7 @@ public class GiocareAUnoXTuttiController {
 
 	/**
 	 * Operazione utente definita nei contratti. Il thread viene sospeso
-	 * sinche' l'ingresso nella stanza non e'; avvenuto.
+	 * sinchè l'ingresso nella stanza non è; avvenuto.
 	 *
 	 * @param roomName Il nome della stanza in cui entrare
 	 * @param roomAddr L'indirizzo della stanza in cui entrare
@@ -174,11 +174,11 @@ public class GiocareAUnoXTuttiController {
 
 	/**
 	 * Metodo invocato dalle classi del "model" quando il server comunica che
-	 * l'ingresso nella stanza e', completato (si tratta di un evento
+	 * l'ingresso nella stanza è, completato (si tratta di un evento
 	 * asincrono). Sveglia il thread che era stato messo in attesa durante
 	 * "entraInRoom".
 	 *
-	 * @param room La stanza in cui si e' entrati.
+	 * @param room La stanza in cui si è entrati.
 	 */
 	public void roomEntranceCompleted(RemoteRoom room) {
 		synchronized (entranceWaiting) {
@@ -189,11 +189,11 @@ public class GiocareAUnoXTuttiController {
 
 	/**
 	 * Metodo invocato dalle classi del "model" quando il server comunica che
-	 * l'ingresso nella stanza e' fallito (si tratta di un evento
+	 * l'ingresso nella stanza è fallito (si tratta di un evento
 	 * asincrono). Sveglia il thread che era stato messo in attesa durante
 	 * "entraInRoom".
 	 *
-	 * @param room La stanza in cui non si e' riusciti ad entrare.
+	 * @param room La stanza in cui non si è riusciti ad entrare.
 	 */
 	public void roomEntranceFailed(RemoteRoom room) {
 		synchronized (entranceWaiting){

@@ -7,7 +7,7 @@ package unoxtutti.connection;
 
 /**
  * Eccezione lanciata quando qualche aspetto della comunicazione fra client e 
- * server non funziona (ad esempio il messaggio che arriva e' diverso da quanto
+ * server non funziona (ad esempio il messaggio che arriva è diverso da quanto
  * ci si aspettava, per tipologia o parametri).
  * @author picardi
  */
