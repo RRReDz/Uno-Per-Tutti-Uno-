@@ -50,14 +50,14 @@ public class P2PMessage implements Serializable {
 		this.parameters = pars;
 	}
 
-	/** Stabilisce se il messaggio attuale &egrave; un messaggio Bye.
+	/** Stabilisce se il messaggio attuale e' un messaggio Bye.
 	 * @return true se si tratta di un messaggio Bye, false altrimenti.
 	 */
 	public boolean isByeMessage() {
 		return this.getName().equals(BYE_MSG);
 	}
 
-	/** Stabilisce se il messaggio attuale &egrave; un messaggio Hello.
+	/** Stabilisce se il messaggio attuale e' un messaggio Hello.
 	 * @return true se si tratta di un messaggio Hello, false altrimenti.
 	 */	
 	public boolean isHelloMessage() {

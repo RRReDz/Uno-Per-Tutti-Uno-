@@ -20,7 +20,7 @@ package unoxtutti.connection;
  */
 public interface MessageReceiver {
 	/** Questo metodo viene invocato dal soggetto osservato (un'istanza di P2PConnection)
-	 * quando arriva un messaggio del tipo a cui il MessageReceiver si &egrave; dichiarato
+	 * quando arriva un messaggio del tipo a cui il MessageReceiver si e' dichiarato
 	 * interessato.
 	 * @param msg Il messaggio ricevuto.
 	 */

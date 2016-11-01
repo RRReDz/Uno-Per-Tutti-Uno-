@@ -12,9 +12,9 @@ import unoxtutti.domain.dialogue.DialogueState;
 /**
  * Gli stati del dialogo per entrare in una stanza:
  * <ul>
- * <li>BEFORE_REQUEST: la richiesta non &egrave; ancora stata inviata, o c'&egrave; stato
+ * <li>BEFORE_REQUEST: la richiesta non è ancora stata inviata, o c'è; stato
  * un problema nell'invio.
- * <li>REQUESTED: &egrave; stata inviata la richiesta di ingresso
+ * <li>REQUESTED: è stata inviata la richiesta di ingresso
  * <li>ADMITTED: la richiesta ha avuto risposta positiva
  * <li>REJECTED: la richiesta ha avuto risposta negativa
  * </ul>

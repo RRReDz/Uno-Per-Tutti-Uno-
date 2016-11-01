@@ -20,7 +20,7 @@ import unoxtutti.domain.Player;
 
 /**
  * Questa classe rappresenta una connessione "alla pari". Solo inizialmente
- * serve sapere chi &egrave; il Client (colui che richiede la connessione) e chi
+ * serve sapere chi e' il Client (colui che richiede la connessione) e chi
  * il Server (colui che la concede) per gestire l'handshake iniziale.
  *
  * @author picardi
@@ -225,7 +225,7 @@ public class P2PConnection {
 	/**
 	 * Chiede alla connessione di chiudersi. Essa manda un Bye message sul
 	 * canale (vedasi P2PMessage). Ci&ograve; che effettivamente chiude
-	 * per&ograve; &egrave; la ricezione di una risposta al Bye. Se qualcosa va
+	 * per&ograve; e' la ricezione di una risposta al Bye. Se qualcosa va
 	 * storto la connessione viene chiusa bruscamente richiamando forceClose.
 	 */
 	public synchronized void disconnect() {
@@ -239,9 +239,9 @@ public class P2PConnection {
 	}
 
 	/**
-	 * Dice se la connessione &egrave; chiusa.
+	 * Dice se la connessione e' chiusa.
 	 *
-	 * @return true se la connessione &egrave; chiusa, false altrimenti.
+	 * @return true se la connessione e' chiusa, false altrimenti.
 	 */
 	public synchronized boolean isClosed() {
 		return closed;
@@ -272,7 +272,7 @@ public class P2PConnection {
 	}
 
 	/**
-	 * Aggiunge un osservatore della classe MessageReceiver che verr&agrave;
+	 * Aggiunge un osservatore della classe MessageReceiver che verra'
 	 * notificato quando arriva un messaggio del tipo richiesto.
 	 *
 	 * @param obs l'oggetto che vuole essere notificato dell'arrivo del
@@ -299,12 +299,12 @@ public class P2PConnection {
 	/**
 	 * Rimuove un'istanza della classe MessageReceiver dalla lista degli
 	 * osservatori dei messaggi con nome <em>messageName</em>. Tale istanza non
-	 * verr&agrave; pi&ugrave; notificata.
+	 * verra' piu'; notificata.
 	 *
 	 * @param obs l'oggetto che vuole essere rimosso dalla lista degli
 	 * osservatori
 	 * @param messageName il nome del messaggio il cui arrivo <em>obs</em> non
-	 * vuole pi&ugrave; osservare.
+	 * vuole piu'; osservare.
 	 */
 	public synchronized void removeMessageReceivedObserver(MessageReceiver obs, String messageName) {
 		ArrayList<MessageReceiver> receivers = this.messageReceivers.get(messageName);

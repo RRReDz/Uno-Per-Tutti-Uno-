@@ -13,7 +13,7 @@ import unoxtutti.domain.dialogue.BasicDialogueHandler;
 
 /**
  * Questa classe gestisce un dialogo di ingresso in una stanza. Tale dialogo
- * &egrave; costituito da una richiesta di ingresso e dall'attesa di una
+ * è costituito da una richiesta di ingresso e dall'attesa di una
  * risposta (positiva o negativa). La richiesta ("roomEntranceRequestMsg") ha
  * come parametri il nome della stanza (a mo' di verifica) e il giocatore che
  * vuole entrare. La risposta ("roomEntranceReplyMsg") ha come unico parametro
@@ -27,7 +27,7 @@ public class RoomEntranceDialogueHandler extends BasicDialogueHandler<RoomEntran
 
 	/**
 	 * Crea un handler per una richiesta di ingresso (ci deve essere un handler
-	 * diverso per ogni richiesta). L'handler &egrave; inizialmente in stato
+	 * diverso per ogni richiesta). L'handler è inizialmente in stato
 	 * BEFORE_REQUEST.
 	 *
 	 * @param p2p La connessione su cui i messaggi viaggiano
@@ -43,8 +43,8 @@ public class RoomEntranceDialogueHandler extends BasicDialogueHandler<RoomEntran
 	 *
 	 * @param pl Il giocatore che vuole entrare nella stanza
 	 * @param roomName Il nome della stanza in cui entrare
-	 * @return true se la richiesta &egrave; partita correttamente, false se
-	 * c'&egrave; stato un problema di comunicazione.
+	 * @return true se la richiesta è partita correttamente, false se
+	 * c'è stato un problema di comunicazione.
 	 */
 	public boolean startDialogue(Player pl, String roomName) {
 		boolean ret = true;
@@ -72,7 +72,7 @@ public class RoomEntranceDialogueHandler extends BasicDialogueHandler<RoomEntran
 
 	/**
 	 *
-	 * @return Se l'ingresso nella stanza &egrave; completato correttamente,
+	 * @return Se l'ingresso nella stanza è completato correttamente,
 	 * restituisce l'elenco dei giocatori ivi presenti al momento dell'ingresso.
 	 * Altrimenti restituisce un elenco vuoto.
 	 */

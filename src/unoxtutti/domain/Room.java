@@ -9,9 +9,9 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 
 /**
- * La classe Room &egrave; una rappresentazione astratta di una Stanza del gioco.
+ * La classe Room è una rappresentazione astratta di una Stanza del gioco.
  * Oltre ad essere caratterizzata da nome, indirizzo e porta, permette di conoscere
- * i giocatori che la popolano. Dovr&agrave; essere eventualmente estesa per 
+ * i giocatori che la popolano. Dovrà essere eventualmente estesa per 
  * mostrare anche altre informazioni, come ad esempio le partite che contiene.
  * @author picardi
  */

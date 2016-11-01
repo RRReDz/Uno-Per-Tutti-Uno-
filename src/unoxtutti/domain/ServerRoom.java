@@ -24,7 +24,7 @@ import unoxtutti.webserver.WebServerPrevious;
 
 /**
  * La classe ServerRoom rappresenta una Room (Stanza) lato Server La Room lato
- * Server &egrave; il Server stesso.
+ * Server è il Server stesso.
  *
  * @author picardi
  */
@@ -40,7 +40,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
 	private final ArrayList<P2PConnection> waitingClients;
 
 	/**
-	 * Il costruttore &egrave; privato; una ServerRoom pu&ograve; essere creata
+	 * Il costruttore è privato; una ServerRoom può essere creata
 	 * solo tramite il factory method
 	 * <em>createServerRoom</em>
 	 *
@@ -118,9 +118,9 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
 	}
 
 	/**
-	 * Permette di verificare se il Server si &egrave; effettivamente chiuso.
+	 * Permette di verificare se il Server si è effettivamente chiuso.
 	 *
-	 * @return true se il Server &egrave; chiuso, false altrimenti.
+	 * @return true se il Server è chiuso, false altrimenti.
 	 */
 	public boolean isClosed() {
 		boolean ret = false;

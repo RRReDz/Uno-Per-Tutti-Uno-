@@ -91,7 +91,7 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
 	}
 
 	/**
-	 * @return il giocatore per cui questo oggetto &egrave; stato
+	 * @return il giocatore per cui questo oggetto è stato
 	 * creato.
 	 */
 	public Player getConnectedPlayer() {
