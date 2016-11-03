@@ -1,14 +1,16 @@
+# Forms
+*.form
+
+# NetBeans
 /build/
 /nbproject/
 /dist/
-
-*.form
-build.xml
 manifest.mf
 derby.log
+build.xml
 
 # IntelliJ
-.idea/
-# Compilazione
+/out/
+/.idea/
 UnoXTutti.iml
-out/
+
