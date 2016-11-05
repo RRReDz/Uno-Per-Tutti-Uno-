@@ -56,6 +56,7 @@ public class Player implements Serializable {
         return hash;
     }
 
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof Player)) {
             return false;
