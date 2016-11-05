@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import unoxtutti.utils.GUIUtils;
 
 /**
  *
@@ -22,10 +23,12 @@ import java.util.logging.Logger;
  */
 public class WebServer implements Runnable {
 
-    // CHANGE THIS TO RUN ON YOUR MACHINE
-    public final static int WEBSERVER_PORT = 9000;
+    /**
+     * Indirizzo e porta del WebServer
+     */
     public final static String WEBSERVER_IP = "localhost";
-
+    public final static int WEBSERVER_PORT = 9000;
+    
     private class WebServerHelper implements Runnable {
 
         private final Socket clientSocket;
@@ -67,6 +70,9 @@ public class WebServer implements Runnable {
                 if (req.isDummyRequest()) {
                     sockOut.writeObject("ok");
                 } else {
+                    /* Log del nome della richiesta */
+                    WebServer.log("Ricevuta richiesta di tipo: " + req.getName());
+                    
                     WebRequestHandler theHandler = null;
                     boolean conflict = false;
                     for (WebRequestHandler wrh : requestHandlers) {
@@ -104,6 +110,8 @@ public class WebServer implements Runnable {
     private ServerSocket ssocket;
     private static DBController dbController;
     private final ArrayList<WebServerHelper> helpers;
+    
+    private static WebServerStopDialog stopDialog = null;
 
     public static DBController getDBController() {
         return dbController;
@@ -168,9 +176,9 @@ public class WebServer implements Runnable {
                 t.start();
             }
             System.out.println("Server out of main cycle");
-            for (WebServerHelper t : helpers) {
+            helpers.forEach((t) -> {
                 t.stop();
-            }
+            });
             System.out.println("All helpers stopped");
             ssocket.close();
             setStopped(true);
@@ -187,11 +195,17 @@ public class WebServer implements Runnable {
 
             /* Aggiungere qui altri request handler */
             app.registerRequestHandler(new AuthRequestHandler());  //Handler dell'autenticazione(verifica user e aggiungi user)
-
+            
+            /* Avvio del Web Server */
             (new Thread(app)).start();
-
-            WebServerStopDialog dialog = new WebServerStopDialog(null, app);
-            dialog.setVisible(true);
+            
+            /* Tenta l'inizializzazione di WebLaF */
+            GUIUtils.InstallLookAndFeel();
+            
+            /* Avvio dell'interfaccia grafica del Web Server */
+            stopDialog = new WebServerStopDialog(null, app);
+            log("Web Server avviato...");
+            stopDialog.setVisible(true);
             dbc.disconnect();
         } catch (SQLException ex) {
             Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -212,5 +226,15 @@ public class WebServer implements Runnable {
     synchronized protected void setStopped(boolean s) {
         stopped = s;
     }
-
+    
+    /**
+     * Manda un messaggio di log all'interfaccia grafica del Web Server,
+     * questo messaggio sarà visualizzato nella console dell'host.
+     * @param message Messaggio da tracciare
+     */
+    synchronized public static void log(String message) {
+        if(stopDialog != null) {
+            stopDialog.appendMessageToConsole(message);
+        }
+    }
 }
