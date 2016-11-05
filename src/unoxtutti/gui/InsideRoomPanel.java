@@ -5,8 +5,8 @@
 package unoxtutti.gui;
 
 import unoxtutti.UnoXTutti;
-import unoxtutti.domain.RemoteRoom;
 import unoxtutti.domain.Player;
+import unoxtutti.domain.RemoteRoom;
 
 /**
  * Questo pannello fornisce informazioni su una stanza e d&agrave; accesso alle

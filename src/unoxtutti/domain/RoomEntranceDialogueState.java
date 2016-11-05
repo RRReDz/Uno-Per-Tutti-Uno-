@@ -5,7 +5,6 @@
 package unoxtutti.domain;
 
 import unoxtutti.connection.P2PMessage;
-import unoxtutti.domain.Room;
 import unoxtutti.domain.dialogue.DialogueState;
 
 /**

@@ -9,9 +9,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
+import unoxtutti.connection.ServerCreationException;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteRoom;
-import unoxtutti.connection.ServerCreationException;
 import unoxtutti.domain.ServerRoom;
 
 /**

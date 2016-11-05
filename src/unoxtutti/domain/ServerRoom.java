@@ -17,9 +17,6 @@ import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
 import unoxtutti.connection.ServerCreationException;
-import unoxtutti.domain.Player;
-import unoxtutti.domain.Room;
-import unoxtutti.webserver.WebServerPrevious;
 
 /**
  * La classe ServerRoom rappresenta una Room (Stanza) lato Server La Room lato
@@ -211,7 +208,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             setClosed(true);
             serverSock.close();
         } catch (IOException ex) {
-            Logger.getLogger(WebServerPrevious.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ServerRoom.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -228,6 +225,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      *
      * @return il numero di giocatori presenti nella stanza
      */
+    @Override
     public int getPlayerCount() {
         return connections.keySet().size();
     }
@@ -237,6 +235,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      *
      * @return l'elenco (in copia) dei giocatori presenti nella stanza
      */
+    @Override
     public ArrayList<Player> getPlayers() {
         ArrayList<Player> ret = new ArrayList<>();
         ret.addAll(connections.keySet());
