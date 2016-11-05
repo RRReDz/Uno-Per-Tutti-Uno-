@@ -42,7 +42,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
     private void initComponents() {
 
         javax.swing.JSplitPane jSplitPane1 = new javax.swing.JSplitPane();
-        javax.swing.JScrollPane jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane1 = new javax.swing.JScrollPane();
         playersList = new javax.swing.JList<>();
         roomPanel = new javax.swing.JPanel();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
@@ -53,14 +53,8 @@ public class InsideRoomPanel extends MainWindowSubPanel {
 
         jSplitPane1.setDividerLocation(200);
 
-        jScrollPane1.setMinimumSize(new java.awt.Dimension(150, 23));
-        jScrollPane1.setPreferredSize(new java.awt.Dimension(200, 140));
-        jScrollPane1.setSize(new java.awt.Dimension(150, 140));
-
         playersList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        playersList.setMinimumSize(new java.awt.Dimension(150, 85));
-        playersList.setPreferredSize(new java.awt.Dimension(150, 85));
-        playersList.setSize(new java.awt.Dimension(150, 136));
+        playersList.setName("playersList"); // NOI18N
         jScrollPane1.setViewportView(playersList);
 
         jSplitPane1.setLeftComponent(jScrollPane1);
@@ -95,6 +89,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
     }//GEN-LAST:event_roomExitButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JList<Player> playersList;
     private javax.swing.JButton roomExitButton;
     private javax.swing.JLabel roomNameLabel;
