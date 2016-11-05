@@ -123,7 +123,7 @@ public class DBController {
     boolean checkRegisteredPlayer(String email) throws SQLException {
         boolean result = false;
         String selectCol = "email";
-        try (ResultSet rs = helper.selectWhereLike("App.RegisteredPlayers", "*", selectCol, "'" + email + "'", this)) {
+        try (ResultSet rs = helper.selectWhereEquals("App.RegisteredPlayers", "*", selectCol, "'" + email + "'", this)) {
             result = rs.next();
         }
         System.out.println("Giocatore esistente con email " + email);
@@ -142,7 +142,7 @@ public class DBController {
         RegisteredPlayer rpl = null;
         String[] selCols = new String[]{"email", "password"};
         String[] selVals = new String[]{"'" + email + "'", "'" + password + "'"};
-        try (ResultSet rs = helper.selectWhereLike("App.RegisteredPlayers", new String[]{"*"}, selCols, selVals, this)) {
+        try (ResultSet rs = helper.selectWhereEquals("App.RegisteredPlayers", new String[]{"*"}, selCols, selVals, this)) {
             if (rs.next()) {
                 rpl = new RegisteredPlayer(rs.getInt("id_player"), rs.getString("username"), email, password);
             }

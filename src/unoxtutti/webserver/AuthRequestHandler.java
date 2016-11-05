@@ -18,17 +18,21 @@ import unoxtutti.domain.RegisteredPlayer;
  */
 public class AuthRequestHandler extends WebRequestHandler {
 
-    /* Questo campo elenca i nomi delle richieste che venogon accettate.
-	 * Per ciascuna c'è in questa classe un corrispondente metodo.
+    /**
+     * Questo campo elenca i nomi delle richieste che venogon accettate.
+     * Per ciascuna c'è in questa classe un corrispondente metodo.
      */
     private static final String[] accepted = new String[]{"verify", "createUser"};
 
     public AuthRequestHandler() {
     }
 
-    /* Il metodo canHandle è richiesto da WebRequestHandler
-	 * dice se una certa richiesta può essere gestita da questo Handler
-	 * per stabilirlo si basa sul NOME della richiesta
+    /**
+     * Il metodo canHandle è richiesto da WebRequestHandler
+     * dice se una certa richiesta può essere gestita da questo Handler
+     * per stabilirlo si basa sul NOME della richiesta
+     * @param request Richiesta
+     * @return true se la richiesta può essere soddisfatta, false altrimenti
      */
     @Override
     public boolean canHandle(WebRequest request) {
@@ -40,10 +44,11 @@ public class AuthRequestHandler extends WebRequestHandler {
         return false;
     }
 
-    /* Il metodo handle è richiesto da WebRequestHandler
-	 * gestisce effettivamente la richiesta, inoltrandola al metodo corrispondente
-	 * si occupa anche di fare il casting dei parametri Object ricevuti con la richiesta
-	 * nelle classi o tipi base richiesti dal metodo in questione.
+    /**
+     * Il metodo handle è richiesto da WebRequestHandler
+     * gestisce effettivamente la richiesta, inoltrandola al metodo corrispondente
+     * si occupa anche di fare il casting dei parametri Object ricevuti con la richiesta
+     * nelle classi o tipi base richiesti dal metodo in questione.
      */
     @Override
     public Object handle(WebRequest request, ObjectOutputStream out) throws IOException {
@@ -67,43 +72,55 @@ public class AuthRequestHandler extends WebRequestHandler {
     }
 
     public boolean createUser(String userName, String email, String password) {
+        String logMessage = "Tentativo di registrazione di " + userName + " (" + email + "): ";
+        boolean success = false;
         try {
             boolean exists;
             exists = WebServer.getDBController().checkRegisteredPlayer(email);
 
-            // if it exists, fail
+            /* Se l'utente esiste già, la registrazione fallisce */
             if (exists) {
+                logMessage += "ERR! Utente già registrato";
                 return false;
+            } else {
+                /* Altrimenti crea l'utente */
+                RegisteredPlayer reg = new RegisteredPlayer(0, userName, email, password);
+
+                /* Salva l'utente nel Database */
+                WebServer.getDBController().saveRegisteredPlayer(reg);
+                logMessage += "OK!";
+                success = true;
             }
-
-            // else create new user
-            RegisteredPlayer reg = new RegisteredPlayer(0, userName, email, password);
-
-            // then save on DB
-            WebServer.getDBController().saveRegisteredPlayer(reg);
         } catch (SQLException ex) {
+            logMessage += "ERR! " + ex.getMessage();
             Logger.getLogger(AuthRequestHandler.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            WebServer.log(logMessage);
         }
-
-        return true; // success
+        return success;
     }
 
     public Player verify(String email, String password) {
-
-        // check for email,pwd pair on DB by retrieving the corresponding registered player
+        String logMessage = "Tentativo di accesso di " + email + ": ";
+        
+        /* Cerca di recuperare coppia Username / Password */
         RegisteredPlayer reg = null;
         try {
             reg = WebServer.getDBController().loadRegisteredPlayer(email, password);
         } catch (SQLException ex) {
+            logMessage += "ERR! " + ex.getMessage();
         }
 
-        // if it DOES NOT exist then fail
+        Player pl = null;
         if (reg == null) {
-            return null;
+            /* Giocatore non trovato */
+            logMessage += "ERR! Giocatore non trovato.";
+        } else {
+            /* Giocatore trovato con successo */
+            pl = Player.createPlayer(reg);
+            logMessage += "OK!";
         }
-
-        // otherwise create corresponding Player and return it
-        Player pl = Player.createPlayer(reg);
+        WebServer.log(logMessage);
         return pl;
     }
 }
