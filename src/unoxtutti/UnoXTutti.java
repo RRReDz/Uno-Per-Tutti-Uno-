@@ -6,6 +6,8 @@ package unoxtutti;
 
 import unoxtutti.gui.AutenticarsiGUI;
 import unoxtutti.gui.UnoXTuttiGUI;
+import unoxtutti.utils.DebugHelper;
+import unoxtutti.utils.GUIUtils;
 
 /**
  * Classe che rappresenta l'applicazione nel suo complesso. Gestisce il
@@ -44,6 +46,8 @@ public class UnoXTutti {
      * La GUI principale dell'applicazione.
      */
     public static UnoXTuttiGUI mainWindow;
+    
+    public static DebugHelper gameDebug;
 
     /**
      * @param args the command line arguments
@@ -57,21 +61,30 @@ public class UnoXTutti {
             System.out.println("Problemi di inizializzazione dell'autenticazione. Termino.");
             return;
         }
+        
+        GUIUtils.InstallLookAndFeel();
+        
+        java.awt.EventQueue.invokeLater(() -> {
+            gameDebug = new DebugHelper();
+        });
+                    
         AutenticarsiGUI autDialog = new AutenticarsiGUI(null, true);
-        autDialog.setVisible(true);
+        autDialog.setVisible(true);    
         autDialog.dispose();
 
         // Capiamo che Autenticarsi ha avuto successo dal fatto che il controller di
         // Autenticarsi ha ottenuto un Player
         if (theAutController.getPlayer() == null) // usciamo
         {
+            gameDebug.logToDisplay("ERR: L'autenticazione non ha avuto successo.");
             return;
         }
 
         // Autenticazione riuscita. Ora attiviamo il GiocareAUnoXTuttiController e
         // tiriamo su la GUI principale dell'applicazione
         theUxtController = GiocareAUnoXTuttiController.getInstance(theAutController.getPlayer());
-
+        gameDebug.logToDisplay("OK. L'autenticazione ha avuto successo.");
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             mainWindow = new UnoXTuttiGUI();
