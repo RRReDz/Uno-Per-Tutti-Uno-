@@ -19,15 +19,13 @@ public class Player implements Serializable {
 
     private Player() {
     }
-
-    ;
-	
-	/**
-	 * Crea un nuovo giocatore a partire da una scheda di registrazione
-	 * @param reg la scheda di registrazione
-	 * @return il giocatore creato.
-	 */
-	public static Player createPlayer(RegisteredPlayer reg) {
+    
+    /**
+     * Crea un nuovo giocatore a partire da una scheda di registrazione
+     * @param reg la scheda di registrazione
+     * @return il giocatore creato.
+     */
+    public static Player createPlayer(RegisteredPlayer reg) {
         Player pl = new Player();
         pl.id = reg.getId();
         pl.name = reg.getUserName();
