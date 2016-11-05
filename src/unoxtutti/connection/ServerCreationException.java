@@ -10,20 +10,20 @@ package unoxtutti.connection;
  */
 public class ServerCreationException extends RuntimeException {
 
-	/**
-	 * Creates a new instance of <code>UnoXTuttiServerException</code> without
-	 * detail message.
-	 */
-	public ServerCreationException() {
-	}
+    /**
+     * Creates a new instance of <code>UnoXTuttiServerException</code> without
+     * detail message.
+     */
+    public ServerCreationException() {
+    }
 
-	/**
-	 * Constructs an instance of <code>UnoXTuttiServerException</code> with the
-	 * specified detail message.
-	 *
-	 * @param msg the detail message.
-	 */
-	public ServerCreationException(String msg) {
-		super(msg);
-	}
+    /**
+     * Constructs an instance of <code>UnoXTuttiServerException</code> with the
+     * specified detail message.
+     *
+     * @param msg the detail message.
+     */
+    public ServerCreationException(String msg) {
+        super(msg);
+    }
 }

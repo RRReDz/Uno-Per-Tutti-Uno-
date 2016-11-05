@@ -8,11 +8,11 @@ import unoxtutti.gui.AutenticarsiGUI;
 import unoxtutti.gui.UnoXTuttiGUI;
 
 /**
- * Classe che rappresenta l'applicazione nel suo complesso. Gestisce il passaggio
- * di consegne fra i controller GRASP coinvolti nell'UC principale (inizialmente
- * "Autenticarsi", successivamente "GiocareAUnoXTutti").
- * Lancia la GUI dell'applicazione stabilendo la sua relazione coi controller.
- * Definisce variabili d'ambiente dell'applicazione (fra cui le istanze dei controller
+ * Classe che rappresenta l'applicazione nel suo complesso. Gestisce il
+ * passaggio di consegne fra i controller GRASP coinvolti nell'UC principale
+ * (inizialmente "Autenticarsi", successivamente "GiocareAUnoXTutti"). Lancia la
+ * GUI dell'applicazione stabilendo la sua relazione coi controller. Definisce
+ * variabili d'ambiente dell'applicazione (fra cui le istanze dei controller
  * GRASP)
  *
  * @author picardi
@@ -43,7 +43,6 @@ public class UnoXTutti {
     /**
      * La GUI principale dell'applicazione.
      */
-
     public static UnoXTuttiGUI mainWindow;
 
     /**
@@ -64,25 +63,19 @@ public class UnoXTutti {
 
         // Capiamo che Autenticarsi ha avuto successo dal fatto che il controller di
         // Autenticarsi ha ottenuto un Player
-
         if (theAutController.getPlayer() == null) // usciamo
+        {
             return;
+        }
 
         // Autenticazione riuscita. Ora attiviamo il GiocareAUnoXTuttiController e
         // tiriamo su la GUI principale dell'applicazione
-
         theUxtController = GiocareAUnoXTuttiController.getInstance(theAutController.getPlayer());
 
-		/*To add for DEBUG:
-        theUxtController = GiocareAUnoXTuttiController.getInstance(Player.createPlayer(new RegisteredPlayer(0,"beatrice","","")));
-		*/
-                
-		/* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                mainWindow = new UnoXTuttiGUI();
-                mainWindow.setVisible(true);
-            }
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(() -> {
+            mainWindow = new UnoXTuttiGUI();
+            mainWindow.setVisible(true);
         });
 
         // Attenzione: la MainWindow è settata su DISPOSE ON CLOSE invece che EXIT ON CLOSE

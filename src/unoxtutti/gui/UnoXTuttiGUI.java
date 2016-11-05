@@ -121,7 +121,6 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
         UnoXTutti.theUxtController.esciDalGioco();
     }//GEN-LAST:event_formWindowClosing
 
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel mainPanel;
     private javax.swing.JLabel userNameLabel;

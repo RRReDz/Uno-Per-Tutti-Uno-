@@ -10,7 +10,7 @@ package unoxtutti.webserver;
  */
 class WebRequestException extends RuntimeException {
 
-	public WebRequestException(String string) {
-	}
-	
+    public WebRequestException(String string) {
+    }
+
 }

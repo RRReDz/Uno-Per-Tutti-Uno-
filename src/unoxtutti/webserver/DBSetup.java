@@ -11,17 +11,18 @@ import java.sql.SQLException;
  * @author picardi
  */
 public class DBSetup {
-	public static void main(String[] args) {
-		DBController dbc = new DBController();
-		try{
-		dbc.connect();
-		try {
-			dbc.resetDB();
-		} finally {
-			dbc.disconnect();
-		}
-		} catch(SQLException exc) {
-			exc.printStackTrace();
-		}
-	}
+
+    public static void main(String[] args) {
+        DBController dbc = new DBController();
+        try {
+            dbc.connect();
+            try {
+                dbc.resetDB();
+            } finally {
+                dbc.disconnect();
+            }
+        } catch (SQLException exc) {
+            exc.printStackTrace();
+        }
+    }
 }

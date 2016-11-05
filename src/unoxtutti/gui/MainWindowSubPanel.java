@@ -11,21 +11,23 @@ import javax.swing.JPanel;
  * @author picardi
  */
 public class MainWindowSubPanel extends JPanel {
-	protected UnoXTuttiGUI mainWindow;
-	/**
-	 * @return the mainWindow
-	 */
-	public UnoXTuttiGUI getMainWindow() {
-		return mainWindow;
-	}
 
-	/**
-	 * @param mainWindow the mainWindow to set
-	 */
-	public void setMainWindow(UnoXTuttiGUI mainWindow) {
-		this.mainWindow = mainWindow;
-	}
+    protected UnoXTuttiGUI mainWindow;
 
-	public void initializeContent() {
-	}
+    /**
+     * @return the mainWindow
+     */
+    public UnoXTuttiGUI getMainWindow() {
+        return mainWindow;
+    }
+
+    /**
+     * @param mainWindow the mainWindow to set
+     */
+    public void setMainWindow(UnoXTuttiGUI mainWindow) {
+        this.mainWindow = mainWindow;
+    }
+
+    public void initializeContent() {
+    }
 }
