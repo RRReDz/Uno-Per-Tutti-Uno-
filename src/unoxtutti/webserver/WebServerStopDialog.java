@@ -56,7 +56,6 @@ public class WebServerStopDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Web Server");
-        setAlwaysOnTop(true);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/terminal.png")));
         setPreferredSize(new java.awt.Dimension(500, 200));
         setResizable(false);
@@ -99,7 +98,7 @@ public class WebServerStopDialog extends javax.swing.JDialog {
 
         getContentPane().add(footerPanel, java.awt.BorderLayout.PAGE_END);
 
-        setBounds(650, 250, 500, 250);
+        setBounds(790, 460, 580, 250);
     }// </editor-fold>//GEN-END:initComponents
 
     

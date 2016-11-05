@@ -55,7 +55,6 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("UnoXTutti");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/cards.png")));
-        setLocation(new java.awt.Point(0, 0));
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -184,8 +183,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
-        pack();
-        setLocationRelativeTo(null);
+        setBounds(100, 100, 537, 266);
     }// </editor-fold>//GEN-END:initComponents
 
     private void signinButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signinButtonActionPerformed

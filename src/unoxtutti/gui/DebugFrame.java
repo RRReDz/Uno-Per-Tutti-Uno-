@@ -52,7 +52,7 @@ public class DebugFrame extends javax.swing.JFrame {
         });
         getContentPane().add(resetLogButton, java.awt.BorderLayout.PAGE_END);
 
-        setBounds(500, 0, 666, 489);
+        setBounds(790, 0, 580, 450);
     }// </editor-fold>//GEN-END:initComponents
 
     private void resetLogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetLogButtonActionPerformed
