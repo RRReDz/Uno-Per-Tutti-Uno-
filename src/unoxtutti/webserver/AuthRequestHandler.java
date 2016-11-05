@@ -1,7 +1,6 @@
-/*
- * Questa classe gestisce le richieste relative all'autenticazione.
- * Estende WebRequestHandler per potersi registrare presso il finto
- * WebServer come gestore di richieste.
+/* 
+ * Progetto UnoXTutto per l'esame di Sviluppo Applicazione Software.
+ * Rossi Riccardo, Giacobino Davide, Sguotti Leonardo
  */
 package unoxtutti.webserver;
 
