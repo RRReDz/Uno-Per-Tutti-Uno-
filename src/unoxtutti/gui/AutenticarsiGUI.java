@@ -7,6 +7,7 @@ package unoxtutti.gui;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
+import unoxtutti.configuration.ApplicationConfig;
 import unoxtutti.domain.Player;
 import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.GUIUtils;
@@ -54,7 +55,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         signupButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("UnoXTutti");
+        setTitle(ApplicationConfig.APP_NAME + " - Autenticazione");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/cards.png")));
         setModalityType(java.awt.Dialog.ModalityType.DOCUMENT_MODAL);
         setResizable(false);

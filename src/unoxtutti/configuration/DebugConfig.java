@@ -5,7 +5,7 @@
 package unoxtutti.configuration;
 
 /**
- * Classe per costanti e varibili dell'applicazione
+ * Classe per la configurazione delle finestra di debug
  * @author Riccardo Rossi
  */
 public class DebugConfig {

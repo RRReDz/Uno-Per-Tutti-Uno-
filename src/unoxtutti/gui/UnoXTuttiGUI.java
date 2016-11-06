@@ -10,6 +10,7 @@ import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.utils.DebugHelper;
+import unoxtutti.configuration.ApplicationConfig;
 
 /**
  *
@@ -97,7 +98,7 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("UnoXTutti");
+        setTitle(ApplicationConfig.APP_NAME);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/cards.png")));
         setPreferredSize(new java.awt.Dimension(800, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
