@@ -7,6 +7,8 @@ package unoxtutti.domain;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import unoxtutti.UnoXTutti;
@@ -175,4 +177,16 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
         }
         this.p2pConn.disconnect();
     }
+     
+    public RemoteMatch hostRemoteMatch(String nomePartita, String opzioni) { 
+        P2PMessage p2pMessage = new P2PMessage("CREATE_MATCH"); 
+        p2pMessage.setSenderConnection(p2pConn); 
+        p2pMessage.setParameters(new Object[]{myPlayer}); 
+            try { 
+                p2pConn.sendMessage(p2pMessage); 
+            } catch (PartnerShutDownException ex) { 
+                Logger.getLogger(RemoteRoom.class.getName()).log(Level.SEVERE, null, ex); 
+            } 
+        return RemoteMatch.createRemoteMatch(myPlayer, p2pConn); 
+    } 
 }
