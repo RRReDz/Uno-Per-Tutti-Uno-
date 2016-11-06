@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package unoxtutti.gui;
 
 import java.awt.Toolkit;
@@ -12,12 +7,12 @@ import unoxtutti.utils.TimeUtils;
  *
  * @author Riccardo Rossi
  */
-public class DebugFrame extends javax.swing.JFrame {
+public class DebugGUI extends javax.swing.JFrame {
 
     /**
      * Creates new form DebugFrame
      */
-    public DebugFrame() {
+    public DebugGUI() {
         initComponents();
     }
 
@@ -31,13 +26,11 @@ public class DebugFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        logText = new javax.swing.JTextArea();
         resetLogButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Operazioni Client");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/terminal.png")));
-        setPreferredSize(new java.awt.Dimension(650, 450));
         setResizable(false);
 
         logText.setEditable(false);
@@ -62,45 +55,10 @@ public class DebugFrame extends javax.swing.JFrame {
     private void resetLogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetLogButtonActionPerformed
         logText.setText("");
     }//GEN-LAST:event_resetLogButtonActionPerformed
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DebugFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new DebugFrame().setVisible(true);
-            }
-        });
-    }
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea logText;
+    private final javax.swing.JTextArea logText = new javax.swing.JTextArea();
     private javax.swing.JButton resetLogButton;
     // End of variables declaration//GEN-END:variables
     
@@ -110,10 +68,12 @@ public class DebugFrame extends javax.swing.JFrame {
      * se non fosse presente.
      * @param line 
      */
-    public void writeToTextArea(String line) {
-        String prefix = "[" + TimeUtils.getCurrentTimeStamp("HH:mm:ss") + "] ";
-        logText.append(prefix);
-        logText.append(line.endsWith("\n") ? line : line + "\n");
+    public void appendMessageToConsole(String line) {
+        synchronized(logText) {
+            String prefix = "[" + TimeUtils.getCurrentTimeStamp("HH:mm:ss") + "] ";
+            logText.append(prefix);
+            logText.append(line.endsWith("\n") ? line : line + "\n");
+        }
     }
 
 }

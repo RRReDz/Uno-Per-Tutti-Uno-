@@ -5,8 +5,10 @@
 package unoxtutti.gui;
 
 import java.awt.Toolkit;
+import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Player;
+import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.GUIUtils;
 
 /**
@@ -188,13 +190,13 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
     private void signinButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_signinButtonActionPerformed
         String email = emailSigninField.getText().trim();
         String password = passSigninField.getText().trim();
-        UnoXTutti.gameDebug.logToDisplay("L'utente sta cercando di accedere (email: " + email + ")...");
+        DebugHelper.log("L'utente sta cercando di accedere (email: " + email + ")...");
         Player pl = UnoXTutti.theAutController.accedi(email, password);
         if (pl == null) {
-            UnoXTutti.gameDebug.logToDisplay("ERR: Credenziali NON valide, impossibile accedere.");
-            //JOptionPane.showMessageDialog(this, "Credenziali non valide. Impossibile accedere.");
+            DebugHelper.log("ERR: Credenziali NON valide, impossibile accedere.");
+            JOptionPane.showMessageDialog(this, "Credenziali non valide. Impossibile accedere.");
         } else {
-            UnoXTutti.gameDebug.logToDisplay("OK: Credenziali corrette, avvio interfaccia gestione stanze.");
+            DebugHelper.log("OK: Credenziali corrette, avvio interfaccia gestione stanze.");
             setVisible(false);
         }
     }//GEN-LAST:event_signinButtonActionPerformed
@@ -203,14 +205,14 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         String userName = nameSignupField.getText().trim();
         String email = emailSignupField.getText().trim();
         String password = passSignupField.getText().trim();
-        UnoXTutti.gameDebug.logToDisplay("L'utente " + userName + " sta cercando di registrarsi...");
+        DebugHelper.log("L'utente " + userName + " sta cercando di registrarsi...");
         boolean ok = UnoXTutti.theAutController.registra(userName, email, password);
         if (!ok) {
-            UnoXTutti.gameDebug.logToDisplay("ERR: La registrazione NON è andata a buon fine.");
-            //JOptionPane.showMessageDialog(this, "Impossibile creare untente con questi dati. Riprova.");
+            DebugHelper.log("ERR: La registrazione NON è andata a buon fine.");
+            JOptionPane.showMessageDialog(this, "Impossibile creare untente con questi dati. Riprova.");
         } else {
-            UnoXTutti.gameDebug.logToDisplay("OK: La registrazione è andata a buon fine.");
-            //JOptionPane.showMessageDialog(this, "Giocatore " + userName + " creato. Ora puoi accedere.");
+            DebugHelper.log("OK: La registrazione è andata a buon fine.");
+            JOptionPane.showMessageDialog(this, "Giocatore " + userName + " creato. Ora puoi accedere.");
             this.tabbedPane.setSelectedIndex(0);
         }
     }//GEN-LAST:event_signupButtonActionPerformed
@@ -224,6 +226,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 AutenticarsiGUI dialog = new AutenticarsiGUI(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {

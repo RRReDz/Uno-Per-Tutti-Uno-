@@ -46,15 +46,11 @@ public class UnoXTutti {
      * La GUI principale dell'applicazione.
      */
     public static UnoXTuttiGUI mainWindow;
-    
-    public static DebugHelper gameDebug;
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // PRIMO PASSO: inizializzare il controller di Autenticarsi e mostrare la GUI
-
         theAutController = AutenticarsiController.getInstance();
         boolean ok = theAutController.initialize();
         if (!ok) {
@@ -62,12 +58,15 @@ public class UnoXTutti {
             return;
         }
         
+        /* Tenta l'inizializzazione di WebLaF come Look&Feel di Java */
         GUIUtils.InstallLookAndFeel();
         
+        /* Avvia la finestra di debug */
         java.awt.EventQueue.invokeLater(() -> {
-            gameDebug = new DebugHelper();
+            DebugHelper.startDebugConsole();
         });
-                    
+        
+        /* Avvia la finestra di autenticazione */
         AutenticarsiGUI autDialog = new AutenticarsiGUI(null, true);
         autDialog.setVisible(true);    
         autDialog.dispose();
@@ -76,14 +75,14 @@ public class UnoXTutti {
         // Autenticarsi ha ottenuto un Player
         if (theAutController.getPlayer() == null) // usciamo
         {
-            gameDebug.logToDisplay("ERR: L'utente ha chiuso la finestra di autenticazione.");
+            DebugHelper.log("ERR: L'utente ha chiuso la finestra di autenticazione.");
             return;
         }
 
         // Autenticazione riuscita. Ora attiviamo il GiocareAUnoXTuttiController e
         // tiriamo su la GUI principale dell'applicazione
         theUxtController = GiocareAUnoXTuttiController.getInstance(theAutController.getPlayer());
-        gameDebug.logToDisplay("OK. L'autenticazione ha avuto successo.");
+        DebugHelper.log("OK. L'autenticazione ha avuto successo.");
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {

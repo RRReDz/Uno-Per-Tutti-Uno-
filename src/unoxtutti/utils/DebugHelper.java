@@ -4,18 +4,22 @@
  */
 package unoxtutti.utils;
 
-import unoxtutti.gui.DebugFrame;
+import unoxtutti.gui.DebugGUI;
 
 /**
  * Classe di ausilio per interfacciarsi con il frame di debug del software
  * @author Riccardo Rossi
  */
 public class DebugHelper {
-    private DebugFrame debugFrame = null;
-
-    public DebugHelper() {
-        if(Constants.DEBUG_MODE) {
-            debugFrame = new DebugFrame();
+    private static DebugGUI debugFrame = null;
+    
+    /**
+     * Avvia la console per il debug delle azioni del client.
+     * Funge come un metodo getInstance() di una classe singleton.
+     */
+    synchronized public static void startDebugConsole() {
+        if(debugFrame == null && Constants.DEBUG_MODE) {
+            debugFrame = new DebugGUI();
             debugFrame.setVisible(true);
         }
     }
@@ -24,8 +28,9 @@ public class DebugHelper {
      * Scrive un messaggio nel frame di debug
      * @param msg 
      */
-    public void logToDisplay(String msg) {
-        if(Constants.DEBUG_MODE)
-            debugFrame.writeToTextArea(msg);
+    synchronized public static void log(String msg) {
+        if(debugFrame != null) {
+            debugFrame.appendMessageToConsole(msg);
+        }
     }
 }
