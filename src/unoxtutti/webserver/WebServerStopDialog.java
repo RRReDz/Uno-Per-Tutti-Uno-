@@ -6,6 +6,7 @@ package unoxtutti.webserver;
 
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
+import unoxtutti.configuration.ApplicationConfig;
 import unoxtutti.utils.TimeUtils;
 
 /**
@@ -55,7 +56,7 @@ public class WebServerStopDialog extends javax.swing.JDialog {
         stopButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Web Server");
+        setTitle(ApplicationConfig.APP_NAME + " - WebServer");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/terminal.png")));
         setPreferredSize(new java.awt.Dimension(500, 200));
         setResizable(false);

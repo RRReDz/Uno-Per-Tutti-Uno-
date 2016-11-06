@@ -6,6 +6,7 @@ package unoxtutti;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import unoxtutti.configuration.ApplicationConfig;
 import unoxtutti.domain.Player;
 import unoxtutti.webclient.WebClientConnection;
 
@@ -67,9 +68,9 @@ public class AutenticarsiController {
      */
     boolean initialize() {
         try {
-            webCliConn = new WebClientConnection(InetAddress.getByName(UnoXTutti.WEB_ADDRESS), UnoXTutti.WEB_PORT);
+            webCliConn = new WebClientConnection(InetAddress.getByName(ApplicationConfig.WEB_ADDRESS), ApplicationConfig.WEB_PORT);
         } catch (UnknownHostException ex) {
-            System.out.println("Host " + UnoXTutti.WEB_ADDRESS + " sconosciuto.");
+            System.out.println("Host " + ApplicationConfig.WEB_ADDRESS + " sconosciuto.");
             return false;
         }
         return true;

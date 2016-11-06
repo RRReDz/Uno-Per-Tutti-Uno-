@@ -8,6 +8,7 @@ import java.awt.CardLayout;
 import java.awt.Cursor;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
+import unoxtutti.configuration.ApplicationConfig;
 
 /**
  *
@@ -95,6 +96,7 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle(ApplicationConfig.APP_NAME);
         setPreferredSize(new java.awt.Dimension(800, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {

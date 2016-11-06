@@ -34,17 +34,6 @@ public class UnoXTutti {
     public static GiocareAUnoXTuttiController theUxtController;
 
     /**
-     * L'indirizzo del Web Server simulato, modificare se gira su un'altra
-     * macchina.
-     */
-    public static String WEB_ADDRESS = "localhost";
-
-    /**
-     * Porta del Web Server simulato, modificare se gira su un'altra porta.
-     */
-    public static int WEB_PORT = 9000;
-
-    /**
      * La GUI principale dell'applicazione.
      */
     public static UnoXTuttiGUI mainWindow;
