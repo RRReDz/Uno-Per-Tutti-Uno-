@@ -5,6 +5,7 @@
  */
 package unoxtutti.gui;
 
+import java.awt.Toolkit;
 import unoxtutti.utils.TimeUtils;
 
 /**
@@ -33,17 +34,20 @@ public class DebugFrame extends javax.swing.JFrame {
         logText = new javax.swing.JTextArea();
         resetLogButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Operazioni Client");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/terminal.png")));
         setPreferredSize(new java.awt.Dimension(650, 450));
         setResizable(false);
 
+        logText.setEditable(false);
         logText.setColumns(20);
         logText.setRows(5);
-        logText.setEnabled(false);
         jScrollPane1.setViewportView(logText);
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
+        resetLogButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/trash.png"))); // NOI18N
         resetLogButton.setText("Reset");
         resetLogButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
