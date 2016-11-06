@@ -71,7 +71,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
 
         jSplitPane1.setDividerLocation(300);
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEmptyBorder(5, 0, 5, 5), javax.swing.BorderFactory.createEtchedBorder()));
+        jPanel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanel4.setLayout(new java.awt.BorderLayout());
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));

@@ -6,8 +6,10 @@ package unoxtutti.gui;
 
 import java.awt.CardLayout;
 import java.awt.Cursor;
+import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
+import unoxtutti.utils.DebugHelper;
 
 /**
  *
@@ -95,6 +97,8 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("UnoXTutti");
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/cards.png")));
         setPreferredSize(new java.awt.Dimension(800, 600));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -106,7 +110,7 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
         userNameLabel.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
         userNameLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         userNameLabel.setText("Giocatore: ");
-        userNameLabel.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)), javax.swing.BorderFactory.createEmptyBorder(3, 3, 3, 3)));
+        userNameLabel.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         userNameLabel.setOpaque(true);
         getContentPane().add(userNameLabel, java.awt.BorderLayout.PAGE_START);
 
@@ -118,6 +122,7 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         UnoXTutti.theUxtController.esciDalGioco();
+        DebugHelper.stopDebugConsole(5);
     }//GEN-LAST:event_formWindowClosing
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

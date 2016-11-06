@@ -22,7 +22,8 @@ public class WebServerStopDialog extends javax.swing.JDialog {
      * @param ws WebServer
      */
     public WebServerStopDialog(java.awt.Frame parent, WebServer ws) {
-        super(parent, true);
+        //super(parent, true);
+        super(parent, java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
         initComponents();
         webServer = ws;
     }
