@@ -42,77 +42,25 @@ public class InsideRoomPanel extends MainWindowSubPanel {
     private void initComponents() {
 
         javax.swing.JSplitPane jSplitPane1 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         playersList = new javax.swing.JList<>();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         roomPanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        matchList = new javax.swing.JList<>();
-        jPanel4 = new javax.swing.JPanel();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
         roomNameLabel = new javax.swing.JLabel();
         roomExitButton = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
-        jSplitPane1.setDividerLocation(381);
-
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        jSplitPane1.setDividerLocation(200);
 
         playersList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         playersList.setName("playersList"); // NOI18N
         jScrollPane1.setViewportView(playersList);
 
-        jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        jLabel1.setText("Giocatori:");
-        jPanel1.add(jLabel1, java.awt.BorderLayout.PAGE_START);
-
-        jButton2.setText("jButton2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jPanel3.add(jButton2);
-
-        jButton3.setText("jButton3");
-        jPanel3.add(jButton3);
-
-        jPanel1.add(jPanel3, java.awt.BorderLayout.PAGE_END);
-
-        jSplitPane1.setLeftComponent(jPanel1);
+        jSplitPane1.setLeftComponent(jScrollPane1);
 
         roomPanel.setPreferredSize(new java.awt.Dimension(100, 399));
         roomPanel.setLayout(new java.awt.BorderLayout());
-
-        jLabel2.setText("Partite disponibili:");
-        roomPanel.add(jLabel2, java.awt.BorderLayout.PAGE_START);
-
-        matchList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane2.setViewportView(matchList);
-
-        roomPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
-
-        jButton4.setText("Crea partita");
-        jPanel4.add(jButton4);
-
-        jButton5.setText("Entra in partita");
-        jPanel4.add(jButton5);
-
-        roomPanel.add(jPanel4, java.awt.BorderLayout.PAGE_END);
-
         jSplitPane1.setRightComponent(roomPanel);
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
@@ -140,23 +88,8 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         mainWindow.setGuiState(UnoXTuttiGUI.GUIState.OUTSIDE_ROOM);
     }//GEN-LAST:event_roomExitButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JList<String> matchList;
     private javax.swing.JList<Player> playersList;
     private javax.swing.JButton roomExitButton;
     private javax.swing.JLabel roomNameLabel;
