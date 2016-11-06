@@ -47,7 +47,6 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         playersList = new javax.swing.JList<>();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         roomPanel = new javax.swing.JPanel();
@@ -57,7 +56,6 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         jPanel4 = new javax.swing.JPanel();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
         roomNameLabel = new javax.swing.JLabel();
         roomExitButton = new javax.swing.JButton();
@@ -77,10 +75,12 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         jLabel1.setText("Giocatori:");
         jPanel1.add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
-        jButton1.setText("jButton1");
-        jPanel3.add(jButton1);
-
         jButton2.setText("jButton2");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel3.add(jButton2);
 
         jButton3.setText("jButton3");
@@ -105,14 +105,11 @@ public class InsideRoomPanel extends MainWindowSubPanel {
 
         roomPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        jButton4.setText("jButton4");
+        jButton4.setText("Crea partita");
         jPanel4.add(jButton4);
 
-        jButton5.setText("jButton5");
+        jButton5.setText("Entra in partita");
         jPanel4.add(jButton5);
-
-        jButton6.setText("jButton6");
-        jPanel4.add(jButton6);
 
         roomPanel.add(jPanel4, java.awt.BorderLayout.PAGE_END);
 
@@ -143,13 +140,15 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         mainWindow.setGuiState(UnoXTuttiGUI.GUIState.OUTSIDE_ROOM);
     }//GEN-LAST:event_roomExitButtonActionPerformed
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
