@@ -76,7 +76,7 @@ public class UnoXTutti {
         // Autenticarsi ha ottenuto un Player
         if (theAutController.getPlayer() == null) // usciamo
         {
-            gameDebug.logToDisplay("ERR: L'autenticazione non ha avuto successo.");
+            gameDebug.logToDisplay("ERR: L'utente ha chiuso la finestra di autenticazione.");
             return;
         }
 
