@@ -1,7 +1,7 @@
 package unoxtutti.gui;
 
 import java.awt.Toolkit;
-import unoxtutti.configuration.ApplicationConfig;
+import unoxtutti.configuration.DebugConfig;
 import unoxtutti.utils.TimeUtils;
 
 /**
@@ -30,7 +30,7 @@ public class DebugGUI extends javax.swing.JFrame {
         resetLogButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle(ApplicationConfig.APP_NAME + " - Operazioni dei clients" );
+        setTitle(DebugConfig.CONSOLE_TITLE);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/terminal.png")));
         setResizable(false);
 

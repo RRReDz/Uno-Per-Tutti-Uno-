@@ -4,8 +4,6 @@
  */
 package unoxtutti;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import unoxtutti.gui.AutenticarsiGUI;
 import unoxtutti.gui.UnoXTuttiGUI;
 import unoxtutti.utils.DebugHelper;
@@ -76,6 +74,7 @@ public class UnoXTutti {
         // Autenticazione riuscita. Ora attiviamo il GiocareAUnoXTuttiController e
         // tiriamo su la GUI principale dell'applicazione
         theUxtController = GiocareAUnoXTuttiController.getInstance(theAutController.getPlayer());
+        DebugHelper.appendToDebugConsoleTitle("Giocatore: " + theAutController.getPlayer().getName());
         DebugHelper.log("OK. L'autenticazione ha avuto successo.");
         
         /* Create and display the form */

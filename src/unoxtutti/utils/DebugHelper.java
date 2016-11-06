@@ -75,4 +75,14 @@ public class DebugHelper {
             debugFrame.appendMessageToConsole(msg);
         }
     }
+    
+    /**
+     * Aggiunge una stringa al titolo del frame di debug
+     * @param msg stringa da aggiungere
+     */
+    synchronized public static void appendToDebugConsoleTitle(String msg) {
+        if(debugFrame != null) {
+            debugFrame.setTitle(debugFrame.getTitle() + " - " + msg);
+        }
+    }
 }

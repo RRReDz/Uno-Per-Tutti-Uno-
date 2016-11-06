@@ -9,5 +9,13 @@ package unoxtutti.configuration;
  * @author Riccardo Rossi
  */
 public class DebugConfig {
+    /**
+     * Titolo delle schermate di debug
+     */
+    public static final String CONSOLE_TITLE = "UnoPerTutti Debug";
+    
+    /**
+     * Variabile per indicare se visualizzare o meno le schermate di debug
+     */
     public static final boolean DEBUG_MODE = true;
 }
