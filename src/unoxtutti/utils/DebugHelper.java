@@ -4,6 +4,9 @@
  */
 package unoxtutti.utils;
 
+import java.awt.EventQueue;
+import java.util.Timer;
+import unoxtutti.configuration.DebugConfig;
 import unoxtutti.gui.DebugGUI;
 
 /**
@@ -11,6 +14,9 @@ import unoxtutti.gui.DebugGUI;
  * @author Riccardo Rossi
  */
 public class DebugHelper {
+    /**
+     * Finestra di Debug
+     */
     private static DebugGUI debugFrame = null;
     
     /**
@@ -18,9 +24,45 @@ public class DebugHelper {
      * Funge come un metodo getInstance() di una classe singleton.
      */
     synchronized public static void startDebugConsole() {
-        if(debugFrame == null && Constants.DEBUG_MODE) {
+        if(debugFrame == null && DebugConfig.DEBUG_MODE) {
             debugFrame = new DebugGUI();
             debugFrame.setVisible(true);
+        }
+    }
+    
+    /**
+     * Chiude la finestra di Debug
+     */
+    synchronized public static void stopDebugConsole() {
+        stopDebugConsole(0);
+    }
+    
+    /**
+     * Chiude la finestra di Debug dopo un certo lasso di tempo
+     * @param seconds Secondi prima della chiusura della finestra
+     */
+    synchronized public static void stopDebugConsole(int seconds) {
+        if(seconds > 0) {
+            DebugHelper.log("Questa finestra verrà chiusa tra " + seconds + " secondi.");
+        }
+        
+        if(debugFrame != null) {
+            Timer t = new Timer();
+            t.schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        DebugHelper.log("Chiusura della finestra in corso...");
+                        /* Richiamo la chiusura della finestra dal thread principale */
+                        EventQueue.invokeLater(() -> {
+                            debugFrame.setVisible(false);
+                            debugFrame.dispose();
+                        });
+                        t.cancel();
+                    }
+                },
+                seconds * 1000
+            );
         }
     }
     

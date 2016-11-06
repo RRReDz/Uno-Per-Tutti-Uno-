@@ -56,6 +56,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("UnoXTutti");
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("../resources/icons/cards.png")));
+        setModalityType(java.awt.Dialog.ModalityType.DOCUMENT_MODAL);
         setResizable(false);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));

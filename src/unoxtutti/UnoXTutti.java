@@ -4,6 +4,8 @@
  */
 package unoxtutti;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import unoxtutti.gui.AutenticarsiGUI;
 import unoxtutti.gui.UnoXTuttiGUI;
 import unoxtutti.utils.DebugHelper;
@@ -64,18 +66,21 @@ public class UnoXTutti {
         /* Avvia la finestra di debug */
         java.awt.EventQueue.invokeLater(() -> {
             DebugHelper.startDebugConsole();
+            DebugHelper.log("Client inizializzato...");
         });
         
         /* Avvia la finestra di autenticazione */
         AutenticarsiGUI autDialog = new AutenticarsiGUI(null, true);
-        autDialog.setVisible(true);    
+        DebugHelper.log("Interfaccia di accesso avviata.");
+        autDialog.setVisible(true);
         autDialog.dispose();
 
         // Capiamo che Autenticarsi ha avuto successo dal fatto che il controller di
         // Autenticarsi ha ottenuto un Player
         if (theAutController.getPlayer() == null) // usciamo
         {
-            DebugHelper.log("ERR: L'utente ha chiuso la finestra di autenticazione.");
+            DebugHelper.log("L'utente ha chiuso la finestra di autenticazione.");
+            DebugHelper.stopDebugConsole(5);
             return;
         }
 
