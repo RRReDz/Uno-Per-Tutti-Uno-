@@ -46,24 +46,22 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         playersList = new javax.swing.JList<>();
         jLabel1 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
         roomPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         matchList = new javax.swing.JList<>();
         jPanel4 = new javax.swing.JPanel();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
+        createMatchButton = new javax.swing.JButton();
+        joinMatchButton = new javax.swing.JButton();
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
         roomNameLabel = new javax.swing.JLabel();
         roomExitButton = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
-        jSplitPane1.setDividerLocation(381);
+        jSplitPane1.setDividerLocation(200);
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanel1.setLayout(new java.awt.BorderLayout());
 
         playersList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
@@ -75,41 +73,24 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         jLabel1.setText("Giocatori:");
         jPanel1.add(jLabel1, java.awt.BorderLayout.PAGE_START);
 
-        jButton2.setText("jButton2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-        jPanel3.add(jButton2);
-
-        jButton3.setText("jButton3");
-        jPanel3.add(jButton3);
-
-        jPanel1.add(jPanel3, java.awt.BorderLayout.PAGE_END);
-
         jSplitPane1.setLeftComponent(jPanel1);
 
+        roomPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         roomPanel.setPreferredSize(new java.awt.Dimension(100, 399));
         roomPanel.setLayout(new java.awt.BorderLayout());
 
         jLabel2.setText("Partite disponibili:");
         roomPanel.add(jLabel2, java.awt.BorderLayout.PAGE_START);
 
-        matchList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
         jScrollPane2.setViewportView(matchList);
 
         roomPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        jButton4.setText("Crea partita");
-        jPanel4.add(jButton4);
+        createMatchButton.setText("Crea partita");
+        jPanel4.add(createMatchButton);
 
-        jButton5.setText("Entra in partita");
-        jPanel4.add(jButton5);
+        joinMatchButton.setText("Entra in partita");
+        jPanel4.add(joinMatchButton);
 
         roomPanel.add(jPanel4, java.awt.BorderLayout.PAGE_END);
 
@@ -117,7 +98,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        jPanel2.setBorder(javax.swing.BorderFactory.createEmptyBorder(5, 10, 5, 10));
         jPanel2.setLayout(new java.awt.BorderLayout(5, 0));
 
         roomNameLabel.setFont(new java.awt.Font("Lucida Grande", 1, 18)); // NOI18N
@@ -140,22 +121,15 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         mainWindow.setGuiState(UnoXTuttiGUI.GUIState.OUTSIDE_ROOM);
     }//GEN-LAST:event_roomExitButtonActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton createMatchButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton joinMatchButton;
     private javax.swing.JList<String> matchList;
     private javax.swing.JList<Player> playersList;
     private javax.swing.JButton roomExitButton;
