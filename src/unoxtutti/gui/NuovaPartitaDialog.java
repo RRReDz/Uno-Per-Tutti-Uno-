@@ -6,23 +6,20 @@ package unoxtutti.gui;
 
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author picardi
- */
-public class NuovaStanzaDialog extends javax.swing.JDialog {
+
+public class NuovaPartitaDialog extends javax.swing.JDialog {
 
     private int result;
 
     /**
-     * Creates new form NuovaStanzaDialog
+     * Creates new form NuovaPartitaDialog
      */
-    public NuovaStanzaDialog(java.awt.Frame parent, boolean modal) {
+    public NuovaPartitaDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         result = JOptionPane.CANCEL_OPTION;
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -36,16 +33,14 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
         javax.swing.JPanel jPanel2 = new javax.swing.JPanel();
         javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
-        nomeStanzaField = new javax.swing.JTextField();
-        javax.swing.Box.Filler filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 10), new java.awt.Dimension(0, 10), new java.awt.Dimension(32767, 10));
-        javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
-        portaStanzaField = new javax.swing.JTextField();
+        txtNomePartita = new javax.swing.JTextField();
         javax.swing.JPanel jPanel3 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Creazione stanza");
+        setTitle("Creazione partita");
+        setPreferredSize(new java.awt.Dimension(300, 180));
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
         jPanel4.setLayout(new java.awt.BorderLayout());
@@ -57,17 +52,9 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
         jLabel1.setText("Nome Stanza:");
         jPanel1.add(jLabel1);
 
-        nomeStanzaField.setColumns(20);
-        nomeStanzaField.setAlignmentX(0.0F);
-        jPanel1.add(nomeStanzaField);
-        jPanel1.add(filler2);
-
-        jLabel3.setText("Porta:");
-        jPanel1.add(jLabel3);
-
-        portaStanzaField.setColumns(5);
-        portaStanzaField.setAlignmentX(0.0F);
-        jPanel1.add(portaStanzaField);
+        txtNomePartita.setColumns(20);
+        txtNomePartita.setAlignmentX(0.0F);
+        jPanel1.add(txtNomePartita);
 
         jPanel2.add(jPanel1);
 
@@ -99,21 +86,21 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    /**
+     * Controllo validità dati al click del tasto OK.
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         result = JOptionPane.OK_OPTION;
         boolean ok = true;
-        int num = 0;
-        try {
-            num = Integer.parseInt(this.portaStanzaField.getText().trim());
-        } catch (NumberFormatException ex) {
+        
+        if (txtNomePartita.getText().isEmpty()) {
             ok = false;
-            JOptionPane.showMessageDialog(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
+            JOptionPane.showMessageDialog(this, "Inserire il nome della partita!");
+            txtNomePartita.requestFocus();
         }
-        if (ok && (num < 1024 || num > 65535)) {
-            ok = false;
-            JOptionPane.showMessageDialog(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
-        }
+        
         if (ok) {
             setVisible(false);
         }
@@ -124,12 +111,8 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    public String getRoomName() {
-        return this.nomeStanzaField.getText().trim();
-    }
-
-    public int getRoomPort() {
-        return Integer.parseInt(this.portaStanzaField.getText().trim());
+    public String getMatchName() {
+        return this.txtNomePartita.getText().trim();
     }
 
     public int getResult() {
@@ -138,8 +121,7 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
-    private javax.swing.JTextField nomeStanzaField;
     private javax.swing.JButton okButton;
-    private javax.swing.JTextField portaStanzaField;
+    private javax.swing.JTextField txtNomePartita;
     // End of variables declaration//GEN-END:variables
 }

@@ -4,8 +4,11 @@
  */
 package unoxtutti.utils;
 
+import java.awt.Rectangle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import unoxtutti.gui.AutenticarsiGUI;
@@ -31,4 +34,23 @@ public class GUIUtils {
         }
     }
     
+    
+    /**
+     * Imposta la posizione di un dialog al centro di una finestra
+     * @param dialog Finestra di dialogo
+     * @param window Finestra in cui mettere il dialog
+     */
+    public static void CenterDialogInsideWindow(JDialog dialog, JFrame window) {
+        /* Recupero coordinate */
+        Rectangle diarect = dialog.getBounds();
+        Rectangle mainrect = window.getBounds();
+        
+        /* Centramento */
+        dialog.setBounds(
+            (int) (mainrect.getCenterX() - diarect.getWidth() / 2),
+            (int) (mainrect.getCenterY() - diarect.getHeight() / 2),
+            (int) diarect.getWidth(),
+            (int) diarect.getHeight()
+        );
+    }
 }

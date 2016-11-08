@@ -9,8 +9,8 @@ import java.awt.Cursor;
 import java.awt.Toolkit;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
-import unoxtutti.utils.DebugHelper;
 import unoxtutti.configuration.ApplicationConfig;
+import unoxtutti.utils.DebugHelper;
 
 /**
  *

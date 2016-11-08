@@ -13,7 +13,6 @@ import unoxtutti.connection.ServerCreationException;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteRoom;
 import unoxtutti.domain.ServerRoom;
-import unoxtutti.utils.DebugHelper;
 
 /**
  * Controller GRASP per l'UC "GiocareAUnoXTutti". È un singleton, quindi l'unica

@@ -4,9 +4,11 @@
  */
 package unoxtutti.gui;
 
+import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteRoom;
+import unoxtutti.utils.GUIUtils;
 
 /**
  * Questo pannello fornisce informazioni su una stanza e d&agrave; accesso alle
@@ -87,6 +89,11 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         roomPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         createMatchButton.setText("Crea partita");
+        createMatchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                createMatchButtonActionPerformed(evt);
+            }
+        });
         jPanel4.add(createMatchButton);
 
         joinMatchButton.setText("Entra in partita");
@@ -120,6 +127,26 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         UnoXTutti.theUxtController.esciDaStanza();
         mainWindow.setGuiState(UnoXTuttiGUI.GUIState.OUTSIDE_ROOM);
     }//GEN-LAST:event_roomExitButtonActionPerformed
+    
+    
+    /**
+     * Avvia il flusso di creazione di una partita
+     * @param evt Evento generato dal bottone
+     */
+    private void createMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMatchButtonActionPerformed
+        NuovaPartitaDialog dia = new NuovaPartitaDialog(mainWindow, true);
+        GUIUtils.CenterDialogInsideWindow(dia, this.mainWindow);
+        dia.setVisible(true);
+        
+        if(dia.getResult() == JOptionPane.OK_OPTION){
+            JOptionPane.showMessageDialog(
+                    this.mainWindow,
+                    "Work in progress...",
+                    "Creazione di una partita",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+    }//GEN-LAST:event_createMatchButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createMatchButton;

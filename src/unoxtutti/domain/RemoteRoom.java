@@ -178,15 +178,15 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
         this.p2pConn.disconnect();
     }
      
-    public RemoteMatch hostRemoteMatch(String nomePartita, String opzioni) { 
+    public RemoteMatch hostRemoteMatch(String nomePartita, Object opzioni) { 
         P2PMessage p2pMessage = new P2PMessage("CREATE_MATCH"); 
         p2pMessage.setSenderConnection(p2pConn); 
         p2pMessage.setParameters(new Object[]{myPlayer}); 
-            try { 
-                p2pConn.sendMessage(p2pMessage); 
-            } catch (PartnerShutDownException ex) { 
+                try {
+                p2pConn.sendMessage(p2pMessage);
+            } catch (PartnerShutDownException ex) {
                 Logger.getLogger(RemoteRoom.class.getName()).log(Level.SEVERE, null, ex); 
-            } 
+            }
         return RemoteMatch.createRemoteMatch(myPlayer, p2pConn); 
     } 
 }
