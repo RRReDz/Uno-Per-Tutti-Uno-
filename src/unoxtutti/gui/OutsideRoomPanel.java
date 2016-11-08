@@ -8,6 +8,8 @@ import java.awt.Rectangle;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.ServerRoom;
+import unoxtutti.utils.DebugHelper;
+import unoxtutti.utils.GUIUtils;
 
 /**
  *
@@ -180,17 +182,17 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
                 this.portaStanzaField.setText(selectedRoom.getPort() + "");
                 this.nomeStanzaField.setText(rname);
             }
+            DebugHelper.log("OK: Lista delle stanze disponibili caricata.");
         }
+        DebugHelper.log("ERR: Lista delle stanze NON caricata.");
     }//GEN-LAST:event_stanzeListValueChanged
 
     private void apriStanzaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apriStanzaButtonActionPerformed
         NuovaStanzaDialog dia = new NuovaStanzaDialog(mainWindow, true);
-        Rectangle mainrect = this.mainWindow.getBounds();
-        Rectangle diarect = dia.getBounds();
-        dia.setBounds((int) (mainrect.getCenterX() - diarect.getWidth() / 2),
-                (int) (mainrect.getCenterY() - diarect.getHeight() / 2), (int) diarect.getWidth(), (int) diarect.getHeight());
+        GUIUtils.CenterDialogInsideWindow(dia, mainWindow);
         dia.setVisible(true);
         if (dia.getResult() == JOptionPane.OK_OPTION) {
+            DebugHelper.log("OK: Avvio interfaccia gestione interna stanza.");
             UnoXTutti.theUxtController.apriStanza(dia.getRoomName(), dia.getRoomPort());
         }
     }//GEN-LAST:event_apriStanzaButtonActionPerformed
@@ -205,6 +207,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
         if (selectedRoom != null) {
             JOptionPane.showMessageDialog(mainWindow, selectedRoom.getInfo());
         }
+        DebugHelper.log("ERR: Nessuna stanza selezionata.");
     }//GEN-LAST:event_infoButtonActionPerformed
 
     private void entraButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_entraButtonActionPerformed
@@ -217,14 +220,16 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
             roomPort = 0;
         }
         if (roomPort < 1024 || roomPort > 65535) {
-            JOptionPane.showMessageDialog(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
+            DebugHelper.log("ERR: La porta deve essere un numero\ncompreso fra 1024 e 65535.");
         } else {
             this.mainWindow.setWaiting(true);
             UnoXTutti.theUxtController.entraInStanza(roomName, roomAddr, roomPort);
             this.mainWindow.setWaiting(false);
             if (UnoXTutti.theUxtController.inStanza()) {
+                DebugHelper.log("OK: Avvio interfaccia gestione partita.");
                 this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
             }
+            DebugHelper.log("ERR: L'utente NON fa più parte della partita.");
         }
     }//GEN-LAST:event_entraButtonActionPerformed
 
