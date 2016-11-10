@@ -220,6 +220,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
             roomPort = 0;
         }
         if (roomPort < 1024 || roomPort > 65535) {
+            JOptionPane.showMessageDialog(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
             DebugHelper.log("ERR: La porta deve essere un numero\ncompreso fra 1024 e 65535.");
         } else {
             this.mainWindow.setWaiting(true);
