@@ -13,10 +13,13 @@ import unoxtutti.domain.RemoteRoom;
  */ 
 public class GiocarePartitaController {
     private static GiocarePartitaController singleInstance;
-    private final RemoteRoom remoteRoom;
+    private static RemoteRoom remoteRoom;
     
-    private GiocarePartitaController(RemoteRoom remoteRoom) { 
-        this.remoteRoom = remoteRoom; 
+    /**
+     * Non permette di generare oggetti della classe
+     * al di fuori del metodo getInstance()
+     */
+    private GiocarePartitaController() { 
     }
     
     /**
@@ -26,11 +29,19 @@ public class GiocarePartitaController {
      * @param remoteRoom Stanza di cui si vuole il controller
      * @return Istanza di <code>GiocarePartitaController</code>
      */
-    public static GiocarePartitaController getInstance(RemoteRoom remoteRoom) { 
-        if(singleInstance == null || singleInstance.remoteRoom != remoteRoom) 
-            singleInstance = new GiocarePartitaController(remoteRoom); 
+    public static GiocarePartitaController getInstance() { 
+        if(singleInstance == null) 
+            singleInstance = new GiocarePartitaController(); 
         return singleInstance; 
-    } 
+    }
+    
+    /**
+     * Imposta la stanza remota
+     * @param newRoom 
+     */
+    public void setRemoteRoom(RemoteRoom newRoom) {
+        remoteRoom = newRoom;
+    }
      
     /** 
      * Crea una partita
