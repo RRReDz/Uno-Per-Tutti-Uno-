@@ -13,7 +13,7 @@ import unoxtutti.domain.RemoteRoom;
  */ 
 public class GiocarePartitaController {
     private static GiocarePartitaController singleInstance;
-    private static RemoteRoom remoteRoom;
+    private RemoteRoom remoteRoom;
     
     /**
      * Non permette di generare oggetti della classe
