@@ -23,10 +23,7 @@ public class GiocarePartitaController {
     }
     
     /**
-     * Ritorna l'istanza del controller di una determinata stanza.
-     * Se il controller attualmente memorizzato è di un'altra stanza,
-     * viene abbandonato e sostituito da un altro controller.
-     * @param remoteRoom Stanza di cui si vuole il controller
+     * Ritorna l'istanza del controller.
      * @return Istanza di <code>GiocarePartitaController</code>
      */
     public static GiocarePartitaController getInstance() { 
