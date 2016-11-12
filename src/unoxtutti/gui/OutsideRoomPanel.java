@@ -228,7 +228,6 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
                 DebugHelper.log("OK: Avvio interfaccia gestione partita.");
                 this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
             }
-            DebugHelper.log("ERR: L'utente NON fa più parte della partita.");
         }
     }//GEN-LAST:event_entraButtonActionPerformed
 
