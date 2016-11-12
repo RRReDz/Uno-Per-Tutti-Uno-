@@ -182,7 +182,6 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
                 this.portaStanzaField.setText(selectedRoom.getPort() + "");
                 this.nomeStanzaField.setText(rname);
             }
-            DebugHelper.log("OK: Lista delle stanze disponibili caricata.");
         }
     }//GEN-LAST:event_stanzeListValueChanged
 
