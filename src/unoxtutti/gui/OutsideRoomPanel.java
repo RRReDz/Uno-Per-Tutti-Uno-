@@ -237,6 +237,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
     /**
      * @return the mainWindow
      */
+    @Override
     public UnoXTuttiGUI getMainWindow() {
         return mainWindow;
     }
@@ -244,6 +245,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
     /**
      * @param mainWindow the mainWindow to set
      */
+    @Override
     public void setMainWindow(UnoXTuttiGUI mainWindow) {
         this.mainWindow = mainWindow;
     }

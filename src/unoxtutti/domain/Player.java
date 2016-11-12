@@ -44,6 +44,7 @@ public class Player implements Serializable {
      *
      * @return una rappresentazione testuale del giocatore (corrisponde al nome)
      */
+    @Override
     public String toString() {
         return name;
     }

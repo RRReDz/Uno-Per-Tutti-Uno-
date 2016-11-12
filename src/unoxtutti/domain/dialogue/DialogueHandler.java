@@ -99,6 +99,7 @@ public abstract class DialogueHandler<T> implements MessageReceiver {
      *
      * @param msg Il messaggio ricevuto.
      */
+    @Override
     public synchronized void updateMessageReceived(P2PMessage msg) {
         boolean stateChanged = evolveState(msg);
         if (stateChanged) {
