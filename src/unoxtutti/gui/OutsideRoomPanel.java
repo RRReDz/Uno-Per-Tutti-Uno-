@@ -184,7 +184,6 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
             }
             DebugHelper.log("OK: Lista delle stanze disponibili caricata.");
         }
-        DebugHelper.log("ERR: Lista delle stanze NON caricata.");
     }//GEN-LAST:event_stanzeListValueChanged
 
     private void apriStanzaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apriStanzaButtonActionPerformed
