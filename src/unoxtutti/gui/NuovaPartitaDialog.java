@@ -49,7 +49,7 @@ public class NuovaPartitaDialog extends javax.swing.JDialog {
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.Y_AXIS));
 
-        jLabel1.setText("Nome Stanza:");
+        jLabel1.setText("Nome partita:");
         jPanel1.add(jLabel1);
 
         txtNomePartita.setColumns(20);
