@@ -22,7 +22,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
      * Creates new form AuthenticationDialog
      */
     public AutenticarsiGUI(java.awt.Frame parent, boolean modal) {
-        super(parent, modal);
+        super(parent, java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
         lookAndFeel();
         initComponents();
     }
