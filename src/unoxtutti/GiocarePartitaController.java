@@ -12,40 +12,52 @@ import unoxtutti.domain.RemoteRoom;
  * @author Riccardo Rossi 
  */ 
 public class GiocarePartitaController {
-    private static GiocarePartitaController singleInstance;
+    /**
+     * Istanza del controller
+     */
+    private static GiocarePartitaController instance;
+    
+    /**
+     * La stanza di appartenenza, viene settata in automatico da
+     * <code>GiocareAUnoXTuttiController</code> durante l'accesso e l'uscita.
+     * 
+     * Quando non si è in una stanza, questo valore è <code>null</code>.
+     */
     private RemoteRoom remoteRoom;
     
     /**
      * Non permette di generare oggetti della classe
      * al di fuori del metodo getInstance()
      */
-    private GiocarePartitaController() { 
+    private GiocarePartitaController() {
     }
     
     /**
      * Ritorna l'istanza del controller.
      * @return Istanza di <code>GiocarePartitaController</code>
      */
-    public static GiocarePartitaController getInstance() { 
-        if(singleInstance == null) 
-            singleInstance = new GiocarePartitaController(); 
-        return singleInstance; 
+    public static GiocarePartitaController getInstance() {
+        if(instance == null) {
+            instance = new GiocarePartitaController();
+        }
+        return instance;
     }
     
     /**
      * Imposta la stanza remota
      * @param newRoom 
      */
-    public void setRemoteRoom(RemoteRoom newRoom) {
+    protected void setRemoteRoom(RemoteRoom newRoom) {
         remoteRoom = newRoom;
     }
-     
+    
     /** 
      * Crea una partita
-     * @param nomePartita 
+     * @param nomePartita Nome della partita
      * @param opzioni
      */ 
-    public void creaPartita(String nomePartita, Object opzioni) { 
-        remoteRoom.hostRemoteMatch(nomePartita, opzioni); 
+    public void creaPartita(String nomePartita, Object opzioni) {
+        remoteRoom.createRemoteMatch(nomePartita, opzioni);
+        // TODO: Cambiare nome in remoteRoom.createRemoteMatch() per chiarezza
     }
-} 
+}

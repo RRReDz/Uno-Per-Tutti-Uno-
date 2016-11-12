@@ -20,17 +20,16 @@ import unoxtutti.utils.GUIUtils;
  * @author picardi
  */
 public class UnoXTutti {
-
     /**
-     * il controller GRASP per "Autenticarsi"
+     * Controller GRASP per "Autenticarsi"
      */
     public static AutenticarsiController theAutController;
 
     /**
-     * il controller GRASP per "Giocare a UnoXTutti"
+     * Controller GRASP per "Giocare a UnoXTutti"
      */
     public static GiocareAUnoXTuttiController theUxtController;
-
+    
     /**
      * La GUI principale dell'applicazione.
      */
@@ -81,7 +80,7 @@ public class UnoXTutti {
             mainWindow = new UnoXTuttiGUI();
             mainWindow.setVisible(true);
         });
-
+        
         // Attenzione: la MainWindow è settata su DISPOSE ON CLOSE invece che EXIT ON CLOSE
         // perchè se la finestra viene chiusa invece che uscire bruscamente è meglio chiudere
         // i thread in modo graceful.

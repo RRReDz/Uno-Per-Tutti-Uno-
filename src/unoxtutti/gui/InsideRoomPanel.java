@@ -5,9 +5,11 @@
 package unoxtutti.gui;
 
 import javax.swing.JOptionPane;
+import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteRoom;
+import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.GUIUtils;
 
 /**
@@ -139,13 +141,22 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         dia.setVisible(true);
         
         if(dia.getResult() == JOptionPane.OK_OPTION){
-            JOptionPane.showMessageDialog(
-                    this.mainWindow,
-                    "Work in progress...",
-                    "Creazione di una partita",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            /**
+             * L'utente desidera creare una partita,
+             * ha inserito il nome correttamente
+             */
+            String matchName = dia.getMatchName();
+            DebugHelper.log("Creazione della partita '" + matchName + "' in corso...");
+            
+            /* Tentativo di creazione della partita */
+            this.mainWindow.setWaiting(true);
+            GiocarePartitaController.getInstance().creaPartita(matchName, new Object());
+            this.mainWindow.setWaiting(false);
+            // TODO: Eccezioni? Messaggi di notifica?
         }
+        
+        /* Liberazione memoria da JDialog */
+        dia.dispose();
     }//GEN-LAST:event_createMatchButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

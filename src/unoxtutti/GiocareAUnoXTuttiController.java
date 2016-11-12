@@ -157,6 +157,7 @@ public class GiocareAUnoXTuttiController {
             }
             if (roomInLimbo != null) {
                 currentRoom = roomInLimbo;
+                GiocarePartitaController.getInstance().setRemoteRoom(currentRoom);
                 roomInLimbo = null;
             } else {
                 currentRoom = null;
@@ -231,6 +232,7 @@ public class GiocareAUnoXTuttiController {
      */
     public void esciDaStanza() {
         if (currentRoom != null) {
+            GiocarePartitaController.getInstance().setRemoteRoom(null);
             currentRoom.exit();
             currentRoom = null;
         }
