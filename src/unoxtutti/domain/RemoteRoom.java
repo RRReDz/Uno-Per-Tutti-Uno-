@@ -18,6 +18,7 @@ import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
 import unoxtutti.domain.dialogue.DialogueHandler;
 import unoxtutti.domain.dialogue.DialogueObserver;
+import unoxtutti.utils.DebugHelper;
 
 /**
  * Rappresenta una stanza dal punto di vista del client (per questa ragione
@@ -130,6 +131,7 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
     @Override
     public synchronized void updateMessageReceived(P2PMessage msg) {
         if (msg.getName().equals(Room.roomUpdateMsg)) {
+            DebugHelper.log("Ricevuto aggiornamento della stanza da parte di RoomServer.");
             try {
                 /* Aggiornamento lista giocatori */
                 ArrayList<Player> players = (ArrayList<Player>) msg.getParameter(0);

@@ -85,12 +85,12 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             MatchCreationDialogueState state = creationHandler.getState();
             switch (state) {
                 case ADMITTED:
-                    DebugHelper.log("REPLY from ROOM: PARTITA_CREATA");
+                    DebugHelper.log("Risposta da RoomServer: OK! La partita è stata creata.");
                     creationHandler.concludeDialogue();
                     GiocarePartitaController.getInstance().matchCreationCompleted(this);
                     break;
                 case REJECTED:
-                    DebugHelper.log("REPLY from ROOM: PARTITA_NON_VALIDA");
+                    DebugHelper.log("Risposta da RoomServer: ERR! Impossibile creare la partita.");
                     creationHandler.concludeDialogue();
                     GiocarePartitaController.getInstance().matchCreationFailed();
                     break;
