@@ -4,8 +4,20 @@
  */
 package unoxtutti.webserver;
 
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
 import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import unoxtutti.configuration.DebugConfig;
 import unoxtutti.utils.TimeUtils;
 
@@ -23,7 +35,6 @@ public class WebServerStopDialog extends javax.swing.JDialog {
      * @param ws WebServer
      */
     public WebServerStopDialog(java.awt.Frame parent, WebServer ws) {
-        //super(parent, true);
         super(parent, java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
         initComponents();
         webServer = ws;
@@ -55,6 +66,7 @@ public class WebServerStopDialog extends javax.swing.JDialog {
         footerPanel = new javax.swing.JPanel();
         clearConsoleButton = new javax.swing.JButton();
         stopButton = new javax.swing.JButton();
+        minimizeButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle(DebugConfig.CONSOLE_TITLE + " - WebServer");
@@ -84,7 +96,9 @@ public class WebServerStopDialog extends javax.swing.JDialog {
                 clearConsoleButtonActionPerformed(evt);
             }
         });
-        footerPanel.add(clearConsoleButton, new java.awt.GridBagConstraints());
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        footerPanel.add(clearConsoleButton, gridBagConstraints);
 
         stopButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/stop.png"))); // NOI18N
         stopButton.setText("Stop Web Server");
@@ -94,9 +108,25 @@ public class WebServerStopDialog extends javax.swing.JDialog {
             }
         });
         gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         footerPanel.add(stopButton, gridBagConstraints);
+
+        minimizeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/minimize.png"))); // NOI18N
+        minimizeButton.setText("Minimizza");
+        minimizeButton.setToolTipText("Nasconde la finestra nell'area di notifica del sistema.");
+        minimizeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                minimizeButtonActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        footerPanel.add(minimizeButton, gridBagConstraints);
 
         getContentPane().add(footerPanel, java.awt.BorderLayout.PAGE_END);
 
@@ -146,11 +176,59 @@ public class WebServerStopDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_clearConsoleButtonActionPerformed
 
+    /**
+     * Minimizza la finestra nell'area di notifica del sistema.
+     * @param evt 
+     */
+    private void minimizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minimizeButtonActionPerformed
+        if(SystemTray.isSupported()) {
+            try {
+                /* Recupero System Tray ed icona */
+                SystemTray tray = SystemTray.getSystemTray();
+                BufferedImage icon = ImageIO.read(WebServerStopDialog.class.getResource("../resources/icons/terminal-white.png"));
+                
+                /* Creazione del menù da aggiungere alla System Tray*/
+                TrayIcon trayIcon;
+                trayIcon = new TrayIcon(icon, "UnoXTutti - Web Server");
+                trayIcon.setImageAutoSize(true);
+                
+                /* Creazione listener per ripristinare la finestra */
+                trayIcon.addMouseListener(new MouseListener() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if(e.getButton() != 1 && e.getButton() != 3) return;
+                        /* Ripristino finestra */
+                        setVisible(true);
+                        toFront();
+                        requestFocusInWindow();
+                        // TODO: Bugfix ripristino finestra
+                        SystemTray.getSystemTray().remove(trayIcon);
+                    }
+                    @Override
+                    public void mousePressed(MouseEvent e) { }
+                    @Override
+                    public void mouseReleased(MouseEvent e) { }
+                    @Override
+                    public void mouseEntered(MouseEvent e) { }
+                    @Override
+                    public void mouseExited(MouseEvent e) { }
+                });
+                
+                /* Minimizzazione applicazione */
+                tray.add(trayIcon);
+                setVisible(false);
+            } catch (AWTException | IOException ex) {
+                Logger.getLogger(WebServerStopDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_minimizeButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton clearConsoleButton;
     private final javax.swing.JTextArea consoleTxt = new javax.swing.JTextArea();
     private javax.swing.JPanel footerPanel;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton minimizeButton;
     private javax.swing.JButton stopButton;
     // End of variables declaration//GEN-END:variables
 }

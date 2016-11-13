@@ -2,15 +2,19 @@
  * Progetto UnoXTutto per l'esame di Sviluppo Applicazioni Software.
  * Rossi Riccardo, Giacobino Davide, Sguotti Leonardo
  */
- 
-package unoxtutti; 
- 
-import unoxtutti.domain.RemoteRoom; 
- 
-/** 
+
+package unoxtutti;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import unoxtutti.domain.RemoteMatch;
+import unoxtutti.domain.RemoteRoom;
+import unoxtutti.utils.DebugHelper;
+
+/**
  * Controller singleton
- * @author Riccardo Rossi 
- */ 
+ * @author Riccardo Rossi
+ */
 public class GiocarePartitaController {
     /**
      * Istanza del controller
@@ -23,13 +27,31 @@ public class GiocarePartitaController {
      * 
      * Quando non si è in una stanza, questo valore è <code>null</code>.
      */
-    private RemoteRoom remoteRoom;
+    private RemoteRoom currentRoom;
+    
+    /**
+     * La partita in cui il giocatore si trova correntemente.
+     */
+    private RemoteMatch currentMatch;
+    
+    /**
+     * Utilizzata durante l'accesso e la creazione di una partita
+     */
+    private RemoteMatch matchInLimbo;
+    
+    /**
+     * Lock per richieste
+     */
+    private final Object lock;
     
     /**
      * Non permette di generare oggetti della classe
      * al di fuori del metodo getInstance()
      */
     private GiocarePartitaController() {
+        lock = new Object();
+        currentRoom = null;
+        currentMatch = null;
     }
     
     /**
@@ -39,6 +61,7 @@ public class GiocarePartitaController {
     public static GiocarePartitaController getInstance() {
         if(instance == null) {
             instance = new GiocarePartitaController();
+            DebugHelper.log("Creata istanza di GiocarePartitaController.");
         }
         return instance;
     }
@@ -47,8 +70,22 @@ public class GiocarePartitaController {
      * Imposta la stanza remota
      * @param newRoom 
      */
-    protected void setRemoteRoom(RemoteRoom newRoom) {
-        remoteRoom = newRoom;
+    protected void setRoom(RemoteRoom newRoom) {
+        if(newRoom != null && currentRoom != null) {
+            /**
+             * Caso dubbio: si sta cercando di passare direttamente da una
+             * stanza ad un'altra stanza: non si dovrebbe passare per la lista
+             * delle stanze? Ovvero bisogna passare per lo stato in cui il
+             * giocatore non si trova in una stanza.
+             * 
+             * currentRoom può quindi cambiare solamente da un'istanza di
+             * RemoteRoom a null, e viceversa.
+             */
+            throw new IllegalStateException(
+                    "Impossibile cambiare stanza: il giocatore si trova già in una stanza."
+            );
+        }
+        currentRoom = newRoom;
     }
     
     /** 
@@ -57,7 +94,50 @@ public class GiocarePartitaController {
      * @param opzioni
      */ 
     public void creaPartita(String nomePartita, Object opzioni) {
-        remoteRoom.createRemoteMatch(nomePartita, opzioni);
-        // TODO: Cambiare nome in remoteRoom.createRemoteMatch() per chiarezza
+        if(currentMatch != null) throw new IllegalStateException(
+                "Impossibile creare una partita: il giocatore è già in una partita."
+        );
+        
+        synchronized(lock) {
+            matchInLimbo = RemoteMatch.createRemoteMatch(nomePartita, opzioni);
+            if(matchInLimbo != null) {
+                try {
+                    /**
+                     * Si attende che gli altri thread mi avvisino che
+                     * la richiesta è terminata.
+                     */
+                    lock.wait();
+                } catch (InterruptedException ex) {
+                    matchInLimbo = null;
+                    DebugHelper.log("InterruptedException durante la creazione della partita: " + ex.getMessage());
+                    Logger.getLogger(GiocarePartitaController.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    /**
+                     * Se tutto èandato a buon fine, mi trovo in una stanza,
+                     * altrimenti currentMatch rimane null.
+                     */
+                    currentMatch = matchInLimbo;
+                    matchInLimbo = null;
+                }
+            }
+        }
+    }
+    
+    /**
+     * Ritorna la stanza in cui si trova il giocatore.
+     * @return Istanza di <code>RemoteRoom</code>, <code>null</code> se il
+     * giocatore non si trova in nessuna stanza.
+     */
+    public RemoteRoom getCurrentRoom() {
+        return currentRoom;
+    }
+    
+    /**
+     * Ritorna la partita in cui si trova il giocatore.
+     * @return Istanza di <code>RemoteMatch</code>, <code>null</code> se il
+     * giocatore non si trova in nessuna partita.
+     */
+    public RemoteMatch getCurrentMatch() {
+        return currentMatch;
     }
 }
