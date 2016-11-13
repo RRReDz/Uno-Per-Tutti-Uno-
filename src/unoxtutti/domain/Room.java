@@ -112,4 +112,11 @@ public abstract class Room {
                 + "Porta: " + port + "\n"
                 + "Numero Giocatori: " + getPlayerCount();
     }
+    
+    /**
+     * Restituisce una copia dell'elenco delle partite presenti nella stanza.
+     *
+     * @return L'elenco (in copia) delle partite presenti nella stanza
+     */
+    public abstract ArrayList<String> getAvailableMatches();
 }

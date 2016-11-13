@@ -35,6 +35,8 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
     private P2PConnection p2pConn;
     private DefaultListModel<Player> allPlayers;
     private RoomEntranceDialogueHandler entranceHandler;
+    
+    private DefaultListModel<String> availableMatches;
 
     /**
      * Factory method per creare una RemoteRoom. Crea la connessione al server e
@@ -70,6 +72,7 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
     private RemoteRoom(String name) {
         super(name);
         allPlayers = new DefaultListModel<>();
+        availableMatches = new DefaultListModel<>();
     }
 
     private RemoteRoom(Player pl, String name, P2PConnection p2p) {
@@ -128,11 +131,19 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
     public synchronized void updateMessageReceived(P2PMessage msg) {
         if (msg.getName().equals(Room.roomUpdateMsg)) {
             try {
+                /* Aggiornamento lista giocatori */
                 ArrayList<Player> players = (ArrayList<Player>) msg.getParameter(0);
                 allPlayers.removeAllElements();
-                for (Player p : players) {
+                players.forEach((p) -> {
                     allPlayers.addElement(p);
-                }
+                });
+                
+                /* Aggiornamento lista partite */
+                ArrayList<String> matches = (ArrayList<String>) msg.getParameter(1);
+                availableMatches.removeAllElements();
+                matches.forEach((m) -> {
+                    availableMatches.addElement(m);
+                });
             } catch (ClassCastException ex) {
                 throw new CommunicationException("Wrong parameter type in message " + msg.getName());
             }
@@ -174,5 +185,28 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
             // Tanto si stava chiudendo in ogni caso
         }
         this.p2pConn.disconnect();
+    }
+    
+    
+    /**
+     * Restituisce una copia dei nomi delle partite disponibili.
+     * @return Lista dei nomi delle partite disponibili.
+     */
+    @Override
+    public ArrayList<String> getAvailableMatches() {
+        ArrayList<String> matches = new ArrayList<>();
+        for (int i = 0; i < getPlayerCount(); i++) {
+            matches.add(availableMatches.getElementAt(i));
+        }
+        return matches;
+    }
+    
+    /**
+     * Ritorna il modello lista delle partite disponibili per
+     * l'aggiornamento dell'interfaccia.
+     * @return Partite disponibili
+     */
+    public ListModel<String> getAvailableMatchesAsList() {
+        return availableMatches;
     }
 }

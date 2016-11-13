@@ -35,6 +35,12 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
 
     private final HashMap<Player, P2PConnection> connections;
     private final ArrayList<P2PConnection> waitingClients;
+    
+    /**
+     * Partite all'interno della stanza. La chiave utilizzata
+     * dalla mappa è il nome della partita.
+     */
+    private final HashMap<String, ServerMatch> matches;
 
     /**
      * Il costruttore è privato; una ServerRoom può essere creata solo tramite
@@ -52,6 +58,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         closeDownMonitor = new Object();
         connections = new HashMap<>();
         waitingClients = new ArrayList<>();
+        matches = new HashMap<>();
     }
 
     /**
@@ -314,7 +321,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
 
     private void sendRoomUpdate() {
         P2PMessage upd = new P2PMessage(Room.roomUpdateMsg);
-        Object[] updpar = new Object[]{this.getPlayers()};
+        Object[] updpar = new Object[]{this.getPlayers(), this.getAvailableMatches()};
         upd.setParameters(updpar);
         while (upd != null) {
             ArrayList<P2PConnection> unresp = new ArrayList<>();
@@ -345,17 +352,17 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         /* Controllo validità dati ricevuti */
         boolean reqOk = true;
         Player matchOwner = null;
+        String matchName = null;
         if (msg.getParametersCount() != 2) {
             reqOk = false;
         } else {
             try {
                 matchOwner = (Player) msg.getParameter(0);
-                String matchName = (String) msg.getParameter(1);
-                // TODO:
-                // if(Stanza contiene partita con nome uguale...)
-//                if (!matchName.equals(this.getName())) {
-//                    reqOk = false;
-//                }
+                matchName = (String) msg.getParameter(1);
+                if(matches.containsKey(matchName)) {
+                    /* Esiste già una partita con lo stesso nome */
+                    reqOk = false;
+                }
             } catch (ClassCastException ex) {
                 reqOk = false;
             }
@@ -368,17 +375,17 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         reply.setParameters(parameters);
         parameters[0] = reqOk;
         
-        /* Invio risposta */
+        /* Creazione della partita ed invio risposta */
         synchronized(this) {
             if(reqOk && matchOwner != null) {
-//                sender.setPlayer(matchOwner);     ???
-//                addPlayer(sender);                ???
-//                waitingClients.remove(sender);    ???
+                /* Creazione della partia */
+                createMatch(matchOwner, matchName);
                 sender.addMessageReceivedObserver(this, Match.MATCH_DESTROY_MSG);
                 sender.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
-                // TODO: Aggiornamento lista stanze?
+                //waitingClients.remove(sender);    ???
             }
             
+            /* Invio risposta (sia in caso di successo che insuccesso) */
             try {
                 sender.sendMessage(reply);
                 sendRoomUpdate();
@@ -386,8 +393,49 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 sender.disconnect();
                 removePlayer(sender);
             }
-            //this.waitingClients.remove(sender); ???
+            //waitingClients.remove(sender); ???
         }
     }
-
+    
+    /**
+     * Inizializza una partita e la aggiunge alla lista delle partite.
+     * @param matchOwner Proprietario della partita
+     * @param matchName Nome della partita
+     */
+    private void createMatch(Player matchOwner, String matchName) {
+        if(matchOwner == null || matchName == null || matchName.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Dati mancanti per la creazione di una partita."
+            );
+        }
+        matches.put(
+                matchName,
+                new ServerMatch(
+                    matchOwner,
+                    matchName,
+                    new Object() // TODO: Opzioni
+                )
+        );
+    }
+    
+    /**
+     * Ritorna la lista delle partite.
+     * @return Lista delle partite.
+     */
+    @Override
+    public ArrayList<String> getAvailableMatches() {
+        ArrayList<String> matchesList = new ArrayList<>();
+        matches.values().stream().filter((m) -> (!m.isStarted())).forEachOrdered((m) -> {
+            matchesList.add(m.getMatchName());
+        });
+        
+        /* Per i plebei: */
+        //for(ServerMatch m : matches.values()) {
+        //    if(!m.isStarted()) {
+        //        matchesList.add(m.getMatchName());
+        //    }
+        //}
+        
+        return matchesList;
+    }
 }

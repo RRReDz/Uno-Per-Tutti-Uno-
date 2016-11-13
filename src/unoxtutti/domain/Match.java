@@ -37,4 +37,12 @@ public abstract class Match {
         this.matchName = name;
         this.options = options;
     }
+    
+    /**
+     * Ritorna il nome della partita
+     * @return Nome della partita
+     */
+    public String getMatchName() {
+        return matchName;
+    }
 }

@@ -33,6 +33,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
     public void initializeContent() {
         currentRoom = UnoXTutti.theUxtController.getCurrentRoom();
         this.playersList.setModel(currentRoom.getPlayersAsList());
+        this.matchList.setModel(currentRoom.getAvailableMatchesAsList());
         this.roomNameLabel.setText("Stanza: " + currentRoom.getName());
     }
 
