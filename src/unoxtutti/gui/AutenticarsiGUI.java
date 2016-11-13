@@ -20,8 +20,9 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
 
     /**
      * Creates new form AuthenticationDialog
+     * @param parent
      */
-    public AutenticarsiGUI(java.awt.Frame parent, boolean modal) {
+    public AutenticarsiGUI(java.awt.Frame parent) {
         super(parent, java.awt.Dialog.ModalityType.TOOLKIT_MODAL);
         lookAndFeel();
         initComponents();
@@ -230,7 +231,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AutenticarsiGUI dialog = new AutenticarsiGUI(new javax.swing.JFrame(), true);
+                AutenticarsiGUI dialog = new AutenticarsiGUI(new javax.swing.JFrame());
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

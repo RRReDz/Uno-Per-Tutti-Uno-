@@ -56,7 +56,7 @@ public class UnoXTutti {
         });
         
         /* Avvia la finestra di autenticazione */
-        AutenticarsiGUI autDialog = new AutenticarsiGUI(null, true);
+        AutenticarsiGUI autDialog = new AutenticarsiGUI(null);
         DebugHelper.log("Interfaccia di accesso avviata.");
         autDialog.setVisible(true);
         autDialog.dispose();
@@ -73,7 +73,7 @@ public class UnoXTutti {
         // Autenticazione riuscita. Ora attiviamo il GiocareAUnoXTuttiController e
         // tiriamo su la GUI principale dell'applicazione
         theUxtController = GiocareAUnoXTuttiController.getInstance(theAutController.getPlayer());
-        DebugHelper.appendToDebugConsoleTitle("Giocatore: " + theAutController.getPlayer().getName());
+        DebugHelper.appendToDebugConsoleTitle(theAutController.getPlayer().getName());
         
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {

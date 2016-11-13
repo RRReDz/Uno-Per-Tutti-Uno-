@@ -12,7 +12,7 @@ public class DebugConfig {
     /**
      * Titolo delle schermate di debug
      */
-    public static final String CONSOLE_TITLE = "UnoPerTutti Debug";
+    public static final String CONSOLE_TITLE = "Log";
     
     /**
      * Variabile per indicare se visualizzare o meno le schermate di debug
