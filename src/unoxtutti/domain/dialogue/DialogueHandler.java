@@ -61,7 +61,7 @@ public abstract class DialogueHandler<T> implements MessageReceiver {
     }
 
     /**
-     * Il messaggio che &egrave; stato causa scatenante dell'ultimo cambio di
+     * Il messaggio che è stato causa scatenante dell'ultimo cambio di
      * stato.
      *
      * @return Il messaggio che ha causato l'ultimo cambio di stato, o null se
@@ -93,9 +93,9 @@ public abstract class DialogueHandler<T> implements MessageReceiver {
 
     /**
      * Viene chiamata dalla P2PConnection quando riceve un messaggio per cui
-     * questo oggetto si &egrave; registrato. Chiama evolveState per determinare
+     * questo oggetto si è registrato. Chiama evolveState per determinare
      * l'eventuale cambiamento di stato, e notifyStateChange per avvertire gli
-     * observer se questo cambiamento &egrave; avvenuto.
+     * observer se questo cambiamento è avvenuto.
      *
      * @param msg Il messaggio ricevuto.
      */
