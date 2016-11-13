@@ -16,6 +16,7 @@ public abstract class Match {
     public static final String MATCH_CREATION_REPLY_MSG = "matchCreationReply";
     public static final String MATCH_UPDATE_MSG = "matchUpdate";
     public static final String MATCH_EXIT_MSG = "matchExit";
+    public static final String MATCH_DESTROY_MSG = "matchDestroy";
     
     /**
      * Nome della partita

@@ -43,8 +43,9 @@ public class MatchCreationDialogueHandler extends BasicDialogueHandler<MatchCrea
     public boolean startDialogue(Player owner, String matchName, Object options) {
         boolean ret = true;
         connection.addMessageReceivedObserver(this, Match.MATCH_CREATION_REPLY_MSG);
-        P2PMessage msg = new P2PMessage(Room.roomEntranceRequestMsg);
+        P2PMessage msg = new P2PMessage(Match.MATCH_CREATION_REQUEST_MSG);
         Object[] pars = new Object[]{owner, matchName};
+        
         /**
          * TODO: Passare come argomento le opzioni.
          * Se si vogliono passare come argomento le opzioni, queste devono

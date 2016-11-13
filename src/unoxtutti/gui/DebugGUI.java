@@ -74,6 +74,7 @@ public class DebugGUI extends javax.swing.JFrame {
             String prefix = "[" + TimeUtils.getCurrentTimeStamp("HH:mm:ss") + "] ";
             logText.append(prefix);
             logText.append(line.endsWith("\n") ? line : line + "\n");
+            System.out.println(prefix + line);
         }
     }
 

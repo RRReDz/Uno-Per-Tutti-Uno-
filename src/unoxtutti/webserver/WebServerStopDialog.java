@@ -117,6 +117,7 @@ public class WebServerStopDialog extends javax.swing.JDialog {
         minimizeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/minimize.png"))); // NOI18N
         minimizeButton.setText("Minimizza");
         minimizeButton.setToolTipText("Nasconde la finestra nell'area di notifica del sistema.");
+        minimizeButton.setEnabled(false);
         minimizeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 minimizeButtonActionPerformed(evt);
@@ -181,6 +182,9 @@ public class WebServerStopDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void minimizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_minimizeButtonActionPerformed
+        // TODO: Bugfix
+        if(true) throw new UnsupportedOperationException("Da correggere...");
+        
         if(SystemTray.isSupported()) {
             try {
                 /* Recupero System Tray ed icona */

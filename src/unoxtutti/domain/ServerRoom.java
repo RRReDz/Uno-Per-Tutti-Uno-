@@ -17,6 +17,7 @@ import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
 import unoxtutti.connection.ServerCreationException;
+import unoxtutti.utils.DebugHelper;
 
 /**
  * La classe ServerRoom rappresenta una Room (Stanza) lato Server La Room lato
@@ -186,6 +187,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 synchronized (waitingClients) {
                     waitingClients.add(playerConnection);
                     playerConnection.addMessageReceivedObserver(this, Room.roomEntranceRequestMsg);
+                    playerConnection.addMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
                 }
             }
             System.out.println("Server is closing down");
@@ -244,10 +246,20 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
 
     @Override
     public void updateMessageReceived(P2PMessage msg) {
-        if (msg.getName().equals(Room.roomEntranceRequestMsg)) {
-            handleEntranceRequest(msg);
-        } else if (msg.getName().equals(Room.roomExitMsg)) {
-            handleExit(msg);
+        String msgName = msg.getName();
+        switch(msgName) {
+            case Room.roomEntranceRequestMsg:
+                DebugHelper.log("ROOM: ricevuta richiesta di ingresso.");
+                handleEntranceRequest(msg);
+                break;
+            case Room.roomExitMsg:
+                DebugHelper.log("ROOM: ricevuta notifica di uscita.");
+                handleExit(msg);
+                break;
+            case Match.MATCH_CREATION_REQUEST_MSG:
+                DebugHelper.log("ROOM: ricevuta richiesta di creazione partita.");
+                handleMatchCreation(msg);
+                break;
         }
     }
 
@@ -323,7 +335,59 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 upd = null;
             }
         }
-
+    }
+    
+    /**
+     * Gestisce la richiesta di creazione di una partita.
+     * @param msg Messaggio di richiesta
+     */
+    private void handleMatchCreation(P2PMessage msg) {
+        /* Controllo validità dati ricevuti */
+        boolean reqOk = true;
+        Player matchOwner = null;
+        if (msg.getParametersCount() != 2) {
+            reqOk = false;
+        } else {
+            try {
+                matchOwner = (Player) msg.getParameter(0);
+                String matchName = (String) msg.getParameter(1);
+                // TODO:
+                // if(Stanza contiene partita con nome uguale...)
+//                if (!matchName.equals(this.getName())) {
+//                    reqOk = false;
+//                }
+            } catch (ClassCastException ex) {
+                reqOk = false;
+            }
+        }
+        
+        /* Costruzione messaggio di risposta */
+        P2PConnection sender = msg.getSenderConnection();
+        P2PMessage reply = new P2PMessage(Match.MATCH_CREATION_REPLY_MSG);
+        Object[] parameters = new Object[1];
+        reply.setParameters(parameters);
+        parameters[0] = reqOk;
+        
+        /* Invio risposta */
+        synchronized(this) {
+            if(reqOk && matchOwner != null) {
+//                sender.setPlayer(matchOwner);     ???
+//                addPlayer(sender);                ???
+//                waitingClients.remove(sender);    ???
+                sender.addMessageReceivedObserver(this, Match.MATCH_DESTROY_MSG);
+                sender.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
+                // TODO: Aggiornamento lista stanze?
+            }
+            
+            try {
+                sender.sendMessage(reply);
+                sendRoomUpdate();
+            } catch (PartnerShutDownException ex) {
+                sender.disconnect();
+                removePlayer(sender);
+            }
+            //this.waitingClients.remove(sender); ???
+        }
     }
 
 }

@@ -11,6 +11,7 @@ import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.domain.dialogue.DialogueHandler;
 import unoxtutti.domain.dialogue.DialogueObserver;
+import unoxtutti.utils.DebugHelper;
 
 /**
  * Rappresenta una partita dal punto di vista dei client.
@@ -84,17 +85,14 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             MatchCreationDialogueState state = creationHandler.getState();
             switch (state) {
                 case ADMITTED:
-                    System.out.println("ADMITTED!");
-//                    for (Player p : entranceHandler.getRemoteRoomPlayers()) {
-//                        allPlayers.addElement(p);
-//                    }
-//                    entranceHandler.concludeDialogue();
-//                    UnoXTutti.theUxtController.roomEntranceCompleted(this);
+                    DebugHelper.log("REPLY from ROOM: PARTITA_CREATA");
+                    creationHandler.concludeDialogue();
+                    GiocarePartitaController.getInstance().matchCreationCompleted(this);
                     break;
                 case REJECTED:
-                    System.out.println("REJECTED!");
-//                    entranceHandler.concludeDialogue();
-//                    UnoXTutti.theUxtController.roomEntranceFailed(this);
+                    DebugHelper.log("REPLY from ROOM: PARTITA_NON_VALIDA");
+                    creationHandler.concludeDialogue();
+                    GiocarePartitaController.getInstance().matchCreationFailed();
                     break;
                 default:
             }
@@ -107,8 +105,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     private boolean create() {
         creationHandler = new MatchCreationDialogueHandler(conn);
-        // TODO: Add listener per aggiornamenti?
-        //conn.addMessageReceivedObserver(this, Match.MATCH_UPDATE_MSG);
+        conn.addMessageReceivedObserver(this, Match.MATCH_UPDATE_MSG);
         creationHandler.addStateChangeObserver(this);
         return creationHandler.startDialogue(owner, matchName, options);
     }

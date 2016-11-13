@@ -118,6 +118,7 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Minimizza"/>
             <Property name="toolTipText" type="java.lang.String" value="Nasconde la finestra nell&apos;area di notifica del sistema."/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="minimizeButtonActionPerformed"/>

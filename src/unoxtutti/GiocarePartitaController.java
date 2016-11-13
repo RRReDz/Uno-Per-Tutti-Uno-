@@ -140,4 +140,33 @@ public class GiocarePartitaController {
     public RemoteMatch getCurrentMatch() {
         return currentMatch;
     }
+    
+    
+    /**
+     * Metodo invocato quando si riceve una risposta positiva da parte del
+     * proprietario della stanza, alla richiesta di creazione di una partita.
+     * Sveglia il thread che era stato messo in attesa durante "creaPartita".
+     *
+     * @param room La partita creata.
+     */
+    public void matchCreationCompleted(RemoteMatch room) {
+        synchronized (lock) {
+            matchInLimbo = room;
+            lock.notifyAll();
+        }
+    }
+    
+    
+    /**
+     * Metodo invocato quando si riceve una risposta negativa da parte del
+     * proprietario della stanza, alla richiesta di creazione di una partita.
+     * 
+     * Sveglia il thread che era stato messo in attesa durante "creaPartita".
+     */
+    public void matchCreationFailed() {
+        synchronized (lock) {
+            matchInLimbo = null;
+            lock.notifyAll();
+        }
+    }
 }
