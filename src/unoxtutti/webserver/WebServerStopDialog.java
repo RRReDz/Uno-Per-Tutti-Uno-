@@ -5,8 +5,6 @@
 package unoxtutti.webserver;
 
 import java.awt.AWTException;
-import java.awt.Image;
-import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
 import java.awt.TrayIcon;

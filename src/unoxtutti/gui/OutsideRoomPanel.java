@@ -4,7 +4,6 @@
  */
 package unoxtutti.gui;
 
-import java.awt.Rectangle;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.ServerRoom;
