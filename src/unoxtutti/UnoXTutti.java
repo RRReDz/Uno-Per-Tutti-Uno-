@@ -56,7 +56,7 @@ public class UnoXTutti {
         });
         
         /* Avvia la finestra di autenticazione */
-        AutenticarsiGUI autDialog = new AutenticarsiGUI(null, true);
+        AutenticarsiGUI autDialog = new AutenticarsiGUI(null);
         DebugHelper.log("Interfaccia di accesso avviata.");
         autDialog.setVisible(true);
         autDialog.dispose();
