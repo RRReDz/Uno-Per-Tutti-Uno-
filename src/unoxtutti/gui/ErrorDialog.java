@@ -13,6 +13,8 @@ public class ErrorDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form ErrorDialog2
+     * @param parent
+     * @param modal
      */
     public ErrorDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
