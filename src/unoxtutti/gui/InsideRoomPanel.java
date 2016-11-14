@@ -153,7 +153,19 @@ public class InsideRoomPanel extends MainWindowSubPanel {
             this.mainWindow.setWaiting(true);
             GiocarePartitaController.getInstance().creaPartita(matchName, new Object());
             this.mainWindow.setWaiting(false);
+            
             // TODO: Eccezioni? Messaggi di notifica?
+            
+            /* Ho creato con successo la partita */
+            if(!GiocarePartitaController.getInstance().inPartita()) {
+                DebugHelper.log("OK: Avvio interfaccia partita interna.");
+                this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
+            }
+            else {
+                ErrorDialog error = new ErrorDialog(mainWindow, true);
+                GUIUtils.CenterDialogInsideWindow(error, this.mainWindow);
+                error.setVisible(true);
+            }
         }
         
         /* Liberazione memoria da JDialog */

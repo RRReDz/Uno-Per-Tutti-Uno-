@@ -169,4 +169,11 @@ public class GiocarePartitaController {
             lock.notifyAll();
         }
     }
+    
+    /**
+     * @return true se giocatore già all'interno di una partita, false altrimenti
+     */
+    public boolean inPartita() {
+        return (currentMatch != null);
+    }
 }

@@ -13,6 +13,8 @@ public class NuovaPartitaDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form NuovaPartitaDialog
+     * @param parent
+     * @param modal
      */
     public NuovaPartitaDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
