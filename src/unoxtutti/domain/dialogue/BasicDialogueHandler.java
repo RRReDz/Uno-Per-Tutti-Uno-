@@ -21,6 +21,14 @@ public class BasicDialogueHandler<U extends DialogueState<U>> extends DialogueHa
         super(initialState);
     }
 
+    /**
+     * Determina l'eventuale cambiamento di stato a partire dalla ricezione di
+     * un messaggio.
+     *
+     * @param msg Il messaggio ricevuto.
+     * @return true se è avvenuto un cambiamento di stato, false
+     * altrimenti.
+     */
     @Override
     protected final boolean evolveState(P2PMessage msg) {
         U cur = getState();

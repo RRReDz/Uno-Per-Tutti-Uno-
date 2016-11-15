@@ -9,7 +9,7 @@ import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PMessage;
 
 /**
- * La classe DialogueHandler &egrave; la classe base di tutti le classi che
+ * La classe DialogueHandler è la classe base di tutti le classi che
  * gestiscono una sequenza organizzata di scambi di messaggi. I DialogueHandler
  * sono dei MessageReceiver, quindi possono essere registrati presso una
  * P2PConnection per essere notificati dell'arrivo di quei messaggi che
@@ -109,8 +109,7 @@ public abstract class DialogueHandler<T> implements MessageReceiver {
     }
 
     /**
-     * Avverte gli observer di un cambio di stato.
-     *
+     * Avverte gli observer registrati di un cambio di stato.
      */
     protected synchronized void notifyStateChange() {
         for (DialogueObserver obs : observers) {

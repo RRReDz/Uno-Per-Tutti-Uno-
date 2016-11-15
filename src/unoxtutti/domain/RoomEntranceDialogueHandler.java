@@ -47,8 +47,8 @@ public class RoomEntranceDialogueHandler extends BasicDialogueHandler<RoomEntran
      */
     public boolean startDialogue(Player pl, String roomName) {
         boolean ret = true;
-        p2pConn.addMessageReceivedObserver(this, Room.roomEntranceReplyMsg);
-        P2PMessage msg = new P2PMessage(Room.roomEntranceRequestMsg);
+        p2pConn.addMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REPLY_MSG);
+        P2PMessage msg = new P2PMessage(Room.ROOM_ENTRANCE_REQUEST_MSG);
         Object[] pars = new Object[]{roomName, pl};
         msg.setParameters(pars);
         this.setState(RoomEntranceDialogueState.REQUESTED);
@@ -66,7 +66,7 @@ public class RoomEntranceDialogueHandler extends BasicDialogueHandler<RoomEntran
      * ricevere messaggi presso la connessione P2P
      */
     public void concludeDialogue() {
-        p2pConn.removeMessageReceivedObserver(this, Room.roomEntranceReplyMsg);
+        p2pConn.removeMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REPLY_MSG);
     }
 
     /**

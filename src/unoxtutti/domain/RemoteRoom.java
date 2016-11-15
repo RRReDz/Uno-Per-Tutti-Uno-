@@ -93,7 +93,7 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
 
     private boolean enter() {
         entranceHandler = new RoomEntranceDialogueHandler(p2pConn);
-        p2pConn.addMessageReceivedObserver(this, Room.roomUpdateMsg);
+        p2pConn.addMessageReceivedObserver(this, Room.ROOM_UPDATE_MSG);
         entranceHandler.addStateChangeObserver(this);
         return entranceHandler.startDialogue(myPlayer, getName());
     }
@@ -130,7 +130,7 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
 
     @Override
     public synchronized void updateMessageReceived(P2PMessage msg) {
-        if (msg.getName().equals(Room.roomUpdateMsg)) {
+        if (msg.getName().equals(Room.ROOM_UPDATE_MSG)) {
             DebugHelper.log("Ricevuto aggiornamento della stanza da parte di RoomServer.");
             try {
                 /* Aggiornamento lista giocatori */
@@ -179,7 +179,7 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
      * chiudendo quindi la connessione.
      */
     public void exit() {
-        P2PMessage exitMsg = new P2PMessage(Room.roomExitMsg);
+        P2PMessage exitMsg = new P2PMessage(Room.ROOM_EXIT_MSG);
         try {
             this.p2pConn.sendMessage(exitMsg);
         } catch (PartnerShutDownException ex) {

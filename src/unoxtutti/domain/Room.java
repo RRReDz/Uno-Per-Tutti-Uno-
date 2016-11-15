@@ -17,10 +17,10 @@ import java.util.ArrayList;
  */
 public abstract class Room {
 
-    public static final String roomEntranceRequestMsg = "roomEntranceRequest";
-    public static final String roomEntranceReplyMsg = "roomEntranceReply";
-    public static final String roomUpdateMsg = "roomUpdate";
-    public static final String roomExitMsg = "roomExit";
+    public static final String ROOM_ENTRANCE_REQUEST_MSG = "roomEntranceRequest";
+    public static final String ROOM_ENTRANCE_REPLY_MSG = "roomEntranceReply";
+    public static final String ROOM_UPDATE_MSG = "roomUpdate";
+    public static final String ROOM_EXIT_MSG = "roomExit";
 
     protected final String name;
     protected InetAddress address;

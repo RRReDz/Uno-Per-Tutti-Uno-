@@ -193,7 +193,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 P2PConnection playerConnection = P2PConnection.acceptConnectionRequest(serverSock);
                 synchronized (waitingClients) {
                     waitingClients.add(playerConnection);
-                    playerConnection.addMessageReceivedObserver(this, Room.roomEntranceRequestMsg);
+                    playerConnection.addMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REQUEST_MSG);
                     playerConnection.addMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
                 }
             }
@@ -255,11 +255,11 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
     public void updateMessageReceived(P2PMessage msg) {
         String msgName = msg.getName();
         switch(msgName) {
-            case Room.roomEntranceRequestMsg:
+            case Room.ROOM_ENTRANCE_REQUEST_MSG:
                 DebugHelper.log("ROOM: ricevuta richiesta di ingresso.");
                 handleEntranceRequest(msg);
                 break;
-            case Room.roomExitMsg:
+            case Room.ROOM_EXIT_MSG:
                 DebugHelper.log("ROOM: ricevuta notifica di uscita.");
                 handleExit(msg);
                 break;
@@ -287,7 +287,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             }
         }
         P2PConnection sender = msg.getSenderConnection();
-        P2PMessage reply = new P2PMessage(Room.roomEntranceReplyMsg);
+        P2PMessage reply = new P2PMessage(Room.ROOM_ENTRANCE_REPLY_MSG);
         Object[] parameters = new Object[2]; // reply + players
         reply.setParameters(parameters);
         parameters[0] = reqOk;
@@ -298,8 +298,8 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 addPlayer(sender);
                 waitingClients.remove(sender);
                 parameters[1] = this.getPlayers();
-                sender.addMessageReceivedObserver(this, Room.roomExitMsg);
-                sender.removeMessageReceivedObserver(this, Room.roomEntranceRequestMsg);
+                sender.addMessageReceivedObserver(this, Room.ROOM_EXIT_MSG);
+                sender.removeMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REQUEST_MSG);
                 try {
                     sender.sendMessage(reply);
                     sendRoomUpdate();
@@ -320,7 +320,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
     }
 
     private void sendRoomUpdate() {
-        P2PMessage upd = new P2PMessage(Room.roomUpdateMsg);
+        P2PMessage upd = new P2PMessage(Room.ROOM_UPDATE_MSG);
         Object[] updpar = new Object[]{this.getPlayers(), this.getAvailableMatches()};
         upd.setParameters(updpar);
         while (upd != null) {

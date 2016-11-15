@@ -28,7 +28,7 @@ public enum RoomEntranceDialogueState implements DialogueState<RoomEntranceDialo
         String msgName = msg.getName();
         switch (this) {
             case REQUESTED:
-                if (msgName.equals(Room.roomEntranceReplyMsg)) {
+                if (msgName.equals(Room.ROOM_ENTRANCE_REPLY_MSG)) {
                     boolean accepted = (Boolean) msg.getParameter(0);
                     if (accepted) {
                         return ADMITTED;
