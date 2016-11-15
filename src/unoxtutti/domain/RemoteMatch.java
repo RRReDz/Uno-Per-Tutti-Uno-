@@ -4,6 +4,8 @@
  */
 package unoxtutti.domain;
 
+import javax.swing.DefaultListModel;
+import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
 import unoxtutti.connection.MessageReceiver;
@@ -34,6 +36,11 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     private MatchCreationDialogueHandler creationHandler;
     
     /**
+     * Lista di giocatori all'interno della partita.
+     */
+    private DefaultListModel<Player> playersList;
+    
+    /**
      * Costruttore che memorizza le informazioni più importanti.
      * @param connectionToRoomHost Connessione con il proprietario della stanza.
      * @param matchName Nome della partita desiderato.
@@ -43,6 +50,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         super(matchName, options);
         conn = connectionToRoomHost;
         owner = UnoXTutti.theUxtController.getPlayer();
+        playersList = new DefaultListModel<>();
     }
     
     /**
@@ -100,14 +108,22 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
     /**
-     * TODO: Implementare metodo
-     * @return 
+     * Creazione della partita.
+     * @return true se la creazione è avvenuta con successo, false altrimenti
      */
     private boolean create() {
         creationHandler = new MatchCreationDialogueHandler(conn);
         conn.addMessageReceivedObserver(this, Match.MATCH_UPDATE_MSG);
         creationHandler.addStateChangeObserver(this);
         return creationHandler.startDialogue(owner, matchName, options);
+    }
+    
+    /**
+     * Recupera la lista dei giocatori all'interno della partita
+     * @return playersList lista di giocatori
+     */
+    public ListModel<Player> getPlayersAsList() {
+        return playersList;
     }
     
 }

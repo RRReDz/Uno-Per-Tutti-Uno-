@@ -4,6 +4,8 @@
  */
 package unoxtutti.gui;
 
+import unoxtutti.GiocarePartitaController;
+import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
 
@@ -20,6 +22,13 @@ public class InsideMatchPanel extends MainWindowSubPanel{
      */
     public InsideMatchPanel() {
         initComponents();
+    }
+    
+    @Override
+    public void initializeContent() {
+        currentMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+        this.playersList.setModel(currentMatch.getPlayersAsList());
+        this.matchNameLabel.setText("Partita: " + currentMatch.getMatchName());
     }
 
     /**

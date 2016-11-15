@@ -157,7 +157,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
             // TODO: Eccezioni? Messaggi di notifica?
             
             /* Ho creato con successo la partita */
-            if(!GiocarePartitaController.getInstance().inPartita()) {
+            if(GiocarePartitaController.getInstance().inPartita()) {
                 DebugHelper.log("OK: Avvio interfaccia partita interna.");
                 this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
             }
