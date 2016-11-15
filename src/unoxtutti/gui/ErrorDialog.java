@@ -20,6 +20,11 @@ public class ErrorDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
     }
+    
+    public ErrorDialog setErrorMessage(String msg) {
+        errorMessage.setText(msg);
+        return this;
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,7 +39,7 @@ public class ErrorDialog extends javax.swing.JDialog {
         javax.swing.JPanel jPanel7 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
-        javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
+        errorMessage = new javax.swing.JLabel();
         javax.swing.JPanel jPanel3 = new javax.swing.JPanel();
         okButton = new javax.swing.JButton();
 
@@ -51,8 +56,8 @@ public class ErrorDialog extends javax.swing.JDialog {
 
         jPanel1.setLayout(new javax.swing.BoxLayout(jPanel1, javax.swing.BoxLayout.LINE_AXIS));
 
-        jLabel1.setText("Messaggio di errore");
-        jPanel1.add(jLabel1);
+        errorMessage.setText("Messaggio di errore");
+        jPanel1.add(errorMessage);
 
         jPanel7.add(jPanel1);
 
@@ -123,6 +128,7 @@ public class ErrorDialog extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel errorMessage;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables

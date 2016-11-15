@@ -124,6 +124,15 @@ public class GiocarePartitaController {
     }
     
     /**
+     * Avvia la partita
+     */
+    public void avviaPartita() {
+        if(currentMatch == null) 
+            throw new IllegalStateException("Errore: Non esiste alcuna partita associata.");
+        currentMatch.startMatch();
+    }
+    
+    /**
      * Ritorna la stanza in cui si trova il giocatore.
      * @return Istanza di <code>RemoteRoom</code>, <code>null</code> se il
      * giocatore non si trova in nessuna stanza.

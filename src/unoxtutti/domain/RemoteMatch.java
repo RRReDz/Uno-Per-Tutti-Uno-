@@ -4,6 +4,9 @@
  */
 package unoxtutti.domain;
 
+import dialogue.MatchCreationDialogueState;
+import dialogue.MatchCreationDialogueHandler;
+import dialogue.MatchStartingDialogueHandler;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
@@ -36,9 +39,19 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     private MatchCreationDialogueHandler creationHandler;
     
     /**
+     * DialogueHandler per l'avvio della partita
+     */
+    private MatchStartingDialogueHandler startingHandler;
+    
+    /**
      * Lista di giocatori all'interno della partita.
      */
     private DefaultListModel<Player> playersList;
+    
+    /**
+     * Indica se la partita è stata avviata o meno.
+     */
+    private boolean isStarted = false;
     
     /**
      * Costruttore che memorizza le informazioni più importanti.
@@ -72,6 +85,15 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
            return m;
        }
        return null;
+    }
+    
+    /**
+     * Set della variabile di avvio della partita.
+     * @return 
+     */
+    public boolean startMatch() {
+        isStarted = true;
+        return startServerMatch();
     }
     
     /**
@@ -124,6 +146,19 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     public ListModel<Player> getPlayersAsList() {
         return playersList;
+    }
+
+    /**
+     * TODO: Javadoc
+     * @return 
+     */
+    private boolean startServerMatch() {
+        startingHandler = new MatchStartingDialogueHandler(conn);
+        creationHandler.addStateChangeObserver(this);
+        /**
+         * Serve aggiungere qualche listener dei messaggi qui?
+         */
+        return startingHandler.startDialogue();
     }
     
 }

@@ -8,6 +8,7 @@ import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
+import unoxtutti.utils.GUIUtils;
 
 /**
  *
@@ -95,7 +96,19 @@ public class InsideMatchPanel extends MainWindowSubPanel{
     }// </editor-fold>//GEN-END:initComponents
 
     private void startMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMatchButtonActionPerformed
-        
+        if(currentMatch.getPlayersAsList().getSize() == 1) {
+            /* Errore, nessun giocatore all'interno della partita */
+            ErrorDialog error = new ErrorDialog(mainWindow, true)
+                    .setErrorMessage("Errore: Nella partita non ci sono giocatori.");
+            GUIUtils.CenterDialogInsideWindow(error, this.mainWindow);
+            error.setVisible(true);
+        } 
+        else {
+            /* Tentativo di avvio della partita */
+            this.mainWindow.setWaiting(true);
+            GiocarePartitaController.getInstance().avviaPartita();
+            this.mainWindow.setWaiting(false);
+        }
     }//GEN-LAST:event_startMatchButtonActionPerformed
 
     private void closeMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMatchButtonActionPerformed
