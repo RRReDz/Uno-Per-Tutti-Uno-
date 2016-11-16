@@ -164,6 +164,17 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     public ListModel<Player> getPlayersAsList() {
         return playersList;
     }
+    
+    
+    /**
+     * Indica se il giocatore corrente è il proprietario della partita
+     * @return <code>true</code> se l'utente è il proprietario della partita,
+     *          <code>false</code> altrimenti
+     */
+    public boolean amITheOwner() {
+        return owner != null && owner == UnoXTutti.theUxtController.getPlayer();
+    }
+    
 
     /**
      * TODO: Javadoc
@@ -178,5 +189,4 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
          */
         return startingHandler.startDialogue();
     }
-    
 }

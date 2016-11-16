@@ -58,9 +58,8 @@ public class GUIUtils {
     
     
     /**
-     * Visualizza a schermo un errore utilizzando le
-     * librerie Java predefinite (JOptionPane).
-     * @param parentComponent Componente padre (frame in cui centrare l'errore)
+     * Visualizza a schermo un errore.
+     * @param parentComponent Componente padre
      * @param errorMessage Messaggio di errore
      * @param title Titolo del messaggio
      */
@@ -71,5 +70,15 @@ public class GUIUtils {
                     title,
                     JOptionPane.ERROR_MESSAGE
             );
+    }
+    
+    
+    /**
+     * Visualizza a schermo un errore.
+     * @param parentComponent Componente padre
+     * @param errorMessage Messaggio di errore
+     */
+    public static void ShowErrorMessage(Component parentComponent, String errorMessage) {
+        ShowErrorMessage(parentComponent, errorMessage);
     }
 }

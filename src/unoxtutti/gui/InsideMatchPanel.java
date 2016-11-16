@@ -26,6 +26,14 @@ public class InsideMatchPanel extends MainWindowSubPanel{
         RemoteMatch currentMatch = GiocarePartitaController.getInstance().getCurrentMatch();
         this.playersList.setModel(currentMatch.getPlayersAsList());
         this.matchNameLabel.setText("Partita: " + currentMatch.getMatchName());
+        /**
+         * Si nasconde il bottone per iniziare la partita se il
+         * giocatore non è il proprietario.
+         */
+        if(currentMatch.amITheOwner()) {
+            startMatchButton.setEnabled(false);
+            startMatchButton.setVisible(false);
+        }
     }
 
     /**
@@ -91,10 +99,18 @@ public class InsideMatchPanel extends MainWindowSubPanel{
         add(jPanel2, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Il giocatore clicca il bottone per avviare la partita.
+     * @param evt Evento generato dal click sul bottone
+     */
     private void startMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMatchButtonActionPerformed
-        if(playersList.getModel().getSize() <= 1) {
+        if(!GiocarePartitaController.getInstance().getCurrentMatch().amITheOwner() ||
+                !startMatchButton.isEnabled()) {
+            /* Errore, il giocatore non è il proprietario */
+            GUIUtils.ShowErrorMessage(mainWindow, "Non sei il proprietario della partita!");
+        } else if(playersList.getModel().getSize() <= 1) {
             /* Errore, nessun giocatore all'interno della partita */
-            GUIUtils.ShowErrorMessage(mainWindow, "Nella partita non ci sono abbastanza giocatori!", "Errore");
+            GUIUtils.ShowErrorMessage(mainWindow, "Nella partita non ci sono abbastanza giocatori!");
         } else {
             /* Tentativo di avvio della partita */
             this.mainWindow.setWaiting(true);

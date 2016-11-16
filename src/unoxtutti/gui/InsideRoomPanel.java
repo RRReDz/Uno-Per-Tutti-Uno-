@@ -161,7 +161,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
                 DebugHelper.log("OK: Avvio interfaccia partita interna.");
                 this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
             } else {
-                GUIUtils.ShowErrorMessage(mainWindow, "Errore durante la creazione della partita,\nriprovare con un altro nome.", "Errore");
+                GUIUtils.ShowErrorMessage(mainWindow, "Errore durante la creazione della partita,\nriprovare con un altro nome.");
             }
         }
         
