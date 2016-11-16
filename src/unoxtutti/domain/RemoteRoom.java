@@ -4,8 +4,8 @@
  */
 package unoxtutti.domain;
 
-import dialogue.RoomEntranceDialogueHandler;
-import dialogue.RoomEntranceDialogueState;
+import unoxtutti.dialogue.RoomEntranceDialogueHandler;
+import unoxtutti.dialogue.RoomEntranceDialogueState;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;

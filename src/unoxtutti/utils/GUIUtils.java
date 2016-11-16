@@ -4,11 +4,13 @@
  */
 package unoxtutti.utils;
 
+import java.awt.Component;
 import java.awt.Rectangle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import unoxtutti.gui.AutenticarsiGUI;
@@ -52,5 +54,22 @@ public class GUIUtils {
             (int) diarect.getWidth(),
             (int) diarect.getHeight()
         );
+    }
+    
+    
+    /**
+     * Visualizza a schermo un errore utilizzando le
+     * librerie Java predefinite (JOptionPane).
+     * @param parentComponent Componente padre (frame in cui centrare l'errore)
+     * @param errorMessage Messaggio di errore
+     * @param title Titolo del messaggio
+     */
+    public static void ShowErrorMessage(Component parentComponent, String errorMessage, String title) {
+        JOptionPane.showMessageDialog(
+                    parentComponent,
+                    errorMessage,
+                    title,
+                    JOptionPane.ERROR_MESSAGE
+            );
     }
 }

@@ -4,9 +4,9 @@
  */
 package unoxtutti.domain;
 
-import dialogue.MatchCreationDialogueState;
-import dialogue.MatchCreationDialogueHandler;
-import dialogue.MatchStartingDialogueHandler;
+import unoxtutti.dialogue.MatchCreationDialogueState;
+import unoxtutti.dialogue.MatchCreationDialogueHandler;
+import unoxtutti.dialogue.MatchStartingDialogueHandler;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;

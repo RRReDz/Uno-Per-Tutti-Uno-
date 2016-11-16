@@ -4,6 +4,7 @@
  */
 package unoxtutti.gui;
 
+import javax.swing.JOptionPane;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Player;
@@ -98,12 +99,13 @@ public class InsideMatchPanel extends MainWindowSubPanel{
     private void startMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMatchButtonActionPerformed
         if(currentMatch.getPlayersAsList().getSize() == 1) {
             /* Errore, nessun giocatore all'interno della partita */
-            ErrorDialog error = new ErrorDialog(mainWindow, true)
-                    .setErrorMessage("Errore: Nella partita non ci sono giocatori.");
-            GUIUtils.CenterDialogInsideWindow(error, this.mainWindow);
-            error.setVisible(true);
-        } 
-        else {
+            JOptionPane.showMessageDialog(
+                    mainWindow,
+                    "Nella partita non ci sono abbastanza giocatori!",
+                    "Errore",
+                    JOptionPane.ERROR_MESSAGE
+            );
+        } else {
             /* Tentativo di avvio della partita */
             this.mainWindow.setWaiting(true);
             GiocarePartitaController.getInstance().avviaPartita();
