@@ -130,8 +130,9 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
     /**
-     * Creazione della partita.
-     * @return true se la creazione è avvenuta con successo, false altrimenti
+     * Avvia il dialogo con il server per creare una stanza.
+     * @return <code>true</code> se il dialogo è stato avviato con successo,
+     *          <code>false</code> altrimenti.
      */
     private boolean create() {
         creationHandler = new MatchCreationDialogueHandler(conn);

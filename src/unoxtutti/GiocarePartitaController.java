@@ -113,7 +113,7 @@ public class GiocarePartitaController {
                     Logger.getLogger(GiocarePartitaController.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
                     /**
-                     * Se tutto èandato a buon fine, mi trovo in una stanza,
+                     * Se tutto è andato a buon fine, mi trovo in una stanza,
                      * altrimenti currentMatch rimane null.
                      */
                     currentMatch = matchInLimbo;
