@@ -100,13 +100,14 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
     /**
-     * TODO: Implementare metodo
-     * @param msg 
+     * Viene richiamato ogni qualvolta la P2PConnection notifica
+     * questa istanza di un messaggio di tipo "MATCH_UPDATE_MSG"
+     * @param msg messaggio ricevuto 
      */
     @Override
     public void updateMessageReceived(P2PMessage msg) {
         if(msg.getName().equals(Match.MATCH_UPDATE_MSG)) {
-            DebugHelper.log("Ricevuto aggiornamento della stanza da parte di MatchServer.");
+            DebugHelper.log("Ricevuto aggiornamento della partita da parte di MatchServer.");
             try {
                 /* Aggiornamento lista giocatori */
                 ArrayList<Player> players = (ArrayList<Player>) msg.getParameter(0);
@@ -118,7 +119,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 throw new CommunicationException("Wrong parameter type in message " + msg.getName());
             }
         }
-        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     /**
@@ -146,7 +146,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
     /**
-     * Avvia il dialogo con il server per creare una stanza.
+     * Avvia il dialogo con il server per creare una partita.
      * @return <code>true</code> se il dialogo è stato avviato con successo,
      *          <code>false</code> altrimenti.
      */
@@ -176,15 +176,14 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
 
-    /**
-     * TODO: Javadoc
-     * @return 
-     */
+    /** Avvia il dialogo con il server per avviare una partita.
+     * @return <code>true</code> se il dialogo è stato avviato con successo,
+     *          <code>false</code> altrimenti.
+     **/
     private boolean startServerMatch() {
         startingHandler = new MatchStartingDialogueHandler(conn);
         startingHandler.addStateChangeObserver(this);
         /**
-         * Serve aggiungere qualche listener dei messaggi qui?
          * TODO: Ricevere OK dal server
          */
         return startingHandler.startDialogue();
