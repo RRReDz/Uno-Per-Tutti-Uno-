@@ -31,10 +31,11 @@ public class MatchStartingDialogueHandler extends BasicDialogueHandler<MatchStar
      * @param TODO
      * @return TODO
      */
-    public boolean startDialogue() {
+    public boolean startDialogue(String matchName) {
         p2pConn.addMessageReceivedObserver(this, Match.MATCH_STARTING_REPLY_MSG);
         /* Ricordarsi dell'observer lato server per questo tipo di messaggio */
-        P2PMessage msg = new P2PMessage(Match.MATCH_STARTING_MSG); 
+        P2PMessage msg = new P2PMessage(Match.MATCH_STARTING_MSG);
+        Object[] pars = new Object[]{matchName};
         this.setState(MatchStartingDialogueState.STARTING);
         try {
             p2pConn.sendMessage(msg);

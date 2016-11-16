@@ -267,6 +267,9 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 DebugHelper.log("ROOM: ricevuta richiesta di creazione partita.");
                 handleMatchCreation(msg);
                 break;
+            case Match.MATCH_STARTING_MSG:
+                DebugHelper.log("ROOM: ricevuta richiesta di avvio di una partita.");
+                handleMatchStart(msg);
         }
     }
 
@@ -419,6 +422,42 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
     }
     
     /**
+     * Gestisce la richiesta di avvio della partita.
+     * @param msg Messaggio di richiesta
+     */
+    private void handleMatchStart(P2PMessage msg) {
+        /* Controllo validità dati ricevuti */
+        /**
+         * TODO
+         */
+        String matchName = (String) msg.getParameter(0);
+        
+        /* Costruzione messaggio di risposta */
+        P2PConnection sender = msg.getSenderConnection();
+        P2PMessage reply = new P2PMessage(Match.MATCH_STARTING_REPLY_MSG);
+        //Object[] parameters = new Object[1];
+        //reply.setParameters(parameters);
+        //parameters[0] = reqOk;
+        
+        /* Creazione della partita ed invio risposta */
+        synchronized(this) {
+            sender.addMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
+            sender.removeMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
+            //waitingClients.remove(sender);    ???
+            
+            /* Invio risposta (sia in caso di successo che insuccesso) */
+            try {
+                sender.sendMessage(reply);
+                sendMatchUpdate(matchName);
+            } catch (PartnerShutDownException ex) {
+                sender.disconnect();
+                removePlayer(sender);
+            }
+            //waitingClients.remove(sender); ???
+        }
+    }
+    
+    /**
      * Ritorna la lista delle partite.
      * @return Lista delle partite.
      */
@@ -437,5 +476,24 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         //}
         
         return matchesList;
+    }
+
+    /**
+     * Manda un messaggio di aggiornamento a tutti i giocatori
+     * presenti all'interno della partita passata come parametro.
+     */
+    private void sendMatchUpdate(String matchName) {
+        ServerMatch match = matches.get(matchName);
+        /**
+         * TODO: Servirebbe un metodo che ritorni la lista
+         * dei giocatori in una ServerMatch in modo da 
+         * inviare messaggi solo a loro
+         * Ovviamente la lista non esiste ancora perchè non abbiamo
+         * ancora sviluppato la parte di ingresso
+         */
+        P2PMessage upd = new P2PMessage(Match.MATCH_UPDATE_MSG);
+        /**
+         * TODO: Inviare i messaggi a tali giocatori
+         */
     }
 }

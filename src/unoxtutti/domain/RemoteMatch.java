@@ -211,7 +211,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         /**
          * TODO: Ricevere OK dal server
          */
-        return startingHandler.startDialogue();
+        return startingHandler.startDialogue(matchName);
     }
 
     /**
