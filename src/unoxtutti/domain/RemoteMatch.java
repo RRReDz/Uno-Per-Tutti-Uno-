@@ -4,6 +4,7 @@
  */
 package unoxtutti.domain;
 
+import java.util.ArrayList;
 import unoxtutti.dialogue.MatchCreationDialogueState;
 import unoxtutti.dialogue.MatchCreationDialogueHandler;
 import unoxtutti.dialogue.MatchStartingDialogueHandler;
@@ -11,6 +12,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
+import unoxtutti.connection.CommunicationException;
 import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
@@ -89,11 +91,12 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     
     /**
      * Set della variabile di avvio della partita.
-     * @return 
+     * @return <code>true</code> se la partita viene avviata con successo,
+     *          <code>false</code> altrimenti
      */
     public boolean startMatch() {
-        isStarted = true;
-        return startServerMatch();
+        isStarted = startServerMatch();
+        return isStarted;
     }
     
     /**
@@ -102,6 +105,19 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     @Override
     public void updateMessageReceived(P2PMessage msg) {
+        if(msg.getName().equals(Match.MATCH_UPDATE_MSG)) {
+            DebugHelper.log("Ricevuto aggiornamento della stanza da parte di MatchServer.");
+            try {
+                /* Aggiornamento lista giocatori */
+                ArrayList<Player> players = (ArrayList<Player>) msg.getParameter(0);
+                playersList.removeAllElements();
+                players.forEach((p) -> {
+                    playersList.addElement(p);
+                });
+            } catch (ClassCastException ex) {
+                throw new CommunicationException("Wrong parameter type in message " + msg.getName());
+            }
+        }
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
@@ -155,9 +171,10 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     private boolean startServerMatch() {
         startingHandler = new MatchStartingDialogueHandler(conn);
-        creationHandler.addStateChangeObserver(this);
+        startingHandler.addStateChangeObserver(this);
         /**
          * Serve aggiungere qualche listener dei messaggi qui?
+         * TODO: Ricevere OK dal server
          */
         return startingHandler.startDialogue();
     }

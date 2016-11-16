@@ -4,9 +4,7 @@
  */
 package unoxtutti.gui;
 
-import javax.swing.JOptionPane;
 import unoxtutti.GiocarePartitaController;
-import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
 import unoxtutti.utils.GUIUtils;
@@ -16,9 +14,6 @@ import unoxtutti.utils.GUIUtils;
  * @author Riccardo Rossi
  */
 public class InsideMatchPanel extends MainWindowSubPanel{
-
-    private RemoteMatch currentMatch;
-    
     /**
      * Creates new form InsideMatchPanel
      */
@@ -28,7 +23,7 @@ public class InsideMatchPanel extends MainWindowSubPanel{
     
     @Override
     public void initializeContent() {
-        currentMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+        RemoteMatch currentMatch = GiocarePartitaController.getInstance().getCurrentMatch();
         this.playersList.setModel(currentMatch.getPlayersAsList());
         this.matchNameLabel.setText("Partita: " + currentMatch.getMatchName());
     }
@@ -97,7 +92,7 @@ public class InsideMatchPanel extends MainWindowSubPanel{
     }// </editor-fold>//GEN-END:initComponents
 
     private void startMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMatchButtonActionPerformed
-        if(currentMatch.getPlayersAsList().getSize() <= 1) {
+        if(playersList.getModel().getSize() <= 1) {
             /* Errore, nessun giocatore all'interno della partita */
             GUIUtils.ShowErrorMessage(mainWindow, "Nella partita non ci sono abbastanza giocatori!", "Errore");
         } else {
