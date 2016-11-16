@@ -94,7 +94,7 @@ public class InsideMatchPanel extends MainWindowSubPanel{
     private void startMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startMatchButtonActionPerformed
         if(playersList.getModel().getSize() <= 1) {
             /* Errore, nessun giocatore all'interno della partita */
-            GUIUtils.ShowErrorMessage(mainWindow, "Nella partita non ci sono abbastanza giocatori!", "Errore");
+            GUIUtils.showErrorMessage(mainWindow, "Nella partita non ci sono abbastanza giocatori!", "Errore");
         } else {
             /* Tentativo di avvio della partita */
             this.mainWindow.setWaiting(true);

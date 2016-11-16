@@ -64,7 +64,7 @@ public class GUIUtils {
      * @param errorMessage Messaggio di errore
      * @param title Titolo del messaggio
      */
-    public static void ShowErrorMessage(Component parentComponent, String errorMessage, String title) {
+    public static void showErrorMessage(Component parentComponent, String errorMessage, String title) {
         JOptionPane.showMessageDialog(
                     parentComponent,
                     errorMessage,
