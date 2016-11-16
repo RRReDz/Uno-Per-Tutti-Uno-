@@ -107,15 +107,21 @@ public class InsideMatchPanel extends MainWindowSubPanel{
         if(!GiocarePartitaController.getInstance().getCurrentMatch().amITheOwner() ||
                 !startMatchButton.isEnabled()) {
             /* Errore, il giocatore non è il proprietario */
-            GUIUtils.ShowErrorMessage(mainWindow, "Non sei il proprietario della partita!");
+            GUIUtils.showErrorMessage(mainWindow, "Non sei il proprietario della partita!");
         } else if(playersList.getModel().getSize() <= 1) {
             /* Errore, nessun giocatore all'interno della partita */
-            GUIUtils.ShowErrorMessage(mainWindow, "Nella partita non ci sono abbastanza giocatori!");
+            GUIUtils.showErrorMessage(mainWindow, "Nella partita non ci sono abbastanza giocatori!");
         } else {
             /* Tentativo di avvio della partita */
             this.mainWindow.setWaiting(true);
-            GiocarePartitaController.getInstance().avviaPartita();
+            boolean isMatchStarted = GiocarePartitaController.getInstance().avviaPartita();
             this.mainWindow.setWaiting(false);
+            
+            if(isMatchStarted) {
+                /* Avvio della partita... fine iterazione 4 */
+            }
+            
+            GUIUtils.showErrorMessage(mainWindow, "La partita NON è stata avviata!");
         }
     }//GEN-LAST:event_startMatchButtonActionPerformed
 

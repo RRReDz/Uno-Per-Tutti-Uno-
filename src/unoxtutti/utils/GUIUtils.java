@@ -78,7 +78,7 @@ public class GUIUtils {
      * @param parentComponent Componente padre
      * @param errorMessage Messaggio di errore
      */
-    public static void ShowErrorMessage(Component parentComponent, String errorMessage) {
-        showErrorMessage(parentComponent, errorMessage, "Errore");
+    public static void showErrorMessage(Component parentComponent, String errorMessage) {
+        GUIUtils.showErrorMessage(parentComponent, errorMessage, "Errore");
     }
 }

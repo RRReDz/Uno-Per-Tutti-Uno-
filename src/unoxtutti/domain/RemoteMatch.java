@@ -16,6 +16,7 @@ import unoxtutti.connection.CommunicationException;
 import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
+import unoxtutti.dialogue.MatchStartingDialogueState;
 import unoxtutti.domain.dialogue.DialogueHandler;
 import unoxtutti.domain.dialogue.DialogueObserver;
 import unoxtutti.utils.DebugHelper;
@@ -95,8 +96,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      *          <code>false</code> altrimenti
      */
     public boolean startMatch() {
-        isStarted = startServerMatch();
-        return isStarted;
+        return startServerMatch();
     }
     
     /**
@@ -127,6 +127,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     @Override
     public void updateDialogueStateChanged(DialogueHandler source) {
+        /* Handler della creazione della partita */
         if(source.equals(creationHandler)) {
             MatchCreationDialogueState state = creationHandler.getState();
             switch (state) {
@@ -142,6 +143,30 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                     break;
                 default:
             }
+        } 
+        /* Handler dell'avvio della partita */
+        else if(source.equals(startingHandler)) {
+            MatchStartingDialogueState state = startingHandler.getState();
+            switch(state) {
+                case STARTED:
+                    /**
+                     * Solo in questo caso abbiamo una vera conferma se
+                     * il ServerMatch è partito o meno.
+                     */
+                    isStarted = true;
+                    DebugHelper.log("Risposta da MatchServer: OK! La partita è stata avviata.");
+                    break;
+                case NOT_STARTED:
+                    /**
+                     * Solo in questo caso abbiamo una vera conferma se
+                     * il ServerMatch è partito o meno.
+                     */
+                    isStarted = false;
+                    DebugHelper.log("Risposta da MatchServer: ERR! Impossibile avviare la partita.");
+                    break;
+            }
+            creationHandler.concludeDialogue();
+            GiocarePartitaController.getInstance().matchStartEnded();
         }
     }
     
@@ -187,5 +212,13 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
          * TODO: Ricevere OK dal server
          */
         return startingHandler.startDialogue();
+    }
+
+    /**
+     * @return isStarted <code>true</code> se il match è stato avviato
+     * <code>false</code> altrimenti
+     */
+    public boolean isStarted() {
+        return isStarted;
     }
 }
