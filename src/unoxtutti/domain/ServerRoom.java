@@ -289,6 +289,12 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 reqOk = false;
             }
         }
+        
+        if(reqOk)
+            DebugHelper.log("ROOM: OK, richiesta di ingesso corretta. Giocatore autorizzato.");
+        else
+            DebugHelper.log("ROOM: ERR, richiesta di ingesso NON corretta. Cambiare nome della stanza e riprovare.");
+            
         P2PConnection sender = msg.getSenderConnection();
         P2PMessage reply = new P2PMessage(Room.ROOM_ENTRANCE_REPLY_MSG);
         Object[] parameters = new Object[2]; // reply + players
@@ -303,14 +309,20 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 parameters[1] = this.getPlayers();
                 sender.addMessageReceivedObserver(this, Room.ROOM_EXIT_MSG);
                 sender.removeMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REQUEST_MSG);
-                try {
-                    sender.sendMessage(reply);
-                    sendRoomUpdate();
-                } catch (PartnerShutDownException ex) {
-                    sender.disconnect();
-                    removePlayer(sender);
-                }
             }
+            /**
+             * In ogni caso mando il messaggio di risposta
+             * altrimenti il client rimane bloccato all'infinito sulla wait
+             */
+            try {
+                sender.sendMessage(reply);
+                if(reqOk)
+                    sendRoomUpdate();
+            } catch (PartnerShutDownException ex) {
+                sender.disconnect();
+                removePlayer(sender);
+            }
+            
             this.waitingClients.remove(sender);
         }
     }

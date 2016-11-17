@@ -166,10 +166,12 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
                     }
                     entranceHandler.concludeDialogue();
                     UnoXTutti.theUxtController.roomEntranceCompleted(this);
+                    DebugHelper.log("OK: Richiesta di accesso alla stanza andata a buon fine.");
                     break;
                 case REJECTED:
                     entranceHandler.concludeDialogue();
                     UnoXTutti.theUxtController.roomEntranceFailed(this);
+                    DebugHelper.log("ERR: C'è stato un problema durante la richiesta di accesso alla stanza.");
                     break;
                 default:
             }

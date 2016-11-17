@@ -119,6 +119,7 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
         }
         if (ok) {
             setVisible(false);
+            this.dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
 

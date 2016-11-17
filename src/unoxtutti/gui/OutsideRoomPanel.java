@@ -221,6 +221,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
             DebugHelper.log("ERR: La porta deve essere un numero compreso fra 1024 e 65535.");
         } else {
             this.mainWindow.setWaiting(true);
+            DebugHelper.log("Richiesta di accesso in stanza (" + roomName + ", " + roomAddr + ", " + roomPort);
             UnoXTutti.theUxtController.entraInStanza(roomName, roomAddr, roomPort);
             this.mainWindow.setWaiting(false);
             if (UnoXTutti.theUxtController.inStanza()) {
