@@ -1,0 +1,2 @@
+@echo off
+ant -f "C:\\Users\\Riccardo Rossi\\Documents\\NetBeansProjects\\UnoPerTutti-Updated" -Djavac.includes=unoxtutti/webserver/WebServer.java -Dnb.internal.action.name=run.single -Drun.class=unoxtutti.webserver.WebServer run-single
