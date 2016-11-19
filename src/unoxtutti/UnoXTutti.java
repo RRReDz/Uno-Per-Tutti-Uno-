@@ -47,7 +47,7 @@ public class UnoXTutti {
         }
         
         /* Tenta l'inizializzazione di WebLaF come Look&Feel di Java */
-        GUIUtils.InstallLookAndFeel();
+        GUIUtils.installLookAndFeel();
         
         /* Avvia la finestra di debug */
         java.awt.EventQueue.invokeLater(() -> {

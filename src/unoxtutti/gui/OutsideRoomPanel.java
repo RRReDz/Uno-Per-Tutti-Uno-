@@ -187,7 +187,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
 
     private void apriStanzaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_apriStanzaButtonActionPerformed
         NuovaStanzaDialog dia = new NuovaStanzaDialog(mainWindow, true);
-        GUIUtils.CenterDialogInsideWindow(dia, mainWindow);
+        GUIUtils.centerDialogInsideWindow(dia, mainWindow);
         dia.setVisible(true);
         if (dia.getResult() == JOptionPane.OK_OPTION) {
             DebugHelper.log("OK: Avvio interfaccia gestione interna stanza.");
@@ -233,7 +233,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
                 DebugHelper.log("OK: Avvio interfaccia gestione partita.");
                 this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
             } else {
-                GUIUtils.ShowErrorMessage(mainWindow, "Errore durante l'accesso alla stanza, dati errati.");
+                GUIUtils.showErrorMessage(mainWindow, "Errore durante l'accesso alla stanza, dati errati.");
             }
         }
     }//GEN-LAST:event_entraButtonActionPerformed

@@ -28,7 +28,7 @@ public class GUIUtils {
      * 
      * @see http://weblookandfeel.com/
      */
-    public static void InstallLookAndFeel() {
+    public static void installLookAndFeel() {
         try {
             UIManager.setLookAndFeel("com.alee.laf.WebLookAndFeel");
         } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | UnsupportedLookAndFeelException ex) {
@@ -42,7 +42,7 @@ public class GUIUtils {
      * @param dialog Finestra di dialogo
      * @param window Finestra in cui mettere il dialog
      */
-    public static void CenterDialogInsideWindow(JDialog dialog, JFrame window) {
+    public static void centerDialogInsideWindow(JDialog dialog, JFrame window) {
         /* Recupero coordinate */
         Rectangle diarect = dialog.getBounds();
         Rectangle mainrect = window.getBounds();
@@ -63,7 +63,7 @@ public class GUIUtils {
      * @param errorMessage Messaggio di errore
      * @param title Titolo del messaggio
      */
-    public static void ShowErrorMessage(Component parentComponent, String errorMessage, String title) {
+    public static void showErrorMessage(Component parentComponent, String errorMessage, String title) {
         JOptionPane.showMessageDialog(
                 parentComponent,
                 errorMessage,
@@ -78,8 +78,8 @@ public class GUIUtils {
      * @param parentComponent Componente padre
      * @param errorMessage Messaggio di errore
      */
-    public static void ShowErrorMessage(Component parentComponent, String errorMessage) {
-        GUIUtils.ShowErrorMessage(parentComponent, errorMessage, "Errore");
+    public static void showErrorMessage(Component parentComponent, String errorMessage) {
+        GUIUtils.showErrorMessage(parentComponent, errorMessage, "Errore");
     }
     
     
@@ -88,9 +88,9 @@ public class GUIUtils {
      * @param e Eccezione
      * @param parentComponent Finestra in cui centrare il popup
      */
-    public static void ShowException(Exception e, Component parentComponent) {
+    public static void showException(Exception e, Component parentComponent) {
         String exceptionMessage = e.getClass().getSimpleName() + ": " + e.getMessage();
         DebugHelper.appendToDebugConsoleTitle(exceptionMessage);
-        GUIUtils.ShowErrorMessage(parentComponent, exceptionMessage);
+        GUIUtils.showErrorMessage(parentComponent, exceptionMessage);
     }
 }

@@ -200,7 +200,7 @@ public class WebServer implements Runnable {
             (new Thread(app)).start();
             
             /* Tenta l'inizializzazione di WebLaF */
-            GUIUtils.InstallLookAndFeel();
+            GUIUtils.installLookAndFeel();
             
             /* Avvio dell'interfaccia grafica del Web Server */
             stopDialog = new WebServerStopDialog(null, app);

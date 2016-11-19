@@ -262,7 +262,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         //</editor-fold>
         
         /* Si tenta di inizializzare WebLaF */
-        GUIUtils.InstallLookAndFeel();
+        GUIUtils.installLookAndFeel();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

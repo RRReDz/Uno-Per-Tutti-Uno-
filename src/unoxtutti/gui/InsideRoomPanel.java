@@ -143,7 +143,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
      */
     private void createMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_createMatchButtonActionPerformed
         NuovaPartitaDialog dia = new NuovaPartitaDialog(mainWindow, true);
-        GUIUtils.CenterDialogInsideWindow(dia, this.mainWindow);
+        GUIUtils.centerDialogInsideWindow(dia, this.mainWindow);
         dia.setVisible(true);
         
         if(dia.getResult() == JOptionPane.OK_OPTION){
@@ -159,7 +159,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
                 this.mainWindow.setWaiting(true);
                 GiocarePartitaController.getInstance().creaPartita(matchName, new Object());
             } catch(Exception e) {
-                GUIUtils.ShowException(e, mainWindow);
+                GUIUtils.showException(e, mainWindow);
             } finally {
                 this.mainWindow.setWaiting(false);
             }
@@ -169,7 +169,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
                 DebugHelper.log("OK: Avvio interfaccia partita interna.");
                 this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
             } else {
-                GUIUtils.ShowErrorMessage(mainWindow, "Errore durante la creazione della partita,\nriprovare con un altro nome.");
+                GUIUtils.showErrorMessage(mainWindow, "Errore durante la creazione della partita,\nriprovare con un altro nome.");
             }
         }
         
@@ -185,7 +185,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
     private void joinMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinMatchButtonActionPerformed
         String matchName = matchList.getSelectedValue();
         if(matchName == null) {
-            GUIUtils.ShowErrorMessage(mainWindow, "È necessario selezionare una partita.");
+            GUIUtils.showErrorMessage(mainWindow, "È necessario selezionare una partita.");
             return;
         }
         
@@ -195,7 +195,7 @@ public class InsideRoomPanel extends MainWindowSubPanel {
             GiocarePartitaController.getInstance().richiediIngresso(matchName);
             
         } catch(Exception e) {
-            GUIUtils.ShowException(e, mainWindow);
+            GUIUtils.showException(e, mainWindow);
         } finally {
             this.mainWindow.setWaiting(false);
         }
