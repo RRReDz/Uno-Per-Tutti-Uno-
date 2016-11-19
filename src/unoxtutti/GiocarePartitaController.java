@@ -222,4 +222,13 @@ public class GiocarePartitaController {
             lock.notifyAll();
         }
     }
+    
+    
+    /**
+     * Richiede l'accesso ad una partita
+     * @param matchName Nome della partita
+     */
+    public void richiediIngresso(String matchName) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

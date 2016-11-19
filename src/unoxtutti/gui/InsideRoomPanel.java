@@ -100,6 +100,11 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         jPanel4.add(createMatchButton);
 
         joinMatchButton.setText("Entra in partita");
+        joinMatchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                joinMatchButtonActionPerformed(evt);
+            }
+        });
         jPanel4.add(joinMatchButton);
 
         roomPanel.add(jPanel4, java.awt.BorderLayout.PAGE_END);
@@ -150,24 +155,50 @@ public class InsideRoomPanel extends MainWindowSubPanel {
             DebugHelper.log("Creazione della partita '" + matchName + "' in corso...");
             
             /* Tentativo di creazione della partita */
-            this.mainWindow.setWaiting(true);
-            GiocarePartitaController.getInstance().creaPartita(matchName, new Object());
-            this.mainWindow.setWaiting(false);
-            
-            // TODO: Eccezioni? Messaggi di notifica?
+            try {
+                this.mainWindow.setWaiting(true);
+                GiocarePartitaController.getInstance().creaPartita(matchName, new Object());
+            } catch(Exception e) {
+                GUIUtils.ShowException(e, mainWindow);
+            } finally {
+                this.mainWindow.setWaiting(false);
+            }
             
             /* Ho creato con successo la partita */
             if(GiocarePartitaController.getInstance().inPartita()) {
                 DebugHelper.log("OK: Avvio interfaccia partita interna.");
                 this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
             } else {
-                GUIUtils.showErrorMessage(mainWindow, "Errore durante la creazione della partita,\nriprovare con un altro nome.");
+                GUIUtils.ShowErrorMessage(mainWindow, "Errore durante la creazione della partita,\nriprovare con un altro nome.");
             }
         }
         
         /* Liberazione memoria da JDialog */
         dia.dispose();
     }//GEN-LAST:event_createMatchButtonActionPerformed
+
+    
+    /**
+     * Avvia il flusso di ingresso in una partita
+     * @param evt generato dal bottone
+     */
+    private void joinMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_joinMatchButtonActionPerformed
+        String matchName = matchList.getSelectedValue();
+        if(matchName == null) {
+            GUIUtils.ShowErrorMessage(mainWindow, "È necessario selezionare una partita.");
+            return;
+        }
+        
+        DebugHelper.log("Invio richiesta per ingresso in " + matchName);
+        try {
+            this.mainWindow.setWaiting(true);
+            GiocarePartitaController.getInstance().richiediIngresso(matchName);
+        } catch(Exception e) {
+            GUIUtils.ShowException(e, mainWindow);
+        } finally {
+            this.mainWindow.setWaiting(false);
+        }
+    }//GEN-LAST:event_joinMatchButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton createMatchButton;

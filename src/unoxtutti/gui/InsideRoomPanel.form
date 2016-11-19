@@ -160,6 +160,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Entra in partita"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="joinMatchButtonActionPerformed"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
