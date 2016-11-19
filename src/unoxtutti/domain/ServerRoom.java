@@ -441,34 +441,55 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      */
     private void handleMatchStart(P2PMessage msg) {
         /* Controllo validità dati ricevuti */
-        /**
-         * TODO
-         */
-        String matchName = (String) msg.getParameter(0);
-        
+        ServerMatch match = null;
+        boolean isReqOk = true;
+        if (msg.getParametersCount() != 1) {
+            isReqOk = false;
+        } else {
+            try {
+                String matchName = (String) msg.getParameter(0);
+                if(!matches.containsKey(matchName)) {
+                    /* La partita non esiste */
+                    isReqOk = false;
+                }
+                /* La partita desiderata esiste */
+                else {
+                    /* Recupero il match dal nome */
+                    match = matches.get(matchName);
+                    // TODO: Controllare se la partita ha abbastanza spazio...
+                }
+            } catch (ClassCastException ex) {
+                isReqOk = false;
+            }
+        }
+            
         /* Costruzione messaggio di risposta */
         P2PConnection sender = msg.getSenderConnection();
         P2PMessage reply = new P2PMessage(Match.MATCH_STARTING_REPLY_MSG);
-        //Object[] parameters = new Object[1];
-        //reply.setParameters(parameters);
-        //parameters[0] = reqOk;
         
-        /* Creazione della partita ed invio risposta */
+        /* Parametri messaggio */
+        Object[] parameters = new Object[1];
+        reply.setParameters(parameters);
+        parameters[0] = isReqOk;
+        
+        /**
+        * Invio della risposta al client creatore della partita
+        */
         synchronized(this) {
             sender.addMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
             sender.removeMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
-            //waitingClients.remove(sender);    ???
-            
-            /* Invio risposta (sia in caso di successo che insuccesso) */
+
             try {
                 sender.sendMessage(reply);
-                sendMatchUpdate(matchName);
             } catch (PartnerShutDownException ex) {
                 sender.disconnect();
-                removePlayer(sender);
             }
-            //waitingClients.remove(sender); ???
         }
+        
+        /* Aggiorno gli altri client in partita se la richiesta è ok. */
+        if(match != null && isReqOk)
+            match.notifyMatchStart(sender);
+        
     }
     
     /**
@@ -490,28 +511,6 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         //}
         
         return matchesList;
-    }
-
-    /**
-     * TODO: da eliminare da questa classe, non c'entra niente con la stanza
-     * Manda un messaggio di aggiornamento a tutti i giocatori
-     * presenti all'interno della partita passata come parametro.
-     */
-    private void sendMatchUpdate(String matchName) {
-        ServerMatch match = matches.get(matchName);
-        /**
-         * TODO: Servirebbe un metodo che ritorni la lista
-         * dei giocatori in una ServerMatch in modo da 
-         * inviare messaggi solo a loro
-         * Ovviamente la lista non esiste ancora perchè non abbiamo
-         * ancora sviluppato la parte di ingresso
-         * 
-         * Sbagliato mettere il metodo qui.
-         */
-        P2PMessage upd = new P2PMessage(Match.MATCH_UPDATE_MSG);
-        /**
-         * TODO: Inviare i messaggi a tali giocatori
-         */
     }
     
     /**
