@@ -30,7 +30,7 @@ public abstract class Match {
     /* Richiesta di avvio */
     public static final String MATCH_STARTING_MSG = "matchStarting";
     public static final String MATCH_STARTING_REPLY_MSG = "matchStartingReply";
-    public static final String MATCH_STARTED_MSG = "matchStarted";
+    public static final String MATCH_STARTED_MSG = "matchStarted"; //Per altri utenti in stanza
     
     /**
      * Nome della partita

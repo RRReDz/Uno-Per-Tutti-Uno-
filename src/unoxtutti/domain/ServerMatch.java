@@ -4,6 +4,7 @@
  */
 package unoxtutti.domain;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import unoxtutti.connection.P2PConnection;
@@ -64,6 +65,13 @@ public class ServerMatch extends Match {
     
     
     /**
+     * Set del parametro relativo all'avvio della partita
+     */
+    public void setStarted(boolean start) {
+        started = start;
+    }
+    
+    /**
      * Indica se la partita è stata avviata oppure no.
      * @return <code>true</code> se la partita è stata avviata,
      *          <code>false</code> se questa è ancora disponibile.
@@ -76,7 +84,11 @@ public class ServerMatch extends Match {
      * Metodo per notificare a tutti i giocatori in stanza l'inzio della partita.
      */
     void notifyMatchStart(P2PConnection sender) {
-        P2PMessage upd = new P2PMessage(Match.MATCH_STARTED_MSG);
+        /* 
+         * Qui ci andrà un messaggio di tipo Match.MATCH_STARTED_MSG
+         * Ricordarsi anche di registrare l'observer quando si accede alla partita
+         */
+        P2PMessage upd = new P2PMessage(Match.MATCH_UPDATE_MSG);
         /**
          * TODO: Inviare i messaggi alla lista dei giocatori in partita.
          * for (P2PConnection client : connections.values())

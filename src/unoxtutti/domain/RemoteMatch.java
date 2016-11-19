@@ -109,14 +109,21 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     @Override
     public void updateMessageReceived(P2PMessage msg) {
-        /* Aggiornamento della stanza ricevuto da RoomServer*/
-        if(msg.getName().equals(Match.MATCH_UPDATE_MSG)) {
-            DebugHelper.log("Ricevuto aggiornamento della partita da parte di MatchServer.");
-            handleUpdateMessage(msg);
-        /* Richiesta di accesso inoltrata dal RoomServer */
-        } else if(msg.getName().equals(Match.MATCH_ACCESS_REQUEST_MSG)) {
-            DebugHelper.log("Ricevuta richiesta di accesso da RoomServer.");
-            handleAccessRequestMessage(msg);
+        switch (msg.getName()) {
+            case Match.MATCH_UPDATE_MSG: //Handler di prova per ricevere risposta dalla partita remota
+                DebugHelper.log("Ricevuto aggiornamento dal server: TODO");
+                handleUpdateMessage(msg);
+                break;
+            case Match.MATCH_ACCESS_REQUEST_MSG:
+                DebugHelper.log("Ricevuta richiesta di accesso dal server.");
+                handleAccessRequestMessage(msg);
+                break;
+            case Match.MATCH_STARTED_MSG: //Questo sarà l'handler dell'avvio del match
+                DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA INIZIATA.");
+                handleMatchStartedMessage(msg);
+                break;
+            default:
+                break;
         }
     }
     
@@ -244,8 +251,8 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * @param msg Messaggio di aggiornamento
      */
     private void handleUpdateMessage(P2PMessage msg) {
-        try {
-            /* Aggiornamento lista giocatori */
+        /*try {
+            // Aggiornamento lista giocatori
             ArrayList<Player> players = (ArrayList<Player>) msg.getParameter(0);
             playersList.removeAllElements();
             players.forEach((p) -> {
@@ -253,7 +260,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             });
         } catch (ClassCastException ex) {
             throw new CommunicationException("Wrong parameter type in message " + msg.getName());
-        }
+        }*/
     }
 
     /**
@@ -271,5 +278,13 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         
         DebugHelper.log("Devo decidere che cosa fare con il giocatore " + ((Player) msg.getParameter(0)).getName());
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Gestione del messaggio ricevuto dal server relativo all'inizio della partita.
+     * @param msg 
+     */
+    private void handleMatchStartedMessage(P2PMessage msg) {
+        
     }
 }

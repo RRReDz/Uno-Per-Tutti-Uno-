@@ -4,9 +4,11 @@
  */
 package unoxtutti.gui;
 
+import javax.swing.JOptionPane;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
+import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.GUIUtils;
 
 /**
@@ -30,7 +32,7 @@ public class InsideMatchPanel extends MainWindowSubPanel{
          * Si nasconde il bottone per iniziare la partita se il
          * giocatore non è il proprietario.
          */
-        if(currentMatch.amITheOwner()) {
+        if(!currentMatch.amITheOwner()) {
             startMatchButton.setEnabled(false);
             startMatchButton.setVisible(false);
         }
@@ -118,10 +120,17 @@ public class InsideMatchPanel extends MainWindowSubPanel{
             this.mainWindow.setWaiting(false);
             
             if(isMatchStarted) {
+                /* DEBUG */
+                JOptionPane.showMessageDialog(
+                    mainWindow,
+                    "OK! Partita avviata!",
+                    "Partita avviata",
+                    JOptionPane.ERROR_MESSAGE
+                );
                 /* Avvio della partita... fine iterazione 4 */
+            } else {
+                GUIUtils.showErrorMessage(mainWindow, "La partita NON è stata avviata!");
             }
-            
-            GUIUtils.showErrorMessage(mainWindow, "La partita NON è stata avviata!");
         }
     }//GEN-LAST:event_startMatchButtonActionPerformed
 

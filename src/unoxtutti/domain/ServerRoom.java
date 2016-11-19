@@ -274,6 +274,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             case Match.MATCH_STARTING_MSG:
                 DebugHelper.log("ROOM: ricevuta richiesta di avvio di una partita.");
                 handleMatchStart(msg);
+                break;
         }
     }
 
@@ -441,7 +442,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      * @param msg Messaggio di richiesta
      */
     private void handleMatchStart(P2PMessage msg) {
-        /* Controllo validità dati ricevuti */
+        /* Controllo validità dati ricevuti e valori partita */
         ServerMatch match = null;
         boolean isReqOk = true;
         if (msg.getParametersCount() != 1) {
@@ -457,11 +458,19 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 else {
                     /* Recupero il match dal nome */
                     match = matches.get(matchName);
-                    // TODO: Controllare se la partita ha abbastanza spazio...
+                    /* Controllo se partita già iniziata */
+                    if(match.isStarted())
+                        isReqOk = false;
                 }
             } catch (ClassCastException ex) {
                 isReqOk = false;
             }
+        }
+        
+        if(isReqOk) {
+            DebugHelper.log("ROOM: OK, richiesta di avvio partita corretta.");
+        } else {
+            DebugHelper.log("ROOM: ERR, richiesta di avvio partita NON corretta.");
         }
             
         /* Costruzione messaggio di risposta */
@@ -477,8 +486,15 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         * Invio della risposta al client creatore della partita
         */
         synchronized(this) {
-            sender.addMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
-            sender.removeMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
+            /* Set parametro che indica che la partita è stata avviata
+             * Set dei relativi listener per messaggi successivi
+             * sempre se richiesta è ok
+             */
+            if(match != null && isReqOk) {
+                match.setStarted(true);
+                sender.addMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
+                sender.removeMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
+            }
 
             try {
                 sender.sendMessage(reply);
@@ -598,6 +614,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      */
     private void playerCreatedARoom(P2PConnection playerConnection) {
         playerConnection.addMessageReceivedObserver(this, Match.MATCH_DESTROY_MSG);
+        playerConnection.addMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_MSG);
     }
