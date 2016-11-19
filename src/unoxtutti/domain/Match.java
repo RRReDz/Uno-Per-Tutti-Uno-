@@ -22,6 +22,7 @@ public abstract class Match {
     
     /* Notifica di uscita */
     public static final String MATCH_EXIT_MSG = "matchExit";
+    public static final String MATCH_EXIT_REPLY_MSG ="matchExitReply";
     
     /* Distruzione della stanza */
     public static final String MATCH_DESTROY_MSG = "matchDestroy";

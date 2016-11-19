@@ -44,7 +44,10 @@ public class MatchCreationDialogueHandler extends BasicDialogueHandler<MatchCrea
      */
     public boolean startDialogue(Player owner, String matchName, Object options) {
         boolean ret = true;
+        /* Observer per ricezione messaggio di risposta alla creazione della partita */
         connection.addMessageReceivedObserver(this, Match.MATCH_CREATION_REPLY_MSG);
+        /* Observer per ricezione messaggio di risposta all'uscita dalla partita */
+        connection.addMessageReceivedObserver(this, Match.MATCH_EXIT_REPLY_MSG);
         P2PMessage msg = new P2PMessage(Match.MATCH_CREATION_REQUEST_MSG);
         Object[] pars = new Object[]{owner, matchName};
         
