@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
+import unoxtutti.connection.ClientConnectionException;
 import unoxtutti.connection.ServerCreationException;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteRoom;
@@ -145,16 +146,19 @@ public class GiocareAUnoXTuttiController {
      * @param roomAddr L'indirizzo della stanza in cui entrare
      * @param roomPort La porta della stanza in cui entrare
      */
-    public void entraInStanza(String roomName, String roomAddr, int roomPort) {
+    public void entraInStanza(String roomName, String roomAddr, int roomPort) throws ClientConnectionException {
         synchronized (entranceWaiting) {
-            roomInLimbo = RemoteRoom.createRemoteRoom(this.player, roomName, roomAddr, roomPort);
-            if (roomInLimbo != null) {
-                try {
+            try {
+                roomInLimbo = RemoteRoom.createRemoteRoom(this.player, roomName, roomAddr, roomPort);
+                if (roomInLimbo != null) {
                     entranceWaiting.wait();
-                } catch (InterruptedException ex) {
-                    roomInLimbo = null;
                 }
+            } catch (ClientConnectionException | InterruptedException ex) {
+                roomInLimbo = null;
+                if(ex instanceof ClientConnectionException)
+                    throw new ClientConnectionException(ex.getMessage());
             }
+            
             if (roomInLimbo != null) {
                 currentRoom = roomInLimbo;
                 GiocarePartitaController.getInstance().setRoom(currentRoom);
