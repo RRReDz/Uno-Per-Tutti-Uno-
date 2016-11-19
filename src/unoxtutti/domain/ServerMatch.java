@@ -48,4 +48,24 @@ public class ServerMatch extends Match {
     public boolean isStarted() {
         return started;
     }
+    
+    
+    /**
+     * Controlla se un determinato giocatore potrebbe entrare nella partita.
+     * @param player Giocatore che desidera effettuare l'accesso
+     * @return <code>true</code> se tutto va bene, <code>false</code> altrimenti.
+     */
+    boolean checkIfPlayerCanJoin(Player player) {
+        return true;
+    }
+    
+    
+    /**
+     * Chiede al proprietario della partita se un determinato giocatore
+     * può entrare.
+     * @param player Giocatore che desidera effettuare l'accesso.
+     */
+    void askOwnerIfPlayerCanJoin(Player player) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 }

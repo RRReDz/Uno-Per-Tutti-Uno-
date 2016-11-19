@@ -533,7 +533,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 } else {
                     /* La partita desiderata esiste */
                     match = matches.get(matchName);
-                    // TODO: Controllare se la partita ha abbastanza spazio...
+                    reqOk = match.checkIfPlayerCanJoin(msg.getSenderConnection().getPlayer());
                 }
             } catch (ClassCastException ex) {
                 reqOk = false;
@@ -560,8 +560,13 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 removePlayer(sender);
             }
             
-            // TODO: Chiedere al proprietario della partita che cosa si vuole fare
-            //match.getOwner(); Ecc.
+            /**
+             * Si chiede al proprietario della partita che cosa vuole fare
+             * con la richiesta del giocatore.
+             */
+            if(reqOk && match != null) {
+                match.askOwnerIfPlayerCanJoin(msg.getSenderConnection().getPlayer());
+            }
         }
     }
     
