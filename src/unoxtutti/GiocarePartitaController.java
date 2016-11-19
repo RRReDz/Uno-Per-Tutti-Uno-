@@ -229,6 +229,52 @@ public class GiocarePartitaController {
      * @param matchName Nome della partita
      */
     public void richiediIngresso(String matchName) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (currentMatch != null) {
+            throw new IllegalStateException(
+                    "Impossibile creare una partita: il giocatore è già in una partita."
+            );
+        }
+        
+        synchronized (lock) {
+            matchInLimbo = RemoteMatch.sendAccessRequest(matchName);
+            if (matchInLimbo != null) {
+                try {
+                    /**
+                     * Si attende che gli altri thread mi avvisino che la
+                     * richiesta è terminata.
+                     */
+                    lock.wait();
+                } catch (InterruptedException ex) {
+                    matchInLimbo = null;
+                    DebugHelper.log("InterruptedException durante una richiesta di ingresso: " + ex.getMessage());
+                    Logger.getLogger(GiocarePartitaController.class.getName()).log(Level.SEVERE, null, ex);
+                } finally {
+                    /**
+                     * Se tutto è andato a buon fine, mi trovo in una stanza,
+                     * altrimenti currentMatch rimane null.
+                     */
+                    currentMatch = matchInLimbo;
+                    matchInLimbo = null;
+                    
+                    // TODO: Impostare i parametri restanti
+                }
+            }
+        }
+    }
+    
+    
+    /**
+     * La richiesta di accesso ad una partita è stata analizzata dal
+     * proprietario della stanza.
+     * @param accepted <code>true</code> se la richiesta è stata presa in carico
+     * e, magari, in un futuro si riceverà un'accettazione. <code>false</code>
+     * se la richiesta è stata scartata dal proprietario della stanza.
+     */
+    public void matchAccessRequestTakenCareOf(boolean accepted) {
+        synchronized (lock) {
+            
+            lock.notifyAll();
+        }
+        
     }
 }
