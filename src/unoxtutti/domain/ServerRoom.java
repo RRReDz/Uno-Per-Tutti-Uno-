@@ -492,8 +492,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
              */
             if(match != null && isReqOk) {
                 match.setStarted(true);
-                sender.addMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
-                sender.removeMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
+                playerStartedHisMatch(sender);
             }
 
             try {
@@ -617,6 +616,19 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         playerConnection.addMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_MSG);
+    }
+    
+    /**
+     * Il giocatore ha avviato la stanza, si aggiornano i listener.
+     * 
+     * Non ha più senso ricevere messaggi di avvio della partita,
+     * ma ora si possono ricevere messaggi di chiusura della partita
+     * @param playerConnection Connessione con il giocatore
+     */
+    private void playerStartedHisMatch(P2PConnection playerConnection) {
+        /* Da aggiungere altri listener */
+        playerConnection.addMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
+        playerConnection.removeMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
     }
     
     
