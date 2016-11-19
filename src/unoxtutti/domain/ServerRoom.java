@@ -175,12 +175,12 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         (new Thread(room)).start();
         return room;
     }
-
-    @Override
+    
     /**
      * L'esecuzione vera e propria del Server thread
      *
      */
+    @Override
     public void run() {
         if (closed) {
             return;
@@ -194,7 +194,6 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 synchronized (waitingClients) {
                     waitingClients.add(playerConnection);
                     playerConnection.addMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REQUEST_MSG);
-                    playerConnection.addMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
                 }
             }
             System.out.println("Server is closing down");
@@ -223,6 +222,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
 
     protected void addPlayer(P2PConnection conn) {
         this.connections.put(conn.getPlayer(), conn);
+        playerJoinedTheRoom(conn);
     }
 
     protected void removePlayer(P2PConnection conn) {
@@ -267,6 +267,10 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 DebugHelper.log("ROOM: ricevuta richiesta di creazione partita.");
                 handleMatchCreation(msg);
                 break;
+            case Match.MATCH_ACCESS_REQUEST_MSG:
+                DebugHelper.log("ROOM: ricevuta richiesta di accesso ad una partita.");
+                handleMatchAccessRequest(msg);
+                break;
             case Match.MATCH_STARTING_MSG:
                 DebugHelper.log("ROOM: ricevuta richiesta di avvio di una partita.");
                 handleMatchStart(msg);
@@ -290,11 +294,12 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             }
         }
         
-        if(reqOk)
+        if(reqOk) {
             DebugHelper.log("ROOM: OK, richiesta di ingesso corretta. Giocatore autorizzato.");
-        else
+        } else {
             DebugHelper.log("ROOM: ERR, richiesta di ingesso NON corretta. Cambiare nome della stanza e riprovare.");
-            
+        }
+           
         P2PConnection sender = msg.getSenderConnection();
         P2PMessage reply = new P2PMessage(Room.ROOM_ENTRANCE_REPLY_MSG);
         Object[] parameters = new Object[2]; // reply + players
@@ -307,17 +312,17 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 addPlayer(sender);
                 waitingClients.remove(sender);
                 parameters[1] = this.getPlayers();
-                sender.addMessageReceivedObserver(this, Room.ROOM_EXIT_MSG);
-                sender.removeMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REQUEST_MSG);
             }
+            
             /**
              * In ogni caso mando il messaggio di risposta
              * altrimenti il client rimane bloccato all'infinito sulla wait
              */
             try {
                 sender.sendMessage(reply);
-                if(reqOk)
+                if(reqOk) {
                     sendRoomUpdate();
+                }
             } catch (PartnerShutDownException ex) {
                 sender.disconnect();
                 removePlayer(sender);
@@ -395,9 +400,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             if(reqOk && matchOwner != null) {
                 /* Creazione della partia */
                 createMatch(matchOwner, matchName);
-                sender.addMessageReceivedObserver(this, Match.MATCH_DESTROY_MSG);
-                sender.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
-                //waitingClients.remove(sender);    ???
+                playerCreatedARoom(sender);
             }
             
             /* Invio risposta (sia in caso di successo che insuccesso) */
@@ -408,7 +411,6 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 sender.disconnect();
                 removePlayer(sender);
             }
-            //waitingClients.remove(sender); ???
         }
     }
     
@@ -491,6 +493,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
     }
 
     /**
+     * TODO: da eliminare da questa classe, non c'entra niente con la stanza
      * Manda un messaggio di aggiornamento a tutti i giocatori
      * presenti all'interno della partita passata come parametro.
      */
@@ -502,10 +505,90 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
          * inviare messaggi solo a loro
          * Ovviamente la lista non esiste ancora perchè non abbiamo
          * ancora sviluppato la parte di ingresso
+         * 
+         * Sbagliato mettere il metodo qui.
          */
         P2PMessage upd = new P2PMessage(Match.MATCH_UPDATE_MSG);
         /**
          * TODO: Inviare i messaggi a tali giocatori
          */
+    }
+    
+    /**
+     * Il giocatore desidera entrare in una partita.
+     * @param msg Messaggio di richiesta
+     */
+    private void handleMatchAccessRequest(P2PMessage msg) {
+        /* Controllo validità dati ricevuti */
+        ServerMatch match = null;
+        boolean reqOk = true;
+        if (msg.getParametersCount() != 1) {
+            reqOk = false;
+        } else {
+            try {
+                String matchName = (String) msg.getParameter(0);
+                if(!matches.containsKey(matchName)) {
+                    /* La partita non esiste */
+                    reqOk = false;
+                } else {
+                    /* La partita desiderata esiste */
+                    match = matches.get(matchName);
+                    // TODO: Controllare se la partita ha abbastanza spazio...
+                }
+            } catch (ClassCastException ex) {
+                reqOk = false;
+            }
+        }
+        
+        /* Costruzione messaggio di risposta */
+        P2PConnection sender = msg.getSenderConnection();
+        P2PMessage reply = new P2PMessage(Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+        Object[] parameters = new Object[1];
+        reply.setParameters(parameters);
+        parameters[0] = reqOk;
+        
+        /**
+         * Si avvisa il giocatore che la richiesta è stata presa in carico,
+         * oppure che è stata scartata.
+         */
+        synchronized(this) {
+            /* Invio risposta */
+            try {
+                sender.sendMessage(reply);
+            } catch (PartnerShutDownException ex) {
+                sender.disconnect();
+                removePlayer(sender);
+            }
+            
+            // TODO: Chiedere al proprietario della partita che cosa si vuole fare
+            //match.getOwner(); Ecc.
+        }
+    }
+    
+    /**
+     * Il giocatore è entrato nella stanza, si aggiornano i listener.
+     * 
+     * Il giocatore può ora creare ed accedere a partite. Può anche abbandonare
+     * la stanza.
+     * @param playerConnection 
+     */
+    private void playerJoinedTheRoom(P2PConnection playerConnection) {
+        playerConnection.addMessageReceivedObserver(this, Room.ROOM_EXIT_MSG);
+        playerConnection.addMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
+        playerConnection.addMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_MSG);
+        playerConnection.removeMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REQUEST_MSG);
+    }
+    
+    /**
+     * Il giocatore ha creato una stanza, si aggiornano i listener.
+     * 
+     * Non ha più senso ricevere messaggi di creazione/ingresso dal giocatore,
+     * ma ora si possono ricevere messaggi di avvio/distruzione della partita.
+     * @param playerConnection Connessione con il giocatore
+     */
+    private void playerCreatedARoom(P2PConnection playerConnection) {
+        playerConnection.addMessageReceivedObserver(this, Match.MATCH_DESTROY_MSG);
+        playerConnection.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
+        playerConnection.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_MSG);
     }
 }

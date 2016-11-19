@@ -5,6 +5,7 @@
 package unoxtutti.dialogue;
 
 import unoxtutti.connection.P2PMessage;
+import unoxtutti.domain.Match;
 import unoxtutti.domain.MatchAccessRequest;
 import unoxtutti.domain.dialogue.DialogueState;
 
@@ -22,7 +23,7 @@ public enum MatchAccessRequestDialogueState implements DialogueState<MatchAccess
         String msgName = msg.getName();
         switch (this) {
             case REQUESTED:
-                if(msgName.equals(MatchAccessRequest.MATCH_ACCESS_REQUEST_REPLY_MSG)) {
+                if(msgName.equals(Match.MATCH_ACCESS_REQUEST_REPLY_MSG)) {
                     boolean accepted = (Boolean) msg.getParameter(0);
                     if (accepted) {
                         return ADMITTED;

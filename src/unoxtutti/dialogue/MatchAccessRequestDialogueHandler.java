@@ -7,6 +7,7 @@ package unoxtutti.dialogue;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
+import unoxtutti.domain.Match;
 import unoxtutti.domain.MatchAccessRequest;
 import unoxtutti.domain.dialogue.BasicDialogueHandler;
 
@@ -41,8 +42,8 @@ public class MatchAccessRequestDialogueHandler extends BasicDialogueHandler<Matc
      */
     public boolean startDialogue(String matchName) {
         boolean ret = true;
-        connection.addMessageReceivedObserver(this, MatchAccessRequest.MATCH_ACCESS_REQUEST_REPLY_MSG);
-        P2PMessage msg = new P2PMessage(MatchAccessRequest.MATCH_ACCESS_REQUEST_MSG);
+        connection.addMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+        P2PMessage msg = new P2PMessage(Match.MATCH_ACCESS_REQUEST_MSG);
         Object[] pars = new Object[]{matchName};
         
         /**
@@ -67,6 +68,6 @@ public class MatchAccessRequestDialogueHandler extends BasicDialogueHandler<Matc
      * di non essere più tra gli ascoltatori dei messaggi in arrivo.
      */
     public void concludeDialogue() {
-        connection.removeMessageReceivedObserver(this, MatchAccessRequest.MATCH_ACCESS_REQUEST_REPLY_MSG);
+        connection.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
     }
 }

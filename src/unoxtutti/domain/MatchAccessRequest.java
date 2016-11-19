@@ -17,9 +17,6 @@ import unoxtutti.utils.DebugHelper;
  * @author Davide
  */
 public class MatchAccessRequest implements DialogueObserver {
-    public static final String MATCH_ACCESS_REQUEST_MSG = "matchAccessRequest";
-    public static final String MATCH_ACCESS_REQUEST_REPLY_MSG = "matchAccessRequestReply";
-    
     /**
      * Connessione con il proprietario della stanza in cui ci si trova.
      */
