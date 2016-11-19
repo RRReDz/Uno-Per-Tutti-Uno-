@@ -9,6 +9,8 @@ import java.util.List;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
+import java.util.logging.Logger;
+import java.util.logging.Level;
 
 /**
  * Rappresenta una partita lato server.
@@ -70,6 +72,24 @@ public class ServerMatch extends Match {
         return started;
     }
     
+    /**
+     * Metodo per notificare a tutti i giocatori in stanza l'inzio della partita.
+     */
+    void notifyMatchStart(P2PConnection sender) {
+        P2PMessage upd = new P2PMessage(Match.MATCH_STARTED_MSG);
+        /**
+         * TODO: Inviare i messaggi alla lista dei giocatori in partita.
+         * for (P2PConnection client : connections.values())
+         *     client.sendMessage(upd);
+         */
+        
+        /* Test di risposta all'owner */
+        try {
+            sender.sendMessage(upd);
+        } catch (PartnerShutDownException exc) {
+            Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, exc);
+        }
+    }
     
     /**
      * Controlla se un determinato giocatore potrebbe entrare nella partita.
@@ -115,4 +135,5 @@ public class ServerMatch extends Match {
         }
         return success;
     }
+    
 }
