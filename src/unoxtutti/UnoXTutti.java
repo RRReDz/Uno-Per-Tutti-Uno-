@@ -4,7 +4,6 @@
  */
 package unoxtutti;
 
-import javax.swing.JOptionPane;
 import unoxtutti.gui.AutenticarsiGUI;
 import unoxtutti.gui.UnoXTuttiGUI;
 import unoxtutti.utils.DebugHelper;

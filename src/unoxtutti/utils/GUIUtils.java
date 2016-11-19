@@ -15,7 +15,6 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import unoxtutti.gui.AutenticarsiGUI;
-import unoxtutti.gui.UnoXTuttiGUI;
 
 /**
  * Libreria di metodi utili per azioni sull'interfaccia grafica.

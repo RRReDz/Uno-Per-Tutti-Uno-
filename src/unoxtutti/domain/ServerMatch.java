@@ -6,13 +6,13 @@ package unoxtutti.domain;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import unoxtutti.connection.CommunicationException;
+import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
-import java.util.logging.Logger;
-import java.util.logging.Level;
-import unoxtutti.connection.CommunicationException;
-import unoxtutti.connection.MessageReceiver;
 
 /**
  * Rappresenta una partita lato server.
