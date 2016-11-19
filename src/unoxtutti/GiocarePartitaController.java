@@ -6,6 +6,8 @@ package unoxtutti;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import unoxtutti.connection.P2PConnection;
+import unoxtutti.domain.Match;
 import unoxtutti.domain.MatchAccessRequest;
 import unoxtutti.domain.RemoteMatch;
 import unoxtutti.domain.RemoteRoom;
@@ -132,6 +134,15 @@ public class GiocarePartitaController {
                      */
                     currentMatch = matchInLimbo;
                     matchInLimbo = null;
+                    
+                    /**
+                     * Se la partita è stata creata con successo, mi metto in
+                     * ascolto di messaggi di ingresso.
+                     */
+                    if(currentMatch != null) {
+                        P2PConnection conn = getCurrentRoom().getConnection();
+                        conn.addMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
+                    }
                 }
             }
         }
@@ -139,6 +150,7 @@ public class GiocarePartitaController {
 
     /**
      * Avvia la partita
+     * @return 
      */
     public boolean avviaPartita() {
         if (currentMatch == null) {
@@ -256,6 +268,13 @@ public class GiocarePartitaController {
                      */
                     lock.wait();
                     success = accessRequestInLimbo.isRequestAccepted();
+                    if(success) {
+                        /**
+                         * Se la richiesta è stata presa in carico, mi metto
+                         * in ascolto di notifiche di accettazione.
+                         */
+                        // TODO: Listener per accettazione
+                    }
                 } catch (InterruptedException ex) {
                     DebugHelper.log("InterruptedException durante una richiesta di ingresso: " + ex.getMessage());
                     Logger.getLogger(GiocarePartitaController.class.getName()).log(Level.SEVERE, null, ex);

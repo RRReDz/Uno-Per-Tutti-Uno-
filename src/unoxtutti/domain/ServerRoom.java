@@ -295,9 +295,9 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         }
         
         if(reqOk) {
-            DebugHelper.log("ROOM: OK, richiesta di ingesso corretta. Giocatore autorizzato.");
+            DebugHelper.log("ROOM: OK, richiesta di ingresso corretta. Giocatore autorizzato.");
         } else {
-            DebugHelper.log("ROOM: ERR, richiesta di ingesso NON corretta. Cambiare nome della stanza e riprovare.");
+            DebugHelper.log("ROOM: ERR, richiesta di ingresso NON corretta. Cambiare nome della stanza e riprovare.");
         }
            
         P2PConnection sender = msg.getSenderConnection();
@@ -428,6 +428,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         matches.put(
                 matchName,
                 new ServerMatch(
+                    this,
                     matchOwner,
                     matchName,
                     new Object() // TODO: Opzioni
@@ -533,7 +534,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 } else {
                     /* La partita desiderata esiste */
                     match = matches.get(matchName);
-                    reqOk = match.checkIfPlayerCanJoin(msg.getSenderConnection().getPlayer());
+                    reqOk = match.canPlayerJoin(msg.getSenderConnection().getPlayer());
                 }
             } catch (ClassCastException ex) {
                 reqOk = false;
@@ -543,29 +544,34 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         /* Costruzione messaggio di risposta */
         P2PConnection sender = msg.getSenderConnection();
         P2PMessage reply = new P2PMessage(Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
-        Object[] parameters = new Object[1];
-        reply.setParameters(parameters);
-        parameters[0] = reqOk;
-        
+                
         /**
          * Si avvisa il giocatore che la richiesta è stata presa in carico,
          * oppure che è stata scartata.
          */
         synchronized(this) {
-            /* Invio risposta */
-            try {
-                sender.sendMessage(reply);
-            } catch (PartnerShutDownException ex) {
-                sender.disconnect();
-                removePlayer(sender);
-            }
-            
             /**
              * Si chiede al proprietario della partita che cosa vuole fare
              * con la richiesta del giocatore.
              */
             if(reqOk && match != null) {
-                match.askOwnerIfPlayerCanJoin(msg.getSenderConnection().getPlayer());
+                reqOk = match.askOwnerIfPlayerCanJoin(msg.getSenderConnection().getPlayer());
+                
+                /**
+                 * A questo punto, se reqOk è true, il proprietario della partita
+                 * ha ricevuto la richiesta del giocatore.
+                 */
+            }
+            
+            /* Invio risposta */
+            try {
+                Object[] parameters = new Object[1];
+                parameters[0] = reqOk;
+                reply.setParameters(parameters);
+                sender.sendMessage(reply);
+            } catch (PartnerShutDownException ex) {
+                sender.disconnect();
+                removePlayer(sender);
             }
         }
     }
@@ -595,5 +601,15 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         playerConnection.addMessageReceivedObserver(this, Match.MATCH_DESTROY_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_MSG);
+    }
+    
+    
+    /**
+     * Ritorna la connessione con un giocatore presente nella stanza
+     * @param player Giocatore
+     * @return <code>P2PConnection</code> con il giocatore, oppure <code>null</code>
+     */
+    public P2PConnection getConnectionWithPlayer(Player player) {
+        return connections.get(player);
     }
 }

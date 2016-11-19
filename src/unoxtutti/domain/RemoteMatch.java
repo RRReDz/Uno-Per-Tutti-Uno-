@@ -34,7 +34,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     /**
      * Giocatore proprietario della partita
      */
-    private Player owner;
+    private final Player owner;
     
     /**
      * DialogueHandler per la creazione di partite.
@@ -109,18 +109,14 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     @Override
     public void updateMessageReceived(P2PMessage msg) {
+        /* Aggiornamento della stanza ricevuto da RoomServer*/
         if(msg.getName().equals(Match.MATCH_UPDATE_MSG)) {
             DebugHelper.log("Ricevuto aggiornamento della partita da parte di MatchServer.");
-            try {
-                /* Aggiornamento lista giocatori */
-                ArrayList<Player> players = (ArrayList<Player>) msg.getParameter(0);
-                playersList.removeAllElements();
-                players.forEach((p) -> {
-                    playersList.addElement(p);
-                });
-            } catch (ClassCastException ex) {
-                throw new CommunicationException("Wrong parameter type in message " + msg.getName());
-            }
+            handleUpdateMessage(msg);
+        /* Richiesta di accesso inoltrata dal RoomServer */
+        } else if(msg.getName().equals(Match.MATCH_ACCESS_REQUEST_MSG)) {
+            DebugHelper.log("Ricevuta richiesta di accesso da RoomServer.");
+            handleAccessRequestMessage(msg);
         }
     }
     
@@ -241,5 +237,39 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     public boolean isStarted() {
         return isStarted;
+    }
+    
+    /**
+     * Gestione di un messaggio di aggiornamento
+     * @param msg Messaggio di aggiornamento
+     */
+    private void handleUpdateMessage(P2PMessage msg) {
+        try {
+            /* Aggiornamento lista giocatori */
+            ArrayList<Player> players = (ArrayList<Player>) msg.getParameter(0);
+            playersList.removeAllElements();
+            players.forEach((p) -> {
+                playersList.addElement(p);
+            });
+        } catch (ClassCastException ex) {
+            throw new CommunicationException("Wrong parameter type in message " + msg.getName());
+        }
+    }
+
+    /**
+     * Gestione di una richiesta di accesso inoltrata dal RoomServer.
+     * @param msg Richiesta di accesso
+     */
+    private void handleAccessRequestMessage(P2PMessage msg) {
+        if(!owner.equals(UnoXTutti.theUxtController.getPlayer())) {
+            /**
+             * Non sono il proprietario, non dovrei neanche
+             * ricevere questa notifica
+             */
+            throw new IllegalStateException("Il giocatore non è il proprietario della partita.");
+        }
+        
+        DebugHelper.log("Devo decidere che cosa fare con il giocatore " + ((Player) msg.getParameter(0)).getName());
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
