@@ -4,7 +4,6 @@
  */
 package unoxtutti.domain;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -68,6 +67,7 @@ public class ServerMatch extends Match implements MessageReceiver {
     
     /**
      * Set del parametro relativo all'avvio della partita
+     * @param start
      */
     public void setStarted(boolean start) {
         started = start;

@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import unoxtutti.domain.Player;
-import unoxtutti.utils.DebugHelper;
 
 /**
  * Questa classe rappresenta una connessione "alla pari". Solo inizialmente
@@ -191,6 +190,7 @@ public class P2PConnection {
     /**
      * TODO
      *
+     * @param player
      * @param address
      * @param port
      * @return

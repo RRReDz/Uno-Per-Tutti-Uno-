@@ -4,7 +4,6 @@
  */
 package unoxtutti.domain;
 
-import java.util.ArrayList;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
