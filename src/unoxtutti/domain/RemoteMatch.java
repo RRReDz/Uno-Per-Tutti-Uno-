@@ -20,6 +20,7 @@ import unoxtutti.dialogue.MatchStartingDialogueState;
 import unoxtutti.domain.dialogue.DialogueHandler;
 import unoxtutti.domain.dialogue.DialogueObserver;
 import unoxtutti.utils.DebugHelper;
+import unoxtutti.utils.GUIUtils;
 
 /**
  * Rappresenta una partita dal punto di vista dei client.
@@ -114,8 +115,8 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 DebugHelper.log("Ricevuto aggiornamento dal server: TODO");
                 handleUpdateMessage(msg);
                 break;
-            case Match.MATCH_ACCESS_REQUEST_MSG:
-                DebugHelper.log("Ricevuta richiesta di accesso dal server.");
+            case Match.MATCH_ACCESS_REQUEST_MSG: // Richiesta di accesso inoltrata dal RoomServer
+                DebugHelper.log("Ricevuto inoltro richiesta di accesso dal server.");
                 handleAccessRequestMessage(msg);
                 break;
             case Match.MATCH_STARTED_MSG: //Questo sarà l'handler dell'avvio del match
@@ -276,8 +277,26 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             throw new IllegalStateException("Il giocatore non è il proprietario della partita.");
         }
         
-        DebugHelper.log("Devo decidere che cosa fare con il giocatore " + ((Player) msg.getParameter(0)).getName());
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            Player applicant = (Player) msg.getParameter(0);
+            DebugHelper.log("Devo decidere se accettare il giocatore " + applicant.getName());
+            int answer = GUIUtils.askYesOrNoQuestion(
+                    null,
+                    "Vuoi accettare il giocatore " + applicant.getName() + " nella partita?",
+                    "Richiesta di accesso"
+            );
+            /**
+             * answer = 0 -> giocatore accettato (click su "Sì", bottone più a sinistra)
+             * answer = 1 -> giocatore rifiutato (click su "No", bottone più a destra)
+             */
+            if(answer == 0) {
+                // TODO: Bravo!
+            } else {
+                // TODO: Fuck off
+            }
+        } catch (ClassCastException ex) {
+            throw new CommunicationException("Wrong parameter type in message " + msg.getName());
+        }
     }
 
     /**

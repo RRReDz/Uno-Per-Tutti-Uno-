@@ -7,18 +7,20 @@ package unoxtutti.domain;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import unoxtutti.connection.CommunicationException;
+import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
-import java.util.logging.Logger;
-import java.util.logging.Level;
 
 /**
  * Rappresenta una partita lato server.
  * 
  * @author Davide
  */
-public class ServerMatch extends Match {
+public class ServerMatch extends Match implements MessageReceiver {
     /**
      * Stanza di appartenenza
      */
@@ -109,7 +111,7 @@ public class ServerMatch extends Match {
      * @return <code>true</code> se tutto va bene, <code>false</code> altrimenti.
      */
     public boolean canPlayerJoin(Player player) {
-        return true;
+        return !(joinRequests.contains(player) || player.equals(owner));
     }
     
     
@@ -129,7 +131,6 @@ public class ServerMatch extends Match {
          * ha tempo da perdere, si comunica al giocatore la richiesta e poi
          * non si rimane in attesa di una risposta (dato che non è istantanea).
          */
-        joinRequests.add(player);
         
         /* Preparazione del messaggio */
         P2PMessage msg = new P2PMessage(Match.MATCH_ACCESS_REQUEST_MSG);
@@ -141,11 +142,52 @@ public class ServerMatch extends Match {
         boolean success = true;
         try {
             conn.sendMessage(msg);
+            joinRequests.add(player);
+            if(joinRequests.size() == 1) {
+                conn.addMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+            }
         } catch (PartnerShutDownException ex) {
             success = false;
             // TODO: Comunicare alla stanza che il proprietario della partita è morto
         }
         return success;
+    }
+    
+    
+    /**
+     * Listener per messaggi
+     * @param msg Messaggio
+     */
+    @Override
+    public void updateMessageReceived(P2PMessage msg) {
+        if(msg.getName().equals(Match.MATCH_ACCESS_REQUEST_REPLY_MSG)) {
+            handleMatchAccessAnswer(msg);
+        }
+    }
+    
+    
+    /**
+     * Il proprietario della partita ha comunicato il proprio giudizio su 
+     * un giocatore.
+     * @param msg Messaggio
+     */
+    private void handleMatchAccessAnswer(P2PMessage msg) {
+        try {
+            if(msg.getParametersCount() != 2) return;
+            Player applicant = (Player) msg.getParameter(0);
+            boolean accepted = (boolean) msg.getParameter(1);
+            
+            
+            
+            /* Richiesta gestita, pulizia */
+            joinRequests.remove(applicant);
+            if(joinRequests.isEmpty()) {
+                /* Non ci sono più richieste da gestire, si rimuove il listener */
+                msg.getSenderConnection().removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+            }
+        } catch (ClassCastException ex) {
+            throw new CommunicationException("Wrong parameter type in message " + msg.getName());
+        }
     }
     
 }
