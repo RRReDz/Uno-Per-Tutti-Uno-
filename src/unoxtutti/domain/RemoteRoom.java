@@ -55,7 +55,7 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
      * @return L'oggetto RemoteRoom corrispondente alla stanza richiesta
      * @throws ClientConnectionException Se la connessione non riesce
      */
-    public static RemoteRoom createRemoteRoom(Player player, String roomName, String roomAddr, int roomPort)
+    public static RemoteRoom createRemoteRoom(Player player, String roomName, String roomAddr, int roomPort) 
             throws ClientConnectionException {
         InetAddress inetaddr;
         try {
@@ -68,7 +68,7 @@ public class RemoteRoom extends Room implements MessageReceiver, DialogueObserve
             }
             return null;
         } catch (IOException ex) {
-            throw new ClientConnectionException("Address " + roomAddr + " is incorrect.");
+            throw new ClientConnectionException("Attenzione, l'indirizzo " + roomAddr + " NON è corretto.");
         }
     }
 

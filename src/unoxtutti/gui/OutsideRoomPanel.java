@@ -4,8 +4,11 @@
  */
 package unoxtutti.gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
+import unoxtutti.connection.ClientConnectionException;
 import unoxtutti.domain.ServerRoom;
 import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.GUIUtils;
@@ -222,7 +225,12 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
         } else {
             this.mainWindow.setWaiting(true);
             DebugHelper.log("Richiesta di accesso in stanza (" + roomName + ", " + roomAddr + ", " + roomPort);
-            UnoXTutti.theUxtController.entraInStanza(roomName, roomAddr, roomPort);
+            try {
+                UnoXTutti.theUxtController.entraInStanza(roomName, roomAddr, roomPort);
+            } catch (ClientConnectionException exc) {
+                DebugHelper.log("ERR: L'indirizzo " + roomAddr + " NON è corretto.");
+                GUIUtils.showErrorMessage(mainWindow, exc.getMessage());
+            }
             this.mainWindow.setWaiting(false);
             if (UnoXTutti.theUxtController.inStanza()) {
                 DebugHelper.log("OK: Avvio interfaccia gestione partita.");
