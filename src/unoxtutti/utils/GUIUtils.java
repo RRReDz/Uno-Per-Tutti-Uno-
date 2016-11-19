@@ -8,6 +8,7 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -92,5 +93,55 @@ public class GUIUtils {
         String exceptionMessage = e.getClass().getSimpleName() + ": " + e.getMessage();
         DebugHelper.appendToDebugConsoleTitle(exceptionMessage);
         GUIUtils.showErrorMessage(parentComponent, exceptionMessage);
+    }
+    
+    
+    /**
+     * Chiede all'utente una scelta tra due o più opzioni.
+     * @param parentComponent Componente padre
+     * @param question Testo della domanda
+     * @param title Titolo del Dialog
+     * @return Risposta dell'utente
+     */
+    public static int askYesOrNoQuestion(Component parentComponent, String question, String title) {
+        return askQuestion(
+                parentComponent,
+                question,
+                title,
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE, 
+                null,
+                null,
+                null
+        );
+    }
+    
+    
+    /**
+     * Pone all'utente una domanda
+     * @param parentComponent Componente padre
+     * @param question Testo della domanda
+     * @param title Titolo del dialog
+     * @param optionType Tipo di domanda (YES_NO, YES_NO_CANCEL, ecc.)
+     * @param messageType Tipo di messaggio
+     * @param icon Icona del Dialog
+     * @param options Possibili opzioni
+     * @param defaultAnswer Risposta predefinita
+     * @return Risposta dell'utente
+     */
+    public static int askQuestion(
+            Component parentComponent, String question, String title, int optionType, int messageType,
+            Icon icon, Object[] options, Object[] defaultAnswer
+    ) {
+        return JOptionPane.showOptionDialog(
+                parentComponent,
+                question,
+                title,
+                optionType,
+                messageType,
+                icon,
+                options,
+                defaultAnswer
+        );
     }
 }

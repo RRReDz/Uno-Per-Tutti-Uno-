@@ -97,6 +97,7 @@ public class ServerMatch extends Match {
      * @return <code>true</code> se tutto va bene, <code>false</code> altrimenti.
      */
     public boolean canPlayerJoin(Player player) {
+        // TODO: Giocatore != proprietario e Giocatore non presente tra giocatori e richieste
         return true;
     }
     

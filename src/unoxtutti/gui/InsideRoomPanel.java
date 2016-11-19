@@ -193,7 +193,6 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         try {
             this.mainWindow.setWaiting(true);
             GiocarePartitaController.getInstance().richiediIngresso(matchName);
-            
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         } finally {
