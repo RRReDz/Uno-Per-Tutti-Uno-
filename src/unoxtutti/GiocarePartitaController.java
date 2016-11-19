@@ -6,6 +6,7 @@ package unoxtutti;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import unoxtutti.domain.MatchAccessRequest;
 import unoxtutti.domain.RemoteMatch;
 import unoxtutti.domain.RemoteRoom;
 import unoxtutti.utils.DebugHelper;
@@ -39,6 +40,11 @@ public class GiocarePartitaController {
      * Utilizzata durante l'accesso e la creazione di una partita
      */
     private RemoteMatch matchInLimbo;
+    
+    /**
+     * Utilizzata durante l'invio di una richiesta di acecsso
+     */
+    private MatchAccessRequest accessRequestInLimbo;
 
     /**
      * Lock per richieste
@@ -53,6 +59,8 @@ public class GiocarePartitaController {
         lock = new Object();
         currentRoom = null;
         currentMatch = null;
+        matchInLimbo = null;
+        accessRequestInLimbo = null;
     }
 
     /**
@@ -227,54 +235,46 @@ public class GiocarePartitaController {
     /**
      * Richiede l'accesso ad una partita
      * @param matchName Nome della partita
+     * @return <code>true</code> se la richiesta è stata presa in carico
+     *          con successo, <code>false</code> altrimenti.
      */
-    public void richiediIngresso(String matchName) {
+    public boolean richiediIngresso(String matchName) {
         if (currentMatch != null) {
             throw new IllegalStateException(
                     "Impossibile creare una partita: il giocatore è già in una partita."
             );
         }
         
+        boolean success = false;
         synchronized (lock) {
-            matchInLimbo = RemoteMatch.sendAccessRequest(matchName);
-            if (matchInLimbo != null) {
+            accessRequestInLimbo = MatchAccessRequest.createAccessRequest(matchName);
+            if (accessRequestInLimbo != null) {
                 try {
                     /**
                      * Si attende che gli altri thread mi avvisino che la
                      * richiesta è terminata.
                      */
                     lock.wait();
+                    success = accessRequestInLimbo.isRequestAccepted();
                 } catch (InterruptedException ex) {
-                    matchInLimbo = null;
                     DebugHelper.log("InterruptedException durante una richiesta di ingresso: " + ex.getMessage());
                     Logger.getLogger(GiocarePartitaController.class.getName()).log(Level.SEVERE, null, ex);
                 } finally {
-                    /**
-                     * Se tutto è andato a buon fine, mi trovo in una stanza,
-                     * altrimenti currentMatch rimane null.
-                     */
-                    currentMatch = matchInLimbo;
-                    matchInLimbo = null;
-                    
-                    // TODO: Impostare i parametri restanti
+                    accessRequestInLimbo = null;
                 }
             }
         }
+        return success;
     }
     
     
     /**
      * La richiesta di accesso ad una partita è stata analizzata dal
      * proprietario della stanza.
-     * @param accepted <code>true</code> se la richiesta è stata presa in carico
-     * e, magari, in un futuro si riceverà un'accettazione. <code>false</code>
-     * se la richiesta è stata scartata dal proprietario della stanza.
      */
-    public void matchAccessRequestTakenCareOf(boolean accepted) {
+    public void matchAccessRequestTakenCareOf() {
         synchronized (lock) {
-            
             lock.notifyAll();
         }
-        
     }
 }

@@ -49,11 +49,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     private MatchStartingDialogueHandler startingHandler;
     
     /**
-     * DialogueHandler utilizzare per inviare richieste di accesso
-     */
-    private MatchAccessRequestDialogueHandler accessRequestHandler;
-    
-    /**
      * Lista di giocatori all'interno della partita.
      */
     private final DefaultListModel<Player> playersList;
@@ -77,19 +72,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         playersList = new DefaultListModel<>();
     }
     
-    /**
-     * Costruttore utilizzato quando si richiede l'accesso ad una partita.
-     * Mancano infatti alcune informazioni che dovranno essere aggiunte in
-     * futuro, ovvero all'ingresso della partita.
-     * @param connectionToRoomHost Connessione con il proprietario della stanza.
-     * @param matchName Nome della in cui si vuole entrare.
-     */
-    private RemoteMatch(P2PConnection connectionToRoomHost, String matchName) {
-        super(matchName);
-        conn = connectionToRoomHost;
-        owner = null;
-        playersList = new DefaultListModel<>();
-    }
     
     /**
      * Tenta di creare una partita all'interno della stanza indicata.
@@ -154,10 +136,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         if(source.equals(creationHandler)) {
             handleMatchCreationRequest(creationHandler);
         }
-        /* Handler per l'invio di una richiesta di accesso ad una partita a RoomHost */
-        else if(source.equals(accessRequestHandler)) {
-            handleMatchAccessRequest(accessRequestHandler);
-        }
         /* Handler dell'avvio della partita */
         else if(source.equals(startingHandler)) {
             handleMatchStartingRequest(startingHandler);
@@ -182,34 +160,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 DebugHelper.log("Risposta da RoomServer: ERR! Impossibile creare la partita.");
                 creationHandler.concludeDialogue();
                 GiocarePartitaController.getInstance().matchCreationFailed();
-                break;
-            default:
-        }
-    }
-    
-    /**
-     * Gestisce il cambiamento di stato dell'handler per l'invio di richieste
-     * di accesso in partite al RoomServer.
-     * @param source Handler della richiesta
-     */
-    private void handleMatchAccessRequest(MatchAccessRequestDialogueHandler source) {
-        MatchAccessRequestDialogueState state = source.getState();
-        
-        
-        switch(state) {
-            case ADMITTED:
-            case REJECTED:
-                /** 
-                 * Si dice al controller che la richiesta è stata presa in carico,
-                 * con successo o meno.
-                 */
-                boolean accepted = state == MatchAccessRequestDialogueState.ADMITTED;
-                if(accepted) {
-                    DebugHelper.log("Risposta da RoomServer: OK! Richiesta di accesso presa in carico.");
-                } else {
-                    DebugHelper.log("Risposta da RoomServer: ERR! Richiesta di accesso rifiutata.");
-                }
-                GiocarePartitaController.getInstance().matchAccessRequestTakenCareOf(accepted);
                 break;
             default:
         }
@@ -293,38 +243,5 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     public boolean isStarted() {
         return isStarted;
-    }
-    
-    
-    /**
-     * Richiedi al proprietario della stanza il permesso di entrare in una
-     * partita di cui il giocatore conosce solamente il nome.
-     * @param matchName Nome della partita
-     * @return <code>true</code> se il dialogo viene avviato con successo,
-     *          <code>false</code> altrimenti
-     */
-    public static RemoteMatch sendAccessRequest(String matchName) {
-        RemoteMatch m = new RemoteMatch(
-                GiocarePartitaController.getInstance().getCurrentRoom().getConnection(),
-                matchName
-        );
-        
-        boolean success = m.askPermission();
-        if(success) {
-            return m;
-        }
-        return null;
-    }
-    
-    
-    /**
-     * Avvia il dialogo per l'accesso alla partita.
-     * @return <code>true</code> in caso di successo,
-     *          <code>false</code> altrimenti
-     */
-    private boolean askPermission() {
-        accessRequestHandler = new MatchAccessRequestDialogueHandler(conn);
-        accessRequestHandler.addStateChangeObserver(this);
-        return accessRequestHandler.startDialogue(matchName);
     }
 }

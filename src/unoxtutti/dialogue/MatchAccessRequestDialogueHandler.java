@@ -8,6 +8,7 @@ import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
 import unoxtutti.domain.Match;
+import unoxtutti.domain.MatchAccessRequest;
 import unoxtutti.domain.dialogue.BasicDialogueHandler;
 
 /**
@@ -41,8 +42,8 @@ public class MatchAccessRequestDialogueHandler extends BasicDialogueHandler<Matc
      */
     public boolean startDialogue(String matchName) {
         boolean ret = true;
-        connection.addMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_MSG);
-        P2PMessage msg = new P2PMessage(Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+        connection.addMessageReceivedObserver(this, MatchAccessRequest.MATCH_ACCESS_REQUEST_REPLY_MSG);
+        P2PMessage msg = new P2PMessage(MatchAccessRequest.MATCH_ACCESS_REQUEST_MSG);
         Object[] pars = new Object[]{matchName};
         
         /**
@@ -65,12 +66,8 @@ public class MatchAccessRequestDialogueHandler extends BasicDialogueHandler<Matc
     /**
      * Dichiara il dialogo terminato deregistrandosi dalla connessione al fine
      * di non essere più tra gli ascoltatori dei messaggi in arrivo.
-     * 
-     * Nota: da richiamare solamente quando il giocatore entra in una partita,
-     * in caso contrario si potrebbero perdere messaggi di risposta provenienti
-     * da altre richieste.
      */
     public void concludeDialogue() {
-        connection.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REPLY_MSG);
+        connection.removeMessageReceivedObserver(this, MatchAccessRequest.MATCH_ACCESS_REQUEST_REPLY_MSG);
     }
 }

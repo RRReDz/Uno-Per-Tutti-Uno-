@@ -20,8 +20,6 @@ public abstract class Match {
     public static final String MATCH_STARTING_MSG = "matchStarting";
     public static final String MATCH_STARTING_REPLY_MSG = "matchStartingReply";
     public static final String MATCH_CLOSING_MSG = "matchClosing";
-    public static final String MATCH_ACCESS_REQUEST_MSG = "matchAccessRequest";
-    public static final String MATCH_ACCESS_REQUEST_REPLY_MSG = "matchAccessRequestReply";
     
     /**
      * Nome della partita
@@ -41,15 +39,6 @@ public abstract class Match {
     protected Match(String name, Object options) {
         this.matchName = name;
         this.options = options;
-    }
-    
-    
-    /**
-     * Costruttore utilizzato durante l'accesso
-     * @param name Nome della partita 
-     */
-    protected Match(String name) {
-        this.matchName = name;
     }
     
     /**
