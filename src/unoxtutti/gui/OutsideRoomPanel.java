@@ -229,12 +229,13 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
                 UnoXTutti.theUxtController.entraInStanza(roomName, roomAddr, roomPort);
             } catch (ClientConnectionException exc) {
                 DebugHelper.log("ERR: L'indirizzo " + roomAddr + " NON è corretto.");
-                GUIUtils.showErrorMessage(mainWindow, exc.getMessage());
             }
             this.mainWindow.setWaiting(false);
             if (UnoXTutti.theUxtController.inStanza()) {
                 DebugHelper.log("OK: Avvio interfaccia gestione partita.");
                 this.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
+            } else {
+                GUIUtils.ShowErrorMessage(mainWindow, "Errore durante l'accesso alla stanza, dati errati.");
             }
         }
     }//GEN-LAST:event_entraButtonActionPerformed

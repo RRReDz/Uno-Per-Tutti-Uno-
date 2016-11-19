@@ -145,7 +145,6 @@ public class GiocareAUnoXTuttiController {
      * @param roomName Il nome della stanza in cui entrare
      * @param roomAddr L'indirizzo della stanza in cui entrare
      * @param roomPort La porta della stanza in cui entrare
-     * @throws java.lang.Exception
      */
     public void entraInStanza(String roomName, String roomAddr, int roomPort) throws ClientConnectionException {
         synchronized (entranceWaiting) {
