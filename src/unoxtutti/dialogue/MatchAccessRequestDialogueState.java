@@ -5,7 +5,6 @@
 package unoxtutti.dialogue;
 
 import unoxtutti.connection.P2PMessage;
-import unoxtutti.domain.Match;
 import unoxtutti.domain.MatchAccessRequest;
 import unoxtutti.domain.dialogue.DialogueState;
 

@@ -4,8 +4,6 @@
  */
 package unoxtutti.gui;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.connection.ClientConnectionException;

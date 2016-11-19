@@ -4,8 +4,6 @@
  */
 package unoxtutti.domain;
 
-import unoxtutti.dialogue.RoomEntranceDialogueHandler;
-import unoxtutti.dialogue.RoomEntranceDialogueState;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.util.ArrayList;
@@ -18,6 +16,8 @@ import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
+import unoxtutti.dialogue.RoomEntranceDialogueHandler;
+import unoxtutti.dialogue.RoomEntranceDialogueState;
 import unoxtutti.domain.dialogue.DialogueHandler;
 import unoxtutti.domain.dialogue.DialogueObserver;
 import unoxtutti.utils.DebugHelper;

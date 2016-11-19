@@ -5,9 +5,6 @@
 package unoxtutti.domain;
 
 import java.util.ArrayList;
-import unoxtutti.dialogue.MatchCreationDialogueState;
-import unoxtutti.dialogue.MatchCreationDialogueHandler;
-import unoxtutti.dialogue.MatchStartingDialogueHandler;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
@@ -16,8 +13,9 @@ import unoxtutti.connection.CommunicationException;
 import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
-import unoxtutti.dialogue.MatchAccessRequestDialogueHandler;
-import unoxtutti.dialogue.MatchAccessRequestDialogueState;
+import unoxtutti.dialogue.MatchCreationDialogueHandler;
+import unoxtutti.dialogue.MatchCreationDialogueState;
+import unoxtutti.dialogue.MatchStartingDialogueHandler;
 import unoxtutti.dialogue.MatchStartingDialogueState;
 import unoxtutti.domain.dialogue.DialogueHandler;
 import unoxtutti.domain.dialogue.DialogueObserver;

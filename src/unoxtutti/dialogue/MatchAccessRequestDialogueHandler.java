@@ -7,7 +7,6 @@ package unoxtutti.dialogue;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
-import unoxtutti.domain.Match;
 import unoxtutti.domain.MatchAccessRequest;
 import unoxtutti.domain.dialogue.BasicDialogueHandler;
 
