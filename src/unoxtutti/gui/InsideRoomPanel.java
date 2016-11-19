@@ -192,7 +192,20 @@ public class InsideRoomPanel extends MainWindowSubPanel {
         DebugHelper.log("Invio richiesta per ingresso in " + matchName);
         try {
             this.mainWindow.setWaiting(true);
-            GiocarePartitaController.getInstance().richiediIngresso(matchName);
+            boolean result = GiocarePartitaController.getInstance().richiediIngresso(matchName);
+            if(!result) {
+                /* Richiesta fallita */
+                GUIUtils.showErrorMessage(
+                        mainWindow,
+                        "Richiesta di accesso scartata.\n\nÈ possibile che la partita sia al completo "
+                        + "oppure che il\nproprietario debba ancora rispondere ad una tua richiesta."
+                );
+            } else {
+                GUIUtils.showInformationMessage(
+                        mainWindow,
+                        "La richiesta è stata presa in carico con successo!"
+                );
+            }
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         } finally {

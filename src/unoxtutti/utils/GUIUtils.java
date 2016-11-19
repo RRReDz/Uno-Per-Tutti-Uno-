@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import unoxtutti.gui.AutenticarsiGUI;
+import unoxtutti.gui.UnoXTuttiGUI;
 
 /**
  * Libreria di metodi utili per azioni sull'interfaccia grafica.
@@ -65,12 +66,7 @@ public class GUIUtils {
      * @param title Titolo del messaggio
      */
     public static void showErrorMessage(Component parentComponent, String errorMessage, String title) {
-        JOptionPane.showMessageDialog(
-                parentComponent,
-                errorMessage,
-                title,
-                JOptionPane.ERROR_MESSAGE
-        );
+        showMessageDialog(parentComponent, errorMessage, title, JOptionPane.ERROR_MESSAGE, null);
     }
     
     
@@ -143,5 +139,30 @@ public class GUIUtils {
                 options,
                 defaultAnswer
         );
+    }
+    
+    
+    /**
+     * Mostra un dialogo con un messaggio
+     * @param parentComponent Componente in cui centrare il dialog
+     * @param message Messaggio da visualizzare
+     * @param title Titolo del dialog
+     * @param messageType Tipo di messaggio
+     * @param icon Icona
+     */
+    public static void showMessageDialog(
+            Component parentComponent, String message, String title, int messageType, Icon icon
+    ) {
+        JOptionPane.showMessageDialog(parentComponent, message, title, messageType, icon);
+    }
+
+    
+    /**
+     * Mostra un dialogo per comunicare all'utente una bella notizia!
+     * @param parentComponent Componente in cui centrare il dialog
+     * @param message Messaggio da visualizzare
+     */
+    public static void showInformationMessage(Component parentComponent, String message) {
+        showMessageDialog(parentComponent, message, "Messaggio", JOptionPane.INFORMATION_MESSAGE, null);
     }
 }
