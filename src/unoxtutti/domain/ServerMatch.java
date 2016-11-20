@@ -208,8 +208,10 @@ public class ServerMatch extends Match implements MessageReceiver {
                 }
                 
                 if(accepted && !room.playerIsInAMatch(applicant)) {
-                    addPlayer(applicant);
-                    room.tellPlayerToJoinMatch(applicant);
+                    if(tellPlayerToJoin(applicant)) {
+                        addPlayer(applicant);
+                    }
+                    room.deleteAccessRequests(applicant);
                 }
                 
                 /* Richiesta gestita, pulizia */
@@ -307,5 +309,35 @@ public class ServerMatch extends Match implements MessageReceiver {
      */
     void removePlayerAccessRequest(Player player) {
         joinRequests.remove(player);
+        if(joinRequests.isEmpty()) {
+            /* Inutile ascoltare messaggi se non ci sono richieste valide */
+            room.getConnectionWithPlayer(owner)
+                    .removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+        }
+    }
+
+    /**
+     * Informa il giocatore richiedente che la sua richiesta di accesso
+     * ad una partita è stata accettata.
+     * 
+     * Il metodo sposta dunque il giocatoe all'interno della partita.
+     * @param player Giocatore
+     * @return <code>true</code> se il messaggio viene inviato con successo,
+     *          <code>false</code> altrimenti.
+     */
+    private boolean tellPlayerToJoin(Player player) {
+        P2PConnection conn = room.getConnectionWithPlayer(player);
+        P2PMessage message = new P2PMessage(Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG);
+        message.setParameters(new Object[] { matchName, owner });
+        // TODO: passare opzioni
+        try {
+            conn.sendMessage(message);
+            return true;
+        } catch (PartnerShutDownException ex) {
+            conn.disconnect();
+            room.removePlayer(conn);
+            Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 }

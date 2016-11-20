@@ -16,6 +16,7 @@ public abstract class Match {
     /* Richieste di accesso alla partita */
     public static final String MATCH_ACCESS_REQUEST_MSG = "matchAccessRequest";
     public static final String MATCH_ACCESS_REQUEST_REPLY_MSG = "matchAccessRequestReply";
+    public static final String MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG = "matchAccessSuccessNotification";
     
     /*  Aggiornamento della lista dei giocatori */
     public static final String MATCH_UPDATE_MSG = "matchUpdate";

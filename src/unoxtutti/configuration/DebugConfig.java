@@ -17,5 +17,5 @@ public class DebugConfig {
     /**
      * Variabile per indicare se visualizzare o meno le schermate di debug
      */
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
 }

@@ -663,15 +663,10 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
     
     
     /**
-     * Informa il giocatore richiedente che la sua richiesta di accesso
-     * ad una partita è stata accettata.
-     * 
-     * Il metodo sposta dunque il giocatoe all'interno della partita.
+     * Elimina tutte le richieste di accesso di un giocatore.
      * @param player Giocatore
      */
-    void tellPlayerToJoinMatch(Player player) {
-        
-        
+    void deleteAccessRequests(Player player) {
         /* Si eliminano tutte le richieste del giocatore */
         synchronized(this) {
             matches.values().forEach((m) -> {

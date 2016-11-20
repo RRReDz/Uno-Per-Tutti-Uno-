@@ -73,6 +73,21 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     
     
     /**
+     * Costruttore richiamato quando si accede ad una partita già esistente.
+     * @param connectionToRoomHost Connessione con il gestore della partita.
+     * @param matchOwner Proprietario della partita
+     * @param matchName Nome della partita
+     * @param options Opzioni
+     */
+    public RemoteMatch(P2PConnection connectionToRoomHost, Player matchOwner, String matchName, Object options) {
+        super(matchName, options);
+        conn = connectionToRoomHost;
+        owner = matchOwner;
+        playersList = new DefaultListModel<>();
+    }
+    
+    
+    /**
      * Tenta di creare una partita all'interno della stanza indicata.
      * @param matchName Nome della partita
      * @param options Opzioni di creazione della partita

@@ -6,11 +6,16 @@ package unoxtutti;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import unoxtutti.connection.CommunicationException;
+import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
+import unoxtutti.connection.P2PMessage;
 import unoxtutti.domain.Match;
 import unoxtutti.domain.MatchAccessRequest;
+import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
 import unoxtutti.domain.RemoteRoom;
+import unoxtutti.gui.UnoXTuttiGUI;
 import unoxtutti.utils.DebugHelper;
 
 /**
@@ -18,8 +23,7 @@ import unoxtutti.utils.DebugHelper;
  *
  * @author Riccardo Rossi
  */
-public class GiocarePartitaController {
-
+public class GiocarePartitaController implements MessageReceiver {
     /**
      * Istanza del controller
      */
@@ -273,7 +277,8 @@ public class GiocarePartitaController {
                          * Se la richiesta è stata presa in carico, mi metto
                          * in ascolto di notifiche di accettazione.
                          */
-                        // TODO: Listener per accettazione
+                        currentRoom.getConnection()
+                                .addMessageReceivedObserver(this, Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG);
                     }
                 } catch (InterruptedException ex) {
                     DebugHelper.log("InterruptedException durante una richiesta di ingresso: " + ex.getMessage());
@@ -294,6 +299,34 @@ public class GiocarePartitaController {
     public void matchAccessRequestTakenCareOf() {
         synchronized (lock) {
             lock.notifyAll();
+        }
+    }
+
+    
+    /**
+     * Receiver dei messaggi
+     * @param msg Messaggio
+     */
+    @Override
+    public void updateMessageReceived(P2PMessage msg) {
+        if(msg.getName().equals(Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG)) {
+            synchronized(lock) {
+                /**
+                 * Il giocatore è stato accettato in una partita.
+                 */
+                try {
+                    String matchName = (String) msg.getParameter(0);
+                    Player owner = (Player) msg.getParameter(1);
+                    // TODO: ricevere regole della partita
+                    
+                    currentMatch = new RemoteMatch(msg.getSenderConnection(), owner, matchName, new Object());
+                    msg.getSenderConnection().removeMessageReceivedObserver(this, Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG);
+                    // TODO: esportare metodo?
+                    UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
+                } catch(ClassCastException ex) {
+                    throw new CommunicationException("Wrong parameter type in message " + msg.getName());
+                }
+            }
         }
     }
 }
