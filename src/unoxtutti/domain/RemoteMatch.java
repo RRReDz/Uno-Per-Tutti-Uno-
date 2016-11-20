@@ -4,6 +4,7 @@
  */
 package unoxtutti.domain;
 
+import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
@@ -95,12 +96,13 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * fallimento.
      */
     public static RemoteMatch createRemoteMatch(String matchName, Object options) {
+        P2PConnection conn = GiocarePartitaController.getInstance().getCurrentRoom().getConnection();
         RemoteMatch m = new RemoteMatch(
-                GiocarePartitaController.getInstance().getCurrentRoom().getConnection(),
+                conn,
                 matchName,
                 options
         );
-
+        
         boolean success = m.create();
         if(success) {
             return m;
@@ -176,7 +178,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             case REJECTED:
                 DebugHelper.log("Risposta da RoomServer: ERR! Impossibile creare la partita.");
                 creationHandler.concludeDialogue();
-                GiocarePartitaController.getInstance().matchCreationFailed();
+                GiocarePartitaController.getInstance().matchCreationFailed(this);
                 break;
             default:
         }
@@ -267,16 +269,16 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * @param msg Messaggio di aggiornamento
      */
     private void handleUpdateMessage(P2PMessage msg) {
-        /*try {
-            // Aggiornamento lista giocatori
-            ArrayList<Player> players = (ArrayList<Player>) msg.getParameter(0);
+        try {
+            /* Aggiornamento lista giocatori */
+            List<Player> players = (List<Player>) msg.getParameter(0);
             playersList.removeAllElements();
             players.forEach((p) -> {
                 playersList.addElement(p);
             });
         } catch (ClassCastException ex) {
             throw new CommunicationException("Wrong parameter type in message " + msg.getName());
-        }*/
+        }
     }
 
     /**

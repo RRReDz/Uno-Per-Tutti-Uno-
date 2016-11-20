@@ -6,6 +6,8 @@ package unoxtutti.utils;
 
 import java.awt.EventQueue;
 import java.util.Timer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import unoxtutti.configuration.DebugConfig;
 import unoxtutti.gui.DebugGUI;
 
@@ -68,11 +70,14 @@ public class DebugHelper {
     
     /**
      * Scrive un messaggio nel frame di debug
-     * @param msg 
+     * @param msg Messaggio
      */
     synchronized public static void log(String msg) {
         if(debugFrame != null) {
             debugFrame.appendMessageToConsole(msg);
+        } else {
+            System.out.println(msg);
+            //Logger.getLogger(DebugHelper.class.getName()).log(Level.INFO, null, msg);
         }
     }
     

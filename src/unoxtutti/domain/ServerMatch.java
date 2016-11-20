@@ -59,6 +59,7 @@ public class ServerMatch extends Match implements MessageReceiver {
         this.started = false;
         this.players = new ArrayList<>();
         this.joinRequests = new ArrayList<>();
+        players.add(owner);
     }
     
     
@@ -175,6 +176,7 @@ public class ServerMatch extends Match implements MessageReceiver {
      */
     @Override
     public void updateMessageReceived(P2PMessage msg) {
+        /* Messaggio di risposta del proprietario ad una richiesta di accesso */
         if(msg.getName().equals(Match.MATCH_ACCESS_REQUEST_REPLY_MSG)) {
             handleMatchAccessAnswer(msg);
         }

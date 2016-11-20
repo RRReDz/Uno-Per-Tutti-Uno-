@@ -144,8 +144,7 @@ public class GiocarePartitaController implements MessageReceiver {
                      * ascolto di messaggi di ingresso.
                      */
                     if(currentMatch != null) {
-                        P2PConnection conn = getCurrentRoom().getConnection();
-                        conn.addMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
+                        playerCreatedARoom();
                     }
                 }
             }
@@ -207,11 +206,11 @@ public class GiocarePartitaController implements MessageReceiver {
      * proprietario della stanza, alla richiesta di creazione di una partita.
      * Sveglia il thread che era stato messo in attesa durante "creaPartita".
      *
-     * @param room La partita creata.
+     * @param match La partita creata.
      */
-    public void matchCreationCompleted(RemoteMatch room) {
+    public void matchCreationCompleted(RemoteMatch match) {
         synchronized (lock) {
-            matchInLimbo = room;
+            matchInLimbo = match;
             lock.notifyAll();
         }
     }
@@ -221,9 +220,16 @@ public class GiocarePartitaController implements MessageReceiver {
      * proprietario della stanza, alla richiesta di creazione di una partita.
      *
      * Sveglia il thread che era stato messo in attesa durante "creaPartita".
+     * 
+     * @param match La partita creata.
      */
-    public void matchCreationFailed() {
+    public void matchCreationFailed(RemoteMatch match) {
         synchronized (lock) {
+            /**
+             * Dato che la creazione è fallita, 
+             * si rimuove il listener per aggiornamenti
+             */
+            currentRoom.getConnection().removeMessageReceivedObserver(match, Match.MATCH_UPDATE_MSG);
             matchInLimbo = null;
             lock.notifyAll();
         }
@@ -320,13 +326,34 @@ public class GiocarePartitaController implements MessageReceiver {
                     // TODO: ricevere regole della partita
                     
                     currentMatch = new RemoteMatch(msg.getSenderConnection(), owner, matchName, new Object());
-                    msg.getSenderConnection().removeMessageReceivedObserver(this, Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG);
-                    // TODO: esportare metodo?
-                    UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
+                    playerJoinedARoom();
                 } catch(ClassCastException ex) {
                     throw new CommunicationException("Wrong parameter type in message " + msg.getName());
                 }
             }
         }
+    }
+
+    
+    /**
+     * Richiamato quando il giocatore entra in una stanza,
+     * aggiorna l'interfaccia ed i listener.
+     */
+    private void playerJoinedARoom() {
+        P2PConnection c = currentRoom.getConnection();
+        c.addMessageReceivedObserver(currentMatch, Match.MATCH_UPDATE_MSG);
+        c.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG);
+        // TODO: Esportaremetodo?
+        UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
+    }
+    
+    
+    /**
+     * Richiamato quando il giocatore crea una stanza, aggiorna
+     * i listener.
+     */
+    private void playerCreatedARoom() {
+        P2PConnection conn = currentRoom.getConnection();
+        conn.addMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
     }
 }
