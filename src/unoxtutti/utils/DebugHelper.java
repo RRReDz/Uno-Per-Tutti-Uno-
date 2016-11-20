@@ -6,8 +6,6 @@ package unoxtutti.utils;
 
 import java.awt.EventQueue;
 import java.util.Timer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import unoxtutti.configuration.DebugConfig;
 import unoxtutti.gui.DebugGUI;
 
