@@ -6,6 +6,7 @@ package unoxtutti.domain;
 
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
@@ -332,6 +333,10 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * @param msg 
      */
     private void handleMatchStartedMessage(P2PMessage msg) {
-        
+        /**
+         * TODO notificare l'interfaccia grafica dell'avvenuto inizio della partita.
+         * La quale dovrà avviare la partita vera e propria.
+         */
+        GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "Hey, la tua partita sta iniziando!");
     }
 }

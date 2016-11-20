@@ -114,21 +114,25 @@ public class InsideMatchPanel extends MainWindowSubPanel{
             GUIUtils.showErrorMessage(mainWindow, "Nella partita non ci sono abbastanza giocatori!");
         } else {
             /* Tentativo di avvio della partita */
+            boolean errorAlreadyShown = false;
+            boolean isMatchStarted = false;
             this.mainWindow.setWaiting(true);
-            boolean isMatchStarted = GiocarePartitaController.getInstance().avviaPartita();
-            this.mainWindow.setWaiting(false);
+            try {
+                isMatchStarted = GiocarePartitaController.getInstance().avviaPartita();
+            } catch (Exception exc) {
+                GUIUtils.showErrorMessage(mainWindow, exc.getMessage());
+                errorAlreadyShown = true;
+            }
+            finally {
+                this.mainWindow.setWaiting(false);
+            }
             
             if(isMatchStarted) {
                 /* DEBUG */
-                JOptionPane.showMessageDialog(
-                    mainWindow,
-                    "OK! Partita avviata!",
-                    "Partita avviata",
-                    JOptionPane.ERROR_MESSAGE
-                );
+                GUIUtils.showInformationMessage(mainWindow, "OK! Partita avviata!");
                 /* Avvio della partita... fine iterazione 4 */
-            } else {
-                GUIUtils.showErrorMessage(mainWindow, "La partita NON è stata avviata!");
+            } else if(!errorAlreadyShown) {
+                GUIUtils.showErrorMessage(mainWindow, "Errore: Non è stato possibile avviare la partita!");
             }
         }
     }//GEN-LAST:event_startMatchButtonActionPerformed

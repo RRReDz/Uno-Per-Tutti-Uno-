@@ -155,12 +155,16 @@ public class GiocarePartitaController implements MessageReceiver {
      * Avvia la partita
      * @return 
      */
-    public boolean avviaPartita() {
-        if (currentMatch == null) {
-            throw new IllegalStateException("Errore: Non esiste alcuna partita associata.");
-        }
-
+    public boolean avviaPartita() throws Exception {
         synchronized (lock) {
+            if (currentMatch == null) {
+                throw new Exception("Errore: Non esiste alcuna partita associata.");
+            }
+            /* Se la partita è già stata avviata */
+            if(currentMatch.isStarted()) {
+                throw new Exception("Errore: Questa partita è già stata avviata.");
+            }
+        
             /**
              * Nel caso la richiesta non abbia avuto successo (lato client) non
              * ha senso attendere una risposta dal server
@@ -172,13 +176,12 @@ public class GiocarePartitaController implements MessageReceiver {
                     lock.wait();
                 } catch (InterruptedException ex) {
                     DebugHelper.log("InterruptedException durante l'avvio della partita: " + ex.getMessage());
-                    Logger.getLogger(GiocarePartitaController.class.getName()).log(Level.SEVERE, null, ex);
-                    return false;
+                    return currentMatch.isStarted();
                 }
             }
+            
+            return currentMatch.isStarted();
         }
-        
-        return currentMatch.isStarted();
     }
 
     /**
@@ -342,8 +345,10 @@ public class GiocarePartitaController implements MessageReceiver {
     private void playerJoinedARoom() {
         P2PConnection c = currentRoom.getConnection();
         c.addMessageReceivedObserver(currentMatch, Match.MATCH_UPDATE_MSG);
+        /* Listener per l'inizio della partita */
+        c.addMessageReceivedObserver(currentMatch, Match.MATCH_STARTED_MSG);
         c.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG);
-        // TODO: Esportaremetodo?
+        // TODO: Esportare metodo?
         UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
     }
     

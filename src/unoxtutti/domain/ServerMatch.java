@@ -13,6 +13,7 @@ import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
+import unoxtutti.utils.DebugHelper;
 
 /**
  * Rappresenta una partita lato server.
@@ -105,18 +106,51 @@ public class ServerMatch extends Match implements MessageReceiver {
          * Qui ci andrà un messaggio di tipo Match.MATCH_STARTED_MSG
          * Ricordarsi anche di registrare l'observer quando si accede alla partita
          */
-        P2PMessage upd = new P2PMessage(Match.MATCH_UPDATE_MSG);
+        P2PMessage matchStartedMsg = new P2PMessage(Match.MATCH_STARTED_MSG);
+        List<P2PConnection> lostConnections = new ArrayList<>(players.size());
+        
+        
+        
         /**
          * TODO: Inviare i messaggi alla lista dei giocatori in partita.
          * for (P2PConnection client : connections.values())
          *     client.sendMessage(upd);
          */
         
-        /* Test di risposta all'owner */
-        try {
-            sender.sendMessage(upd);
-        } catch (PartnerShutDownException exc) {
-            Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, exc);
+        synchronized(room) {
+            for(Player p : players) {
+                P2PConnection playerConnection = room.getConnectionWithPlayer(p);
+                try {
+                    /* Invio la risposta ad ogni utente */
+                    playerConnection.sendMessage(matchStartedMsg);
+                } catch (PartnerShutDownException ex) {
+                    Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+                    DebugHelper.log("ERR: Il giocatore '" + playerConnection.getPlayer() + "' non è disponibile.");
+                    lostConnections.add(playerConnection);
+                }
+            }
+            
+            /* Chiusura connessioni morte */
+            lostConnections.stream().map((c) -> {
+                c.disconnect();
+                return c;
+            }).forEachOrdered((c) -> {
+                room.removePlayer(c);
+            });
+            
+            /* Rimozione giocatori disconnessi e, in tal caso, ri-aggiornamento */
+            lostConnections.forEach((c) -> {
+                players.remove(c.getPlayer());
+            });
+            
+            /* Se ho trovato dei giocatori non più disponibili,
+             * mando un aggiornamento dei giocatori alla stanza ed alla partita
+             */
+            if(lostConnections.size() > 0) {
+                sendMatchUpdate();
+                room.sendRoomUpdate();
+            }
+            
         }
     }
     
