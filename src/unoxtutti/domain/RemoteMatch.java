@@ -12,6 +12,7 @@ import unoxtutti.connection.CommunicationException;
 import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
+import unoxtutti.connection.PartnerShutDownException;
 import unoxtutti.dialogue.MatchCreationDialogueHandler;
 import unoxtutti.dialogue.MatchCreationDialogueState;
 import unoxtutti.dialogue.MatchStartingDialogueHandler;
@@ -280,7 +281,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             Player applicant = (Player) msg.getParameter(0);
             DebugHelper.log("Devo decidere se accettare il giocatore " + applicant.getName());
             int answer = GUIUtils.askYesOrNoQuestion(
-                    null,
+                    UnoXTutti.mainWindow,
                     "Vuoi accettare il giocatore " + applicant.getName() + " nella partita?",
                     "Richiesta di accesso"
             );
@@ -288,10 +289,21 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
              * answer = 0 -> giocatore accettato (click su "Sì", bottone più a sinistra)
              * answer = 1 -> giocatore rifiutato (click su "No", bottone più a destra)
              */
-            if(answer == 0) {
-                // TODO: Bravo!
-            } else {
-                // TODO: Fuck off
+            Boolean playerAccepted = answer == 0;
+            
+            /* Si comunicano al server le intenzioni del giocatore */
+            try {
+                P2PMessage response = new P2PMessage(Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+                Object[] pars = new Object[]{ applicant, playerAccepted };
+                response.setParameters(pars);
+                conn.sendMessage(response);
+            } catch (PartnerShutDownException ex) {
+                GUIUtils.showErrorMessage(
+                        UnoXTutti.mainWindow,
+                        "Non è possibile connettersi con il proprietario della stanza.\n"
+                            + "L'applicazione verrà chiusa."
+                );
+                System.exit(1);
             }
         } catch (ClassCastException ex) {
             throw new CommunicationException("Wrong parameter type in message " + msg.getName());

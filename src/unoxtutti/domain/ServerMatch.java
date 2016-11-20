@@ -4,7 +4,7 @@
  */
 package unoxtutti.domain;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,14 +31,19 @@ public class ServerMatch extends Match implements MessageReceiver {
     protected final Player owner;
     
     /**
-     * Indica se la partita è stata avviata
+     * Giocatori della partita
      */
-    protected boolean started;
+    protected final List<Player> players;
     
     /**
      * Lista dei giocatori che hanno richiesto l'accesso alla partita.
      */
     protected final List<Player> joinRequests;
+    
+    /**
+     * Indica se la partita è stata avviata
+     */
+    protected boolean started;
     
     /**
      * Inizializza una partita
@@ -52,7 +57,8 @@ public class ServerMatch extends Match implements MessageReceiver {
         this.room = parentRoom;
         this.owner = owner;
         this.started = false;
-        this.joinRequests = new LinkedList<>();
+        this.players = new ArrayList<>();
+        this.joinRequests = new ArrayList<>();
     }
     
     
@@ -80,6 +86,14 @@ public class ServerMatch extends Match implements MessageReceiver {
      */
     public boolean isStarted() {
         return started;
+    }
+    
+    /**
+     * Ritorna i giocatori della partita
+     * @return Lista dei giocatori presenti nella partita
+     */
+    public List<Player> getPlayers() {
+        return new ArrayList<>(players);
     }
     
     /**
@@ -111,7 +125,7 @@ public class ServerMatch extends Match implements MessageReceiver {
      * @return <code>true</code> se tutto va bene, <code>false</code> altrimenti.
      */
     public boolean canPlayerJoin(Player player) {
-        return !(joinRequests.contains(player) || player.equals(owner));
+        return !(players.contains(player) || joinRequests.contains(player) || player.equals(owner));
     }
     
     
@@ -148,7 +162,8 @@ public class ServerMatch extends Match implements MessageReceiver {
             }
         } catch (PartnerShutDownException ex) {
             success = false;
-            // TODO: Comunicare alla stanza che il proprietario della partita è morto
+            conn.disconnect();
+            room.removePlayer(conn);
         }
         return success;
     }
@@ -174,20 +189,123 @@ public class ServerMatch extends Match implements MessageReceiver {
     private void handleMatchAccessAnswer(P2PMessage msg) {
         try {
             if(msg.getParametersCount() != 2) return;
+            Player matchOwner = msg.getSenderConnection().getPlayer();
             Player applicant = (Player) msg.getParameter(0);
             boolean accepted = (boolean) msg.getParameter(1);
             
+            /* Controllo validità messaggio */
+            if(!this.owner.equals(matchOwner)) {
+                throw new IllegalStateException("Il giocatore non è il proprietario della partita.");
+            }
             
-            
-            /* Richiesta gestita, pulizia */
-            joinRequests.remove(applicant);
-            if(joinRequests.isEmpty()) {
-                /* Non ci sono più richieste da gestire, si rimuove il listener */
-                msg.getSenderConnection().removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+            synchronized(room) {
+                if(!joinRequests.contains(applicant)) {
+                    /**
+                     * Il giocatore non è nella lista delle richieste: potrebbe essere
+                     * stato rimosso da essa in quanto è entrato in un'altra partita.
+                     */
+                    return;
+                }
+                
+                if(accepted && !room.playerIsInAMatch(applicant)) {
+                    addPlayer(applicant);
+                    room.tellPlayerToJoinMatch(applicant);
+                }
+                
+                /* Richiesta gestita, pulizia */
+                joinRequests.remove(applicant);
+                if(joinRequests.isEmpty()) {
+                    /* Non ci sono più richieste da gestire, si rimuove il listener */
+                    msg.getSenderConnection().removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_REPLY_MSG);
+                }
             }
         } catch (ClassCastException ex) {
             throw new CommunicationException("Wrong parameter type in message " + msg.getName());
         }
     }
     
+    
+    /**
+     * Aggiunge un giocatore alla partita.
+     * @param player Giocatore da aggiungere
+     */
+    protected void addPlayer(Player player) {
+        if(players.contains(player)) {
+            throw new IllegalStateException("Il giocatore è già presente nella partita.");
+        }
+        players.add(player);
+        sendMatchUpdate();
+    }
+    
+    
+    /**
+     * Rimuove un giocatore dalla partita
+     * @param player Giocatore da rimuovere
+     */
+    protected void removePlayer(Player player) {
+        if(!players.contains(player)) {
+            throw new IllegalStateException("Il giocatore non è presente nella parita.");
+        }
+        players.remove(player);
+        sendMatchUpdate();
+    }
+    
+    
+    /**
+     * Manda un messaggio di aggiornamento a tutti i giocatori
+     */
+    void sendMatchUpdate() {
+        synchronized(room) {
+            /* Si manda un messaggio di aggiornamento a tutti i giocatori */
+            P2PMessage upd = new P2PMessage(Match.MATCH_UPDATE_MSG);
+            Object[] parameters = new Object[]{ this.getPlayers() };
+            upd.setParameters(parameters);
+            List<P2PConnection> lostConnections = new ArrayList<>(players.size());
+            
+            /* Si aggiorna ogni giocatore */
+            players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEachOrdered((c) -> {
+                try {
+                    c.sendMessage(upd);
+                } catch (PartnerShutDownException ex) {
+                    lostConnections.add(c);
+                }
+            });
+            
+            /* Chiusura connessioni morte */
+            lostConnections.stream().map((c) -> {
+                c.disconnect();
+                return c;
+            }).forEachOrdered((c) -> {
+                room.removePlayer(c);
+            });
+            
+            /* Rimozione giocatori disconnessi e, in tal caso, ri-aggiornamento */
+            lostConnections.forEach((c) -> {
+                players.remove(c.getPlayer());
+            });
+            if(lostConnections.size() > 0) {
+                sendMatchUpdate();
+                room.sendRoomUpdate();
+            }
+        }
+    }
+    
+    
+    /**
+     * Indica se un determinato giocatore è presente nella partita
+     * @param player Giocatore da cercare
+     * @return <code>true</code> se il giocatore si trova nella partita,
+     *          <code>false</code> altrimenti.
+     */
+    protected boolean containsPlayer(Player player) {
+        return players.contains(player);
+    }
+
+    /**
+     * Rimuove un giocatore dalla lista delle richieste
+     * @param player Giocatore da rimuovere
+     */
+    void removePlayerAccessRequest(Player player) {
+        joinRequests.remove(player);
+    }
 }

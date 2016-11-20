@@ -5,6 +5,8 @@
 package unoxtutti.webserver;
 
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -22,7 +24,7 @@ public class DBSetup {
                 dbc.disconnect();
             }
         } catch (SQLException exc) {
-            exc.printStackTrace();
+            Logger.getLogger(DBSetup.class.getName()).log(Level.SEVERE, null, exc);
         }
     }
 }

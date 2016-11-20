@@ -52,7 +52,7 @@ public class P2PConnection {
                     }
                 } catch (IOException | ClassNotFoundException ex) {
                     //System.out.println("Exception in " + (serverSide ? "Server: " : "Client: "));
-                    ex.printStackTrace();
+                    Logger.getLogger(P2PConnection.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 // TODO in Step3: DO SOMETHING WITH MESSAGE
             } while (!isClosing());

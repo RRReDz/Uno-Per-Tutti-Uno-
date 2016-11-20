@@ -340,7 +340,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         }
     }
 
-    private void sendRoomUpdate() {
+    void sendRoomUpdate() {
         P2PMessage upd = new P2PMessage(Room.ROOM_UPDATE_MSG);
         Object[] updpar = new Object[]{this.getPlayers(), this.getAvailableMatches()};
         upd.setParameters(updpar);
@@ -408,6 +408,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             try {
                 sender.sendMessage(reply);
                 sendRoomUpdate();
+                matches.get(matchName).sendMatchUpdate();
             } catch (PartnerShutDownException ex) {
                 sender.disconnect();
                 removePlayer(sender);
@@ -548,10 +549,16 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 } else {
                     /* La partita desiderata esiste */
                     match = matches.get(matchName);
+                    if(match.containsPlayer(msg.getSenderConnection().getPlayer())) {
+                        throw new IllegalStateException("Il giocatore è già presente nella partita.");
+                    }
                     reqOk = match.canPlayerJoin(msg.getSenderConnection().getPlayer());
                 }
             } catch (ClassCastException ex) {
                 reqOk = false;
+            } catch (IllegalStateException ex) {
+                reqOk = false;
+                Logger.getLogger(ServerRoom.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
@@ -639,5 +646,37 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      */
     public P2PConnection getConnectionWithPlayer(Player player) {
         return connections.get(player);
+    }
+
+    
+    /**
+     * Controlla se un determinato giocatore è in una partita oppure no
+     * @param player Giocatore
+     * @return <code>true</code> se il giocatore si trova in una partita,
+     *          <code>false</code> altrimenti.
+     */
+    boolean playerIsInAMatch(Player player) {
+        synchronized(this) {
+            return matches.values().stream().anyMatch((m) -> (m.containsPlayer(player)));
+        }
+    }
+    
+    
+    /**
+     * Informa il giocatore richiedente che la sua richiesta di accesso
+     * ad una partita è stata accettata.
+     * 
+     * Il metodo sposta dunque il giocatoe all'interno della partita.
+     * @param player Giocatore
+     */
+    void tellPlayerToJoinMatch(Player player) {
+        
+        
+        /* Si eliminano tutte le richieste del giocatore */
+        synchronized(this) {
+            matches.values().forEach((m) -> {
+                m.removePlayerAccessRequest(player);
+            });
+        }
     }
 }
