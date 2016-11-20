@@ -4,7 +4,6 @@
  */
 package unoxtutti.gui;
 
-import javax.swing.JOptionPane;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;

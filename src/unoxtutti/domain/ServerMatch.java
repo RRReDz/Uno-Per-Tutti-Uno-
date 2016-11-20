@@ -118,17 +118,16 @@ public class ServerMatch extends Match implements MessageReceiver {
          */
         
         synchronized(room) {
-            for(Player p : players) {
-                P2PConnection playerConnection = room.getConnectionWithPlayer(p);
+            /* Invio la risposta ad ogni utente */
+            players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEach((playerConnection) -> {
                 try {
-                    /* Invio la risposta ad ogni utente */
                     playerConnection.sendMessage(matchStartedMsg);
                 } catch (PartnerShutDownException ex) {
                     Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
                     DebugHelper.log("ERR: Il giocatore '" + playerConnection.getPlayer() + "' non è disponibile.");
                     lostConnections.add(playerConnection);
                 }
-            }
+            });
             
             /* Chiusura connessioni morte */
             lostConnections.stream().map((c) -> {

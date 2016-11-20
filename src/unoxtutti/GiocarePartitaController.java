@@ -169,7 +169,7 @@ public class GiocarePartitaController implements MessageReceiver {
              * Nel caso la richiesta non abbia avuto successo (lato client) non
              * ha senso attendere una risposta dal server
              */
-            boolean isStarting = currentMatch.startMatch();
+            boolean isStarting = currentMatch.startServerMatch();
             if (isStarting) {
                 try {
                     /* Attendo una risposta di conferma di avvenuto inizio da parte del server */

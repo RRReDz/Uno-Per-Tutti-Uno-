@@ -6,7 +6,6 @@ package unoxtutti.domain;
 
 import java.util.List;
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
@@ -109,16 +108,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             return m;
         }
         return null;
-    }
-    
-    
-    /**
-     * Set della variabile di avvio della partita.
-     * @return <code>true</code> se la partita viene avviata con successo,
-     *          <code>false</code> altrimenti
-     */
-    public boolean startMatch() {
-        return startServerMatch();
     }
     
     /**
@@ -248,7 +237,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * @return <code>true</code> se il dialogo è stato avviato con successo,
      *          <code>false</code> altrimenti.
      **/
-    private boolean startServerMatch() {
+    public boolean startServerMatch() {
         startingHandler = new MatchStartingDialogueHandler(conn);
         startingHandler.addStateChangeObserver(this);
         /**
