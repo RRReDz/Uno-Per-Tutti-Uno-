@@ -11,3 +11,6 @@ build.xml
 /.idea/
 UnoXTutti.iml
 
+# Other
+/batch/
+

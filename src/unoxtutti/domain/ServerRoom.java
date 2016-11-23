@@ -193,6 +193,10 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 P2PConnection playerConnection = P2PConnection.acceptConnectionRequest(serverSock);
                 synchronized (waitingClients) {
                     waitingClients.add(playerConnection);
+                    /**
+                     * Il server si mette in ascolto sulla nuova connessione
+                     * di messaggi di richiesta di ingresso 
+                     */
                     playerConnection.addMessageReceivedObserver(this, Room.ROOM_ENTRANCE_REQUEST_MSG);
                 }
             }
@@ -274,6 +278,10 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             case Match.MATCH_STARTING_MSG:
                 DebugHelper.log("ROOM: ricevuta richiesta di avvio di una partita.");
                 handleMatchStart(msg);
+                break;
+            case Match.MATCH_CLOSING_MSG:
+                DebugHelper.log("ROOM: ricevuta richiesta di chiusura di una partita.");
+                handleMatchClosing(msg);
                 break;
         }
     }
@@ -401,7 +409,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             if(reqOk && matchOwner != null) {
                 /* Creazione della partia */
                 createMatch(matchOwner, matchName);
-                playerCreatedARoom(sender);
+                playerCreatedAMatch(sender);
             }
             
             /* Invio risposta (sia in caso di successo che insuccesso) */
@@ -507,6 +515,74 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         if(match != null && isReqOk)
             match.notifyMatchStart(sender);
         
+    }
+    
+    private void handleMatchClosing(P2PMessage msg) {
+        /* Controllo validità dati ricevuti e valori partita */
+        ServerMatch match = null;
+        boolean isReqOk = true;
+        if (msg.getParametersCount() != 1) {
+            isReqOk = false;
+        } else {
+            try {
+                String matchName = (String) msg.getParameter(0);
+                if(!matches.containsKey(matchName)) {
+                    /* La partita non esiste */
+                    isReqOk = false;
+                }
+                /* La partita desiderata esiste */
+                else {
+                    /* Recupero il match dal nome */
+                    match = matches.get(matchName);
+                    /* Controllo se partita già iniziata */
+                    if(match.isClosed())
+                        /* La partita è già stata chiusa */
+                        isReqOk = false;
+                }
+            } catch (ClassCastException ex) {
+                isReqOk = false;
+            }
+        }
+        
+        if(isReqOk) {
+            DebugHelper.log("ROOM: OK, richiesta di chiusura partita corretta.");
+        } else {
+            DebugHelper.log("ROOM: ERR, richiesta di chiusura partita NON corretta.");
+        }
+        
+        /* Costruzione messaggio di risposta */
+        P2PConnection sender = msg.getSenderConnection();
+        P2PMessage reply = new P2PMessage(Match.MATCH_CLOSING_REPLY_MSG);
+        
+        /* Parametri messaggio */
+        Object[] parameters = new Object[1];
+        reply.setParameters(parameters);
+        parameters[0] = isReqOk;
+        
+        /**
+        * Invio della risposta al client creatore della partita
+        */
+        synchronized(this) {
+            /**
+             * Set parametro che indica che la partita è stata avviata
+             * Set dei relativi listener per messaggi successivi
+             * sempre se richiesta è ok
+             */
+            if(match != null && isReqOk) {
+                match.setClosed(true);
+                playerClosedHisMatch(sender);
+            }
+
+            try {
+                sender.sendMessage(reply);
+            } catch (PartnerShutDownException ex) {
+                sender.disconnect();
+            }
+        }
+        
+        /* Aggiorno gli altri client in partita se la richiesta è andata a buon fine. */
+        if(match != null && isReqOk)
+            match.notifyMatchClosure(sender);
     }
     
     /**
@@ -618,8 +694,8 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      * ma ora si possono ricevere messaggi di avvio/distruzione della partita.
      * @param playerConnection Connessione con il giocatore
      */
-    private void playerCreatedARoom(P2PConnection playerConnection) {
-        playerConnection.addMessageReceivedObserver(this, Match.MATCH_DESTROY_MSG);
+    private void playerCreatedAMatch(P2PConnection playerConnection) {
+        playerConnection.addMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
         playerConnection.addMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_MSG);
@@ -633,9 +709,18 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      * @param playerConnection Connessione con il giocatore
      */
     private void playerStartedHisMatch(P2PConnection playerConnection) {
-        /* Da aggiungere altri listener */
-        playerConnection.addMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_STARTING_MSG);
+        /* TODO: Aggiungere listener messaggi avvio manche */
+    }
+    
+    private void playerClosedHisMatch(P2PConnection playerConnection) {
+        playerConnection.removeMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
+        /**
+         * Non dovrebbe servire altro al momento, mi immagino che, 
+         * quando l'owner clicca su "chiudi partita",
+         * si esca dalla partita e si ritorni nella stanza 
+         * senza più la propria partita nella lista di quelle disponibili
+         */
     }
     
     
@@ -660,7 +745,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             return matches.values().stream().anyMatch((m) -> (m.containsPlayer(player)));
         }
     }
-    
+
     
     /**
      * Elimina tutte le richieste di accesso di un giocatore.
@@ -674,4 +759,6 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             });
         }
     }
+    
+    
 }

@@ -4,6 +4,8 @@
  */
 package unoxtutti.gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
@@ -137,8 +139,30 @@ public class InsideMatchPanel extends MainWindowSubPanel{
     }//GEN-LAST:event_startMatchButtonActionPerformed
 
     private void closeMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMatchButtonActionPerformed
-        /* Torna indietro alla stanza, ATTENZIONE: non viene ancora fatta la chiamata verso il server */
-        //mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
+        if(!GiocarePartitaController.getInstance().getCurrentMatch().amITheOwner())
+            /* Errore, il giocatore non è il proprietario della partita */
+            GUIUtils.showErrorMessage(mainWindow, "Non sei il proprietario della partita!");
+        else {
+            this.mainWindow.setWaiting(true);
+            boolean matchClosed = false;
+            try {
+                matchClosed = GiocarePartitaController.getInstance().chiudiPartita();
+            } catch (Exception ex) {
+                Logger.getLogger(InsideMatchPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            this.mainWindow.setWaiting(false);
+            
+            if(matchClosed)
+                /* Ho chiuso con successo la partita */
+                mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
+            else {
+                /**
+                 * A questo punto l'host della stanza non è raggiungibile
+                 * quindi tantomeno la stanza da chiudere 
+                 */
+                GUIUtils.showErrorMessage(mainWindow, "Errore! Non è stato possibile chiudere la partita");
+            }
+        } 
     }//GEN-LAST:event_closeMatchButtonActionPerformed
 
 

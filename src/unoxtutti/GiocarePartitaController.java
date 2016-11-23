@@ -156,7 +156,6 @@ public class GiocarePartitaController implements MessageReceiver {
      * @return 
      */
     public boolean avviaPartita() throws Exception {
-        synchronized (lock) {
             if (currentMatch == null) {
                 throw new Exception("Errore: Non esiste alcuna partita associata.");
             }
@@ -164,12 +163,13 @@ public class GiocarePartitaController implements MessageReceiver {
             if(currentMatch.isStarted()) {
                 throw new Exception("Errore: Questa partita è già stata avviata.");
             }
-        
+            
+        synchronized (lock) {
+            boolean isStarting = currentMatch.startMatch();
             /**
              * Nel caso la richiesta non abbia avuto successo (lato client) non
              * ha senso attendere una risposta dal server
              */
-            boolean isStarting = currentMatch.startServerMatch();
             if (isStarting) {
                 try {
                     /* Attendo una risposta di conferma di avvenuto inizio da parte del server */
@@ -300,6 +300,35 @@ public class GiocarePartitaController implements MessageReceiver {
         return success;
     }
     
+    /**
+     * Metodo dei contratti delle operazioni utilizzata per chiudere la partita
+     * @return 
+     */
+    public boolean chiudiPartita() throws Exception {
+        if (currentMatch == null) {
+            throw new Exception("Errore: Non esiste alcuna partita associata.");
+        }
+        if (currentMatch.isClosed()) {
+            /* Il match è già stato chiuso */
+            throw new Exception("Errore: Il match è già stato avviato.");
+        }
+        
+        synchronized(lock) {
+            boolean isClosing = currentMatch.closeMatch();
+            /* Se si sta chiudendo, ha senso mettermi in attesa di una risposta */
+            if(isClosing) {
+                /* Attendo una risposta di conferma di avvenuto inizio da parte del server */
+                try {
+                    lock.wait();
+                } catch (InterruptedException exc) {
+                    DebugHelper.log("InterruptedException durante una richiesta di ingresso: " + exc.getMessage());
+                }
+            }
+            
+            return currentMatch.isClosed();
+        }
+    }
+    
     
     /**
      * La richiesta di accesso ad una partita è stata analizzata dal
@@ -361,4 +390,5 @@ public class GiocarePartitaController implements MessageReceiver {
         P2PConnection conn = currentRoom.getConnection();
         conn.addMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
     }
+
 }

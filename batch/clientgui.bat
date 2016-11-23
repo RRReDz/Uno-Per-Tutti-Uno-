@@ -1,2 +1,0 @@
-@echo off
-ant -f "C:\\Users\\Riccardo Rossi\\Documents\\NetBeansProjects\\UnoPerTutti-Updated" -Djavac.includes=unoxtutti/UnoXTutti.java -Dnb.internal.action.name=run.single -Drun.class=unoxtutti.UnoXTutti run-single

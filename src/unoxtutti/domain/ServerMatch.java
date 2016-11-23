@@ -47,6 +47,11 @@ public class ServerMatch extends Match implements MessageReceiver {
     protected boolean started;
     
     /**
+     * Indica se la partita è stata chiusa
+     */
+    protected boolean closed;
+    
+    /**
      * Inizializza una partita
      * @param parentRoom Stanza di appartenenza
      * @param owner Proprietario della partita
@@ -91,6 +96,22 @@ public class ServerMatch extends Match implements MessageReceiver {
     }
     
     /**
+     * Set del parametro relativo alla chiusura della partita
+     * @param close 
+     */
+    public void setClosed(boolean close) {
+        closed = close;
+    }
+    
+    /**
+     * Indica se la partita è stata chiusa oppure no
+     * @return 
+     */
+    public boolean isClosed() {
+        return closed;
+    }
+    
+    /**
      * Ritorna i giocatori della partita
      * @return Lista dei giocatori presenti nella partita
      */
@@ -102,21 +123,9 @@ public class ServerMatch extends Match implements MessageReceiver {
      * Metodo per notificare a tutti i giocatori in stanza l'inzio della partita.
      */
     void notifyMatchStart(P2PConnection sender) {
-        /* 
-         * Qui ci andrà un messaggio di tipo Match.MATCH_STARTED_MSG
-         * Ricordarsi anche di registrare l'observer quando si accede alla partita
-         */
         P2PMessage matchStartedMsg = new P2PMessage(Match.MATCH_STARTED_MSG);
         List<P2PConnection> lostConnections = new ArrayList<>(players.size());
-        
-        
-        
-        /**
-         * TODO: Inviare i messaggi alla lista dei giocatori in partita.
-         * for (P2PConnection client : connections.values())
-         *     client.sendMessage(upd);
-         */
-        
+       
         synchronized(room) {
             /* Invio la risposta ad ogni utente */
             players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEach((playerConnection) -> {
@@ -149,6 +158,51 @@ public class ServerMatch extends Match implements MessageReceiver {
                 sendMatchUpdate();
                 room.sendRoomUpdate();
             }
+            
+        }
+    }
+    
+    /**
+     * Metodo per notificare tutti gli utenti della chiusura della partita
+     * @param sender 
+     */
+    void notifyMatchClosure(P2PConnection sender) {
+        P2PMessage matchClosedMsg = new P2PMessage(Match.MATCH_CLOSED_MSG);
+        List<P2PConnection> lostConnections = new ArrayList<>(players.size());
+        
+        synchronized(room) {
+            /* Invio la notifica ad ogni utente */
+            players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEach((playerConnection) -> {
+                try {
+                    playerConnection.sendMessage(matchClosedMsg);
+                } catch (PartnerShutDownException ex) {
+                    Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+                    DebugHelper.log("ERR: Il giocatore '" + playerConnection.getPlayer() + "' non è disponibile.");
+                    lostConnections.add(playerConnection);
+                }
+            });
+            
+            /**
+             * TODO: 
+             * Rimozione informazioni presenti nella stanza relative a questa partita
+             * Distruzione partita
+             */
+            
+            /* Non rimuovere giocatori dalla stanza, escono solo dalla partita */
+            
+            /* Aggiunta nuovi listener come se il giocatore entrasse in stanza */
+            /* Chiusura connessioni morte */
+            lostConnections.stream().map((c) -> {
+                c.disconnect();
+                return c;
+            }).forEachOrdered((c) -> {
+                room.removePlayer(c);
+            });
+            
+            /* Rimozione giocatori disconnessi e, in tal caso, ri-aggiornamento */
+            lostConnections.forEach((c) -> {
+                players.remove(c.getPlayer());
+            });
             
         }
     }
@@ -204,7 +258,7 @@ public class ServerMatch extends Match implements MessageReceiver {
     
     
     /**
-     * Listener per messaggi
+     * Ricevuto un messaggio di risposta da parte dell'owner della partita
      * @param msg Messaggio
      */
     @Override
@@ -246,6 +300,7 @@ public class ServerMatch extends Match implements MessageReceiver {
                     if(tellPlayerToJoin(applicant)) {
                         addPlayer(applicant);
                     }
+                    /* Rimuovo tutte le sue altre richieste pendenti poichè acceduto ad una stanza */
                     room.deleteAccessRequests(applicant);
                 }
                 
@@ -375,4 +430,5 @@ public class ServerMatch extends Match implements MessageReceiver {
             return false;
         }
     }
+    
 }

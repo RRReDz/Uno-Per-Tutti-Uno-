@@ -14,6 +14,7 @@ import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
+import unoxtutti.dialogue.MatchClosingDialogueHandler;
 import unoxtutti.dialogue.MatchCreationDialogueHandler;
 import unoxtutti.dialogue.MatchCreationDialogueState;
 import unoxtutti.dialogue.MatchStartingDialogueHandler;
@@ -49,6 +50,11 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     private MatchStartingDialogueHandler startingHandler;
     
     /**
+     * DialogueHandler per la chiusura della partita
+     */
+    private MatchClosingDialogueHandler closingHandler;
+    
+    /**
      * Lista di giocatori all'interno della partita.
      */
     private final DefaultListModel<Player> playersList;
@@ -57,6 +63,11 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * Indica se la partita è stata avviata o meno.
      */
     private boolean isStarted = false;
+    
+    /**
+     * Indica se la partita è chiusa o meno.
+     */
+    private boolean isClosed = false;
     
     /**
      * Costruttore che memorizza le informazioni più importanti.
@@ -71,7 +82,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         owner = UnoXTutti.theUxtController.getPlayer();
         playersList = new DefaultListModel<>();
     }
-    
     
     /**
      * Costruttore richiamato quando si accede ad una partita già esistente.
@@ -233,17 +243,33 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
 
-    /** Avvia il dialogo con il server per avviare una partita.
+    /** 
+     * Avvia il dialogo con il server per avviare una partita.
      * @return <code>true</code> se il dialogo è stato avviato con successo,
      *          <code>false</code> altrimenti.
      **/
-    public boolean startServerMatch() {
+    public boolean startMatch() {
         startingHandler = new MatchStartingDialogueHandler(conn);
         startingHandler.addStateChangeObserver(this);
         /**
          * TODO: Ricevere OK dal server
          */
         return startingHandler.startDialogue(matchName);
+    }
+    
+    /**
+     * Avvia il dialogo con il server per chiudere la partita.
+     * @return <code>true</code> se il dialogo è stato avviato con successo,
+     *         <code>false</code> altrimenti.
+     */
+    public boolean closeMatch() {
+        closingHandler = new MatchClosingDialogueHandler(conn);
+        closingHandler.addStateChangeObserver(this);
+        /**
+         * TODO: Ricevere OK dal server
+         */
+        return closingHandler.startDialogue(matchName);
+        
     }
 
     /**
@@ -252,6 +278,14 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     public boolean isStarted() {
         return isStarted;
+    }
+    
+    /**
+     * @return isClosed <code>true</code> se il match è stato chiuso o meno
+     * <code>false</code> altrimenti
+     */
+    public boolean isClosed() {
+        return isClosed;
     }
     
     /**

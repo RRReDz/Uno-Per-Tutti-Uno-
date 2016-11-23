@@ -21,13 +21,14 @@ public abstract class Match {
     /*  Aggiornamento della lista dei giocatori */
     public static final String MATCH_UPDATE_MSG = "matchUpdate";
     
-    /* Notifica di uscita */
+    /* Uscita dalla partita da parte di un giocatore */
     public static final String MATCH_EXIT_MSG = "matchExit";
     public static final String MATCH_EXIT_REPLY_MSG ="matchExitReply";
     
-    /* Distruzione della stanza */
-    public static final String MATCH_DESTROY_MSG = "matchDestroy";
+    /* Chiusura della partita */
     public static final String MATCH_CLOSING_MSG = "matchClosing";
+    public static final String MATCH_CLOSING_REPLY_MSG = "matchReplyClosing";
+    public static final String MATCH_CLOSED_MSG = "matchClosed"; //Avviso altri utenti in stanza
     
     /* Richiesta di avvio */
     public static final String MATCH_STARTING_MSG = "matchStarting";
