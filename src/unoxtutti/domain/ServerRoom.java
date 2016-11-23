@@ -581,8 +581,12 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         }
         
         /* Aggiorno gli altri client in partita se la richiesta è andata a buon fine. */
-        if(match != null && isReqOk)
+        if(match != null && isReqOk) {
+            /* Distruzione della partita */
+            match.destroyMatch();
+            this.deleteMatchFromList(match.getMatchName());
             match.notifyMatchClosure(sender);
+        }
     }
     
     /**
@@ -757,6 +761,18 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             matches.values().forEach((m) -> {
                 m.removePlayerAccessRequest(player);
             });
+        }
+    }
+    
+    /**
+     * Eliminazione di una partita dalla lista
+     * @param matchName nome della parita
+     * @return <code>true</code> se la partita è stata eliminata,
+     *          <code>false</code> altrimenti.
+     */
+    boolean deleteMatchFromList(String matchName) {
+        synchronized(this) {
+            return matches.remove(matchName) != null;
         }
     }
     

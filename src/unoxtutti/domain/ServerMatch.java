@@ -182,15 +182,6 @@ public class ServerMatch extends Match implements MessageReceiver {
                 }
             });
             
-            /**
-             * TODO: 
-             * Rimozione informazioni presenti nella stanza relative a questa partita
-             * Distruzione partita
-             */
-            
-            /* Non rimuovere giocatori dalla stanza, escono solo dalla partita */
-            
-            /* Aggiunta nuovi listener come se il giocatore entrasse in stanza */
             /* Chiusura connessioni morte */
             lostConnections.stream().map((c) -> {
                 c.disconnect();
@@ -429,6 +420,22 @@ public class ServerMatch extends Match implements MessageReceiver {
             Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+    }
+
+    /**
+     * Metodo per rimuovere le informazioni della partita dalla stanza
+     * e per rimuoverla completamente
+     */
+    void destroyMatch() {
+        /**
+        * TODO: 
+        * Rimozione informazioni presenti nella stanza relative a questa partita
+        * Distruzione partita
+        */
+
+       /* Non rimuovere giocatori dalla stanza, escono solo dalla partita */
+
+       /* Aggiunta nuovi listener come se il giocatore ri-entrasse in stanza */
     }
     
 }
