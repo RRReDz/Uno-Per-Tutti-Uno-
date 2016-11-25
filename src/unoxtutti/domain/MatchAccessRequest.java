@@ -75,7 +75,7 @@ public class MatchAccessRequest implements DialogueObserver {
                         DebugHelper.log("Risposta da RoomServer: ERR! Richiesta di accesso rifiutata.");
                     }
                     accessRequestHandler.concludeDialogue();
-                    GiocarePartitaController.getInstance().matchAccessRequestTakenCareOf();
+                    GiocarePartitaController.getInstance().wakeUpController();
                     break;
                 default:
             }

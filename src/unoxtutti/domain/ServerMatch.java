@@ -151,7 +151,8 @@ public class ServerMatch extends Match implements MessageReceiver {
                 players.remove(c.getPlayer());
             });
             
-            /* Se ho trovato dei giocatori non più disponibili,
+            /**
+             * Se ho trovato dei giocatori non più disponibili,
              * mando un aggiornamento dei giocatori alla stanza ed alla partita
              */
             if(lostConnections.size() > 0) {
@@ -194,6 +195,14 @@ public class ServerMatch extends Match implements MessageReceiver {
             lostConnections.forEach((c) -> {
                 players.remove(c.getPlayer());
             });
+            
+            /**
+             * Se ho trovato dei giocatori non più disponibili,
+             * mando un aggiornamento alla stanza
+             */
+            if(lostConnections.size() > 0) {
+                room.sendRoomUpdate();
+            }
             
         }
     }
@@ -426,7 +435,7 @@ public class ServerMatch extends Match implements MessageReceiver {
      * Metodo per rimuovere le informazioni della partita dalla stanza
      * e per rimuoverla completamente
      */
-    void destroyMatch() {
+    //void destroyMatch() {
         /**
         * TODO: 
         * Rimozione informazioni presenti nella stanza relative a questa partita
@@ -436,6 +445,6 @@ public class ServerMatch extends Match implements MessageReceiver {
        /* Non rimuovere giocatori dalla stanza, escono solo dalla partita */
 
        /* Aggiunta nuovi listener come se il giocatore ri-entrasse in stanza */
-    }
+    //}
     
 }

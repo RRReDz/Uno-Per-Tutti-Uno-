@@ -582,8 +582,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         
         /* Aggiorno gli altri client in partita se la richiesta è andata a buon fine. */
         if(match != null && isReqOk) {
-            /* Distruzione della partita */
-            match.destroyMatch();
+            /* Aggiornamento a giocatori in partita e rimozione della partita */
             this.deleteMatchFromList(match.getMatchName());
             match.notifyMatchClosure(sender);
         }
@@ -770,11 +769,9 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      * @return <code>true</code> se la partita è stata eliminata,
      *          <code>false</code> altrimenti.
      */
-    boolean deleteMatchFromList(String matchName) {
+    void deleteMatchFromList(String matchName) {
         synchronized(this) {
-            return matches.remove(matchName) != null;
+            matches.remove(matchName);
         }
     }
-    
-    
 }

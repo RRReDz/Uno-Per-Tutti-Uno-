@@ -15,6 +15,7 @@ import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
 import unoxtutti.dialogue.MatchClosingDialogueHandler;
+import unoxtutti.dialogue.MatchClosingDialogueState;
 import unoxtutti.dialogue.MatchCreationDialogueHandler;
 import unoxtutti.dialogue.MatchCreationDialogueState;
 import unoxtutti.dialogue.MatchStartingDialogueHandler;
@@ -140,6 +141,10 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA INIZIATA.");
                 handleMatchStartedMessage(msg);
                 break;
+            case Match.MATCH_CLOSED_MSG: //Questo sarà l'handler della chiusura del match
+            DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA CHIUSA.");
+            handleMatchClosedMessage(msg);
+            break;
             default:
                 break;
         }
@@ -158,6 +163,10 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         /* Handler dell'avvio della partita */
         else if(source.equals(startingHandler)) {
             handleMatchStartingRequest(startingHandler);
+        }
+        /* Handler dell'avvio della partita */
+        else if(source.equals(closingHandler)) {
+            handleMatchClosingRequest(closingHandler);
         }
     }
     
@@ -209,7 +218,27 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 break;
         }
         creationHandler.concludeDialogue();
-        GiocarePartitaController.getInstance().matchStartEnded();
+        GiocarePartitaController.getInstance().wakeUpController();
+    }
+    
+    /**
+     * Gestisce il cambiamento di stato dell'handler per la chiusura della partita.
+     * @param source Handler della richiesta 
+     */
+    private void handleMatchClosingRequest(MatchClosingDialogueHandler source) {
+        MatchClosingDialogueState state = source.getState();
+        switch(state) {
+            case CLOSED:
+                isClosed = true;
+                DebugHelper.log("Risposta da MatchServer: OK! La partita è stata chiusa.");
+                break;
+            case NOT_CLOSED:
+                isClosed = false;
+                DebugHelper.log("Risposta da MatchServer: ERR! Impossibile avviare la partita.");
+                break;
+        }
+        closingHandler.concludeDialogue();
+        GiocarePartitaController.getInstance().wakeUpController();
     }
     
     /**
@@ -357,9 +386,17 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     private void handleMatchStartedMessage(P2PMessage msg) {
         /**
-         * TODO notificare l'interfaccia grafica dell'avvenuto inizio della partita.
-         * La quale dovrà avviare la partita vera e propria.
+         * TODO notificare gui avvio partita
          */
-        GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "Hey, la tua partita sta iniziando!");
+        GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "Hey, questa partita sta iniziando!");
+    }
+
+    private void handleMatchClosedMessage(P2PMessage msg) {
+        /**
+         * TODO eliminare questo match dalla propria room
+         * Questo verrà fatto dall'utente partecipante 
+         * che riceve il mess di chiusura
+         */
+        GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "Hey, questa partita si è chiusa!");
     }
 }

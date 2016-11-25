@@ -144,7 +144,7 @@ public class GiocarePartitaController implements MessageReceiver {
                      * ascolto di messaggi di ingresso.
                      */
                     if(currentMatch != null) {
-                        playerCreatedARoom();
+                        playerCreatedAMatch();
                     }
                 }
             }
@@ -247,10 +247,10 @@ public class GiocarePartitaController implements MessageReceiver {
     }
 
     /**
-     * Sblocca il client in attesa di una risposta di conferma di avvio
-     * da parte del server
+     * Risveglia tutti i thread bloccati sulla wait() in attesa di 
+     * una risposta dal server sull'operazione richiesta
      */
-    public void matchStartEnded() {
+    public void wakeUpController() {
         synchronized (lock) {
             lock.notifyAll();
         }
@@ -329,18 +329,6 @@ public class GiocarePartitaController implements MessageReceiver {
         }
     }
     
-    
-    /**
-     * La richiesta di accesso ad una partita è stata analizzata dal
-     * proprietario della stanza.
-     */
-    public void matchAccessRequestTakenCareOf() {
-        synchronized (lock) {
-            lock.notifyAll();
-        }
-    }
-
-    
     /**
      * Receiver dei messaggi
      * @param msg Messaggio
@@ -358,7 +346,7 @@ public class GiocarePartitaController implements MessageReceiver {
                     // TODO: ricevere regole della partita
                     
                     currentMatch = new RemoteMatch(msg.getSenderConnection(), owner, matchName, new Object());
-                    playerJoinedARoom();
+                    playerJoinedAMatch();
                 } catch(ClassCastException ex) {
                     throw new CommunicationException("Wrong parameter type in message " + msg.getName());
                 }
@@ -371,11 +359,15 @@ public class GiocarePartitaController implements MessageReceiver {
      * Richiamato quando il giocatore entra in una stanza,
      * aggiorna l'interfaccia ed i listener.
      */
-    private void playerJoinedARoom() {
+    private void playerJoinedAMatch() {
         P2PConnection c = currentRoom.getConnection();
+        /* Listener per ricevere gli aggiornamenti sulla partita */
         c.addMessageReceivedObserver(currentMatch, Match.MATCH_UPDATE_MSG);
         /* Listener per l'inizio della partita */
         c.addMessageReceivedObserver(currentMatch, Match.MATCH_STARTED_MSG);
+        /* Listener per la chiusura della partita */
+        c.addMessageReceivedObserver(currentMatch, Match.MATCH_CLOSED_MSG);
+        /* Listener per la conferma di accesso da parte dell'owner della partita */
         c.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG);
         // TODO: Esportare metodo?
         UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
@@ -386,7 +378,7 @@ public class GiocarePartitaController implements MessageReceiver {
      * Richiamato quando il giocatore crea una stanza, aggiorna
      * i listener.
      */
-    private void playerCreatedARoom() {
+    private void playerCreatedAMatch() {
         P2PConnection conn = currentRoom.getConnection();
         conn.addMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
     }
