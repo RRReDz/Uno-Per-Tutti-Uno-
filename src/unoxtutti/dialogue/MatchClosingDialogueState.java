@@ -21,7 +21,7 @@ public enum MatchClosingDialogueState implements DialogueState<MatchClosingDialo
     public MatchClosingDialogueState nextState(P2PMessage msg) {
         String msgName = msg.getName();
         switch (this) {
-            case BEFORE_CLOSING:
+            case CLOSING:
                 if (msgName.equals(Match.MATCH_CLOSING_REPLY_MSG)) {
                     boolean accepted = (Boolean) msg.getParameter(0);
                     if (accepted) {
@@ -32,7 +32,7 @@ public enum MatchClosingDialogueState implements DialogueState<MatchClosingDialo
                 }
             case CLOSED:
             case NOT_CLOSED:
-            case CLOSING:
+            case BEFORE_CLOSING:
             default:
                 return this;
         }

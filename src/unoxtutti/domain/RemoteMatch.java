@@ -129,8 +129,8 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     @Override
     public void updateMessageReceived(P2PMessage msg) {
         switch (msg.getName()) {
-            case Match.MATCH_UPDATE_MSG: //Handler di prova per ricevere risposta dalla partita remota
-                DebugHelper.log("Ricevuto aggiornamento dal server: TODO");
+            case Match.MATCH_UPDATE_MSG: //Handler ricezione aggiornamento partita
+                DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA AGGIORNATA");
                 handleUpdateMessage(msg);
                 break;
             case Match.MATCH_ACCESS_REQUEST_MSG: // Richiesta di accesso inoltrata dal RoomServer
@@ -142,9 +142,9 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 handleMatchStartedMessage(msg);
                 break;
             case Match.MATCH_CLOSED_MSG: //Questo sarà l'handler della chiusura del match
-            DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA CHIUSA.");
-            handleMatchClosedMessage(msg);
-            break;
+                DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA CHIUSA.");
+                handleMatchClosedMessage(msg);
+                break;
             default:
                 break;
         }
@@ -398,5 +398,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
          * che riceve il mess di chiusura
          */
         GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "Hey, questa partita si è chiusa!");
+        GiocarePartitaController.getInstance().receivedMatchClosure();
     }
 }

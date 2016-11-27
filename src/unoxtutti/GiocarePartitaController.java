@@ -325,7 +325,11 @@ public class GiocarePartitaController implements MessageReceiver {
                 }
             }
             
-            return currentMatch.isClosed();
+            boolean isClosed = currentMatch.isClosed();
+            if(isClosed)
+                playerClosedHisMatch();
+            
+            return isClosed;
         }
     }
     
@@ -356,7 +360,7 @@ public class GiocarePartitaController implements MessageReceiver {
 
     
     /**
-     * Richiamato quando il giocatore entra in una stanza,
+     * Richiamato quando il giocatore entra in una partita,
      * aggiorna l'interfaccia ed i listener.
      */
     private void playerJoinedAMatch() {
@@ -381,6 +385,49 @@ public class GiocarePartitaController implements MessageReceiver {
     private void playerCreatedAMatch() {
         P2PConnection conn = currentRoom.getConnection();
         conn.addMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
+    }
+    
+    /**
+     * Richiamato quando un giocatore partecipante esce/viene fatto uscire dalla partita.
+     * Valido sia nel caso esca di sua volontà, sia quando venga fatto
+     * uscire poichè la partita sta chiudendo
+     */
+    private void playerOutFromMatch() {
+        P2PConnection conn = currentRoom.getConnection();
+        /* Rimozione dei listener relativi ad aggiornamento, inzio e chiusura partita */
+        conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_UPDATE_MSG);
+        conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_STARTED_MSG);
+        conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_CLOSED_MSG);
+        /* Rimozione del match */
+        currentMatch = null;
+        /**
+         * Aggiornamento interfaccia grafica, ritorno alla stanza 
+         * NON SAREBBE DA FARE QUI!
+         */
+        UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
+    }
+    
+    /**
+     * Richiamato quando un giocatore creatore quando chiude la sua partita.
+     */
+    private void playerClosedHisMatch() {
+        P2PConnection conn = currentRoom.getConnection();
+        /* Rimozione dei listener relativi ad aggiornamento, inzio e chiusura partita */
+        conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
+        /* Rimozione del match */
+        currentMatch = null;
+        /* L'aggiornamento della gui viene fatto in "InsideMatchPanel" */
+    }
+
+    /**
+     * Metodo chiamato dalla RemoteMatch quando riceve un messaggio
+     * di chiusura della stanza, utilizzato dai client 
+     * partecipanti (non creatori) della stanza
+     */
+    public void receivedMatchClosure() {
+        synchronized(lock) {
+            playerOutFromMatch();
+        }
     }
 
 }

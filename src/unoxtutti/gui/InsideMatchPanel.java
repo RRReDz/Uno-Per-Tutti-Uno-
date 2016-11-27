@@ -149,8 +149,9 @@ public class InsideMatchPanel extends MainWindowSubPanel{
                 matchClosed = GiocarePartitaController.getInstance().chiudiPartita();
             } catch (Exception ex) {
                 Logger.getLogger(InsideMatchPanel.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                this.mainWindow.setWaiting(false);
             }
-            this.mainWindow.setWaiting(false);
             
             if(matchClosed)
                 /* Ho chiuso con successo la partita */

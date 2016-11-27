@@ -300,7 +300,7 @@ public class ServerMatch extends Match implements MessageReceiver {
                     if(tellPlayerToJoin(applicant)) {
                         addPlayer(applicant);
                     }
-                    /* Rimuovo tutte le sue altre richieste pendenti poichè acceduto ad una stanza */
+                    /* Rimuovo tutte le sue richieste pendenti */
                     room.deleteAccessRequests(applicant);
                 }
                 
