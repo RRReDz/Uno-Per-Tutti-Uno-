@@ -196,13 +196,7 @@ public class ServerMatch extends Match implements MessageReceiver {
                 players.remove(c.getPlayer());
             });
             
-            /**
-             * Se ho trovato dei giocatori non più disponibili,
-             * mando un aggiornamento alla stanza
-             */
-            if(lostConnections.size() > 0) {
-                room.sendRoomUpdate();
-            }
+            room.sendRoomUpdate();
             
         }
     }

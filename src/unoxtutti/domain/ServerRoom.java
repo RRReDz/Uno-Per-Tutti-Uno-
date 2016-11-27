@@ -718,12 +718,8 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
     
     private void playerClosedHisMatch(P2PConnection playerConnection) {
         playerConnection.removeMessageReceivedObserver(this, Match.MATCH_CLOSING_MSG);
-        /**
-         * Non dovrebbe servire altro al momento, mi immagino che, 
-         * quando l'owner clicca su "chiudi partita",
-         * si esca dalla partita e si ritorni nella stanza 
-         * senza più la propria partita nella lista di quelle disponibili
-         */
+        /* Aggiorno i listener come se l'utente stesse rientrando in stanza */
+        playerJoinedTheRoom(playerConnection);
     }
     
     

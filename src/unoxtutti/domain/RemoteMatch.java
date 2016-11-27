@@ -234,7 +234,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 break;
             case NOT_CLOSED:
                 isClosed = false;
-                DebugHelper.log("Risposta da MatchServer: ERR! Impossibile avviare la partita.");
+                DebugHelper.log("Risposta da MatchServer: ERR! Impossibile chiudere la partita.");
                 break;
         }
         closingHandler.concludeDialogue();
