@@ -289,13 +289,22 @@ public class P2PConnection {
         /* Se la lista non contiene già l'observer, allora lo aggiungo */
         if(!receivers.contains(obs))
             receivers.add(obs);
+        
+        /* debug */
+        System.out.println("\n - addMessageReceivedObserver - ");
+        System.out.println("Aggiunto observer " + obs + " per messaggio " + messageName + " su connessione " + this.toString());
+        
         ArrayList<P2PMessage> queue = unreadMessages.get(messageName);
         if (queue != null) {
             for (P2PMessage msg : queue) {
+                /* debug */
+                System.out.println("Messaggio non letto (" + msg + ") per " + obs);
                 obs.updateMessageReceived(msg);
             }
             queue.clear();
         }
+        /* debug */
+        System.out.println();
     }
 
     /**
@@ -317,9 +326,13 @@ public class P2PConnection {
     }
 
     private synchronized void notifyMessageReceived(P2PMessage msg) {
+        /* debug */
+        System.out.println("\n - notifyMessageReceived - ");
         msg.setSenderConnection(this);
         ArrayList<MessageReceiver> receivers = this.messageReceivers.get(msg.getName());
         if (receivers == null || receivers.isEmpty()) {
+            /* debug */
+            System.out.println("Il messaggio " + msg + " NON verrà consegnato!\n");
             ArrayList<P2PMessage> queue = unreadMessages.get(msg.getName());
             if (queue == null) {
                 queue = new ArrayList<>();
@@ -329,8 +342,23 @@ public class P2PConnection {
             return;
         }
         receivers = (ArrayList<MessageReceiver>) receivers.clone();
+        /* debug */
+        System.out.println("Messaggio in invio ai seguenti observers: ");
         for (MessageReceiver rec : receivers) {
+            /* debug */
+            System.out.println(rec);
             rec.updateMessageReceived(msg);
         }
+        /* debug */
+        System.out.println();
     }
+
+    @Override
+    public String toString() {
+        if(player != null)
+            return player.toString();
+        else
+            return "NULL";
+    }
+    
 }

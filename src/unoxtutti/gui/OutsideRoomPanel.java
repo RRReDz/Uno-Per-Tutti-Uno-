@@ -32,7 +32,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
         this.stanzeList.setSelectedIndex(-1);
         this.chiudiStanzaButton.setEnabled(false);
         this.infoButton.setEnabled(false);
-        this.ipStanzaField.setText("");
+        this.ipStanzaField.setText("localhost");
         this.portaStanzaField.setText("");
         this.nomeStanzaField.setText("");
     }
@@ -91,6 +91,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
         jPanel1.add(jLabel2);
 
         ipStanzaField.setColumns(30);
+        ipStanzaField.setText("localhost");
         ipStanzaField.setAlignmentX(0.0F);
         jPanel1.add(ipStanzaField);
         jPanel1.add(filler2);

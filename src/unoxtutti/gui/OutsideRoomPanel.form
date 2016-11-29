@@ -125,6 +125,7 @@
                     <Component class="javax.swing.JTextField" name="ipStanzaField">
                       <Properties>
                         <Property name="columns" type="int" value="30"/>
+                        <Property name="text" type="java.lang.String" value="localhost"/>
                         <Property name="alignmentX" type="float" value="0.0"/>
                       </Properties>
                     </Component>

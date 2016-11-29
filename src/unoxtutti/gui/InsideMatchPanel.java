@@ -35,6 +35,11 @@ public class InsideMatchPanel extends MainWindowSubPanel{
         if(!currentMatch.amITheOwner()) {
             startMatchButton.setEnabled(false);
             startMatchButton.setVisible(false);
+            closeMatchButton.setEnabled(false);
+            closeMatchButton.setVisible(false);
+        } else {
+            exitMatchButton.setEnabled(false);
+            exitMatchButton.setVisible(false);
         }
     }
 
@@ -56,6 +61,7 @@ public class InsideMatchPanel extends MainWindowSubPanel{
         jPanel3 = new javax.swing.JPanel();
         startMatchButton = new javax.swing.JButton();
         closeMatchButton = new javax.swing.JButton();
+        exitMatchButton = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -95,6 +101,9 @@ public class InsideMatchPanel extends MainWindowSubPanel{
             }
         });
         jPanel3.add(closeMatchButton);
+
+        exitMatchButton.setText("Esci dalla partita");
+        jPanel3.add(exitMatchButton);
 
         jPanel2.add(jPanel3, java.awt.BorderLayout.PAGE_END);
 
@@ -169,6 +178,7 @@ public class InsideMatchPanel extends MainWindowSubPanel{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeMatchButton;
+    private javax.swing.JButton exitMatchButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

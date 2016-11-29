@@ -119,12 +119,7 @@ public class P2PMessage implements Serializable {
 
     @Override
     public String toString() {
-        String str = "P2PMessage{" + "name=" + name + ", parameters=";
-        for (Object parameter : parameters) {
-            str += parameter + " ";
-        }
-        str += "}";
-        return str;
+        return name;
     }
     
     
