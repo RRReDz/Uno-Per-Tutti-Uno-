@@ -116,4 +116,16 @@ public class P2PMessage implements Serializable {
     public String getName() {
         return name;
     }
+
+    @Override
+    public String toString() {
+        String str = "P2PMessage{" + "name=" + name + ", parameters=";
+        for (Object parameter : parameters) {
+            str += parameter + " ";
+        }
+        str += "}";
+        return str;
+    }
+    
+    
 }

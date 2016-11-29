@@ -286,7 +286,9 @@ public class P2PConnection {
             receivers = new ArrayList<>();
             messageReceivers.put(messageName, receivers);
         }
-        receivers.add(obs);
+        /* Se la lista non contiene già l'observer, allora lo aggiungo */
+        if(!receivers.contains(obs))
+            receivers.add(obs);
         ArrayList<P2PMessage> queue = unreadMessages.get(messageName);
         if (queue != null) {
             for (P2PMessage msg : queue) {
