@@ -32,14 +32,10 @@ public class InsideMatchPanel extends MainWindowSubPanel{
          * Si nasconde il bottone per iniziare la partita se il
          * giocatore non è il proprietario.
          */
-        if(!currentMatch.amITheOwner()) {
-            startMatchButton.setEnabled(false);
-            startMatchButton.setVisible(false);
-            closeMatchButton.setEnabled(false);
-            closeMatchButton.setVisible(false);
+        if(currentMatch.amITheOwner()) {
+            initButtons(true);
         } else {
-            exitMatchButton.setEnabled(false);
-            exitMatchButton.setVisible(false);
+            initButtons(false);
         }
     }
 
@@ -175,6 +171,16 @@ public class InsideMatchPanel extends MainWindowSubPanel{
         } 
     }//GEN-LAST:event_closeMatchButtonActionPerformed
 
+    /**
+     * Utilizzato per inizializzare i bottoni della gui
+     * con distinzione tra utente proprietario e partecipante
+     * @param ownerMatch 
+     */
+    private void initButtons(boolean ownerMatch) {
+        startMatchButton.setVisible(ownerMatch);
+        closeMatchButton.setVisible(ownerMatch);
+        exitMatchButton.setVisible(!ownerMatch);
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeMatchButton;

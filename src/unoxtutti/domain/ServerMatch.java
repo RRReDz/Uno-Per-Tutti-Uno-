@@ -120,6 +120,16 @@ public class ServerMatch extends Match implements MessageReceiver {
     }
     
     /**
+     * Utilizzato per sapere se il giocatore
+     * è il proprietario della partita o meno.
+     * @param player
+     * @return 
+     */
+    public boolean isThisPlayerTheOwner(Player player) {
+        return owner.equals(player);
+    }
+    
+    /**
      * Metodo per notificare a tutti i giocatori in stanza l'inzio della partita.
      */
     void notifyMatchStart(P2PConnection sender) {
@@ -128,15 +138,16 @@ public class ServerMatch extends Match implements MessageReceiver {
        
         synchronized(room) {
             /* Invio la risposta ad ogni utente */
-            players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEach((playerConnection) -> {
-                try {
-                    playerConnection.sendMessage(matchStartedMsg);
-                } catch (PartnerShutDownException ex) {
-                    Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
-                    DebugHelper.log("ERR: Il giocatore '" + playerConnection.getPlayer() + "' non è disponibile.");
-                    lostConnections.add(playerConnection);
-                }
-            });
+            players.stream().filter((p) -> !isThisPlayerTheOwner(p)).map((p) -> room.getConnectionWithPlayer(p))
+                    .forEach((playerConnection) -> {
+                        try {
+                            playerConnection.sendMessage(matchStartedMsg);
+                        } catch (PartnerShutDownException ex) {
+                            Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+                            DebugHelper.log("ERR: Il giocatore '" + playerConnection.getPlayer() + "' non è disponibile.");
+                            lostConnections.add(playerConnection);
+                        }
+                    });
             
             /* Chiusura connessioni morte */
             lostConnections.stream().map((c) -> {
@@ -173,7 +184,17 @@ public class ServerMatch extends Match implements MessageReceiver {
         
         synchronized(room) {
             /* Invio la notifica ad ogni utente */
-            players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEach((playerConnection) -> {
+            players.stream().filter((p) -> !isThisPlayerTheOwner(p)).map((p) -> room.getConnectionWithPlayer(p))
+                    .forEach((playerConnection) -> {
+                        try {
+                            playerConnection.sendMessage(matchClosedMsg);
+                        } catch (PartnerShutDownException ex) {
+                            Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+                            DebugHelper.log("ERR: Il giocatore '" + playerConnection.getPlayer() + "' non è disponibile.");
+                            lostConnections.add(playerConnection);
+                        }
+                    });
+            /*players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEach((playerConnection) -> {
                 try {
                     playerConnection.sendMessage(matchClosedMsg);
                 } catch (PartnerShutDownException ex) {
@@ -181,7 +202,7 @@ public class ServerMatch extends Match implements MessageReceiver {
                     DebugHelper.log("ERR: Il giocatore '" + playerConnection.getPlayer() + "' non è disponibile.");
                     lostConnections.add(playerConnection);
                 }
-            });
+            });*/
             
             /* Chiusura connessioni morte */
             lostConnections.stream().map((c) -> {
