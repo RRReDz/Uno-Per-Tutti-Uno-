@@ -301,16 +301,17 @@ public class GiocarePartitaController implements MessageReceiver {
     }
     
     /**
-     * Metodo dei contratti delle operazioni utilizzata per chiudere la partita
-     * @return 
+     * Metodo dei contratti delle operazioni utilizzato per chiudere la partita.
+     * @return <code>true</code> in caso di successo,
+     * <code>false</code> altrimenti.
      */
-    public boolean chiudiPartita() throws Exception {
+    public boolean chiudiPartita() {
         if (currentMatch == null) {
-            throw new Exception("Errore: Non esiste alcuna partita associata.");
-        }
-        if (currentMatch.isClosed()) {
+            /* Partita inesistente */
+            throw new IllegalStateException("Errore: non esiste alcuna partita associata.");
+        } else if (currentMatch.isClosed()) {
             /* Il match è già stato chiuso */
-            throw new Exception("Errore: Il match è già stato avviato.");
+            throw new IllegalStateException("Errore: la partita è già stata avviata.");
         }
         
         synchronized(lock) {
@@ -325,10 +326,11 @@ public class GiocarePartitaController implements MessageReceiver {
                 }
             }
             
-            boolean isClosed = currentMatch.isClosed();
-            if(isClosed)
+            /* Si la partita è stata chiusa con successo, si aggiorna l'interfaccia */
+            boolean isClosed = currentMatch == null;
+            if(isClosed) {
                 playerClosedHisMatch();
-            
+            }
             return isClosed;
         }
     }
@@ -373,7 +375,7 @@ public class GiocarePartitaController implements MessageReceiver {
         c.addMessageReceivedObserver(currentMatch, Match.MATCH_CLOSED_MSG);
         /* Listener per la conferma di accesso da parte dell'owner della partita */
         c.removeMessageReceivedObserver(this, Match.MATCH_ACCESS_SUCCESS_NOTIFICATION_MSG);
-        // TODO: Esportare metodo?
+        /* Aggiornamento interfaccia */
         UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_MATCH);
     }
     
@@ -389,10 +391,10 @@ public class GiocarePartitaController implements MessageReceiver {
     
     /**
      * Richiamato quando un giocatore partecipante esce/viene fatto uscire dalla partita.
-     * Valido sia nel caso esca di sua volontà, sia quando venga fatto
-     * uscire poichè la partita sta chiudendo
+     * Valido sia quando esce di sua volontà, sia quando viene fatto
+     * uscire poichè la partita sta chiudendo.
      */
-    private void playerOutFromMatch() {
+    private void playerLeftAMatch() {
         P2PConnection conn = currentRoom.getConnection();
         /* Rimozione dei listener relativi ad aggiornamento, inzio e chiusura partita */
         conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_UPDATE_MSG);
@@ -400,22 +402,17 @@ public class GiocarePartitaController implements MessageReceiver {
         conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_CLOSED_MSG);
         /* Rimozione del match */
         currentMatch = null;
-        /**
-         * Aggiornamento interfaccia grafica, ritorno alla stanza 
-         * NON SAREBBE DA FARE QUI!
-         */
+        /* Aggiornamento interfaccia grafica, ritorno alla stanza */
         UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
     }
     
     /**
-     * Richiamato quando un giocatore creatore quando chiude la sua partita.
+     * Richiamato quando un proprietario chiude la propria partita.
      */
     private void playerClosedHisMatch() {
         P2PConnection conn = currentRoom.getConnection();
         /* Rimozione dei listener relativi ad aggiornamento, inzio e chiusura partita */
         conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
-        /* Rimozione del match */
-        currentMatch = null;
         /* L'aggiornamento della gui viene fatto in "InsideMatchPanel" */
     }
 
@@ -426,8 +423,23 @@ public class GiocarePartitaController implements MessageReceiver {
      */
     public void receivedMatchClosure() {
         synchronized(lock) {
-            playerOutFromMatch();
+            playerLeftAMatch();
         }
+    }
+    
+    
+    /**
+     * Richiamato quando una partita viene avviata.
+     * Aggiorna l'interfaccia.
+     */
+    public void matchStarted() {
+        UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.GAMEPLAY);
+    }
+    
+    
+    public void matchClosed() {
+        currentMatch = null;
+        wakeUpController();
     }
 
 }

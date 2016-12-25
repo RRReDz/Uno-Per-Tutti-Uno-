@@ -32,7 +32,8 @@ public class MatchClosingDialogueHandler extends BasicDialogueHandler<MatchClosi
      * Se l'invio non funziona torna allo stato BEFORE_CLOSING.
      *
      * @param matchName
-     * @return TODO
+     * @return <code>true</code> in caso di successo,
+     * <code>false</code> altrimenti.
      */
     public boolean startDialogue(String matchName) {
         boolean ret = true;
@@ -40,7 +41,7 @@ public class MatchClosingDialogueHandler extends BasicDialogueHandler<MatchClosi
         conn.addMessageReceivedObserver(this, Match.MATCH_CLOSING_REPLY_MSG);
         /* Creazione messaggio di richiesta da inviare */
         P2PMessage msg = new P2PMessage(Match.MATCH_CLOSING_MSG);
-        Object[] pars = new Object[]{matchName};
+        Object[] pars = new Object[]{ matchName };
         msg.setParameters(pars);
         this.setState(MatchClosingDialogueState.CLOSING);
         try {

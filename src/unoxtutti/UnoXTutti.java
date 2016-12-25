@@ -86,7 +86,6 @@ public class UnoXTutti {
         // i thread in modo graceful.
         // Quindi bisogna poi mettere un listener sulla finestra (presumibilmente lo stesso
         // GiocareAUnoXTuttiController) che gestisca la chiusura di tutto quanto.
-        // TODO
     }
 
 }

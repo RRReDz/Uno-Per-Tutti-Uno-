@@ -99,6 +99,11 @@ public class InsideMatchPanel extends MainWindowSubPanel{
         jPanel3.add(closeMatchButton);
 
         exitMatchButton.setText("Esci dalla partita");
+        exitMatchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMatchButtonActionPerformed(evt);
+            }
+        });
         jPanel3.add(exitMatchButton);
 
         jPanel2.add(jPanel3, java.awt.BorderLayout.PAGE_END);
@@ -134,8 +139,7 @@ public class InsideMatchPanel extends MainWindowSubPanel{
             }
             
             if(isMatchStarted) {
-                /* DEBUG */
-                GUIUtils.showInformationMessage(mainWindow, "OK! Partita avviata!");
+                GiocarePartitaController.getInstance().matchStarted();
                 /* Avvio della partita... fine iterazione 4 */
             } else if(!errorAlreadyShown) {
                 GUIUtils.showErrorMessage(mainWindow, "Errore: Non è stato possibile avviare la partita!");
@@ -144,10 +148,10 @@ public class InsideMatchPanel extends MainWindowSubPanel{
     }//GEN-LAST:event_startMatchButtonActionPerformed
 
     private void closeMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeMatchButtonActionPerformed
-        if(!GiocarePartitaController.getInstance().getCurrentMatch().amITheOwner())
+        if(!GiocarePartitaController.getInstance().getCurrentMatch().amITheOwner()) {
             /* Errore, il giocatore non è il proprietario della partita */
             GUIUtils.showErrorMessage(mainWindow, "Non sei il proprietario della partita!");
-        else {
+        } else {
             this.mainWindow.setWaiting(true);
             boolean matchClosed = false;
             try {
@@ -158,18 +162,22 @@ public class InsideMatchPanel extends MainWindowSubPanel{
                 this.mainWindow.setWaiting(false);
             }
             
-            if(matchClosed)
+            if(matchClosed) {
                 /* Ho chiuso con successo la partita */
                 mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
-            else {
+            } else {
                 /**
                  * A questo punto l'host della stanza non è raggiungibile
                  * quindi tantomeno la stanza da chiudere 
                  */
                 GUIUtils.showErrorMessage(mainWindow, "Errore! Non è stato possibile chiudere la partita");
             }
-        } 
+        }
     }//GEN-LAST:event_closeMatchButtonActionPerformed
+
+    private void exitMatchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMatchButtonActionPerformed
+        // TODO: Permettere a un giocatore di abbandonare una partita
+    }//GEN-LAST:event_exitMatchButtonActionPerformed
 
     /**
      * Utilizzato per inizializzare i bottoni della gui

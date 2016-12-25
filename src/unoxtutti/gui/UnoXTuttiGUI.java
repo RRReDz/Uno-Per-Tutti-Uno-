@@ -24,8 +24,9 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
     public enum GUIState {
         OUTSIDE_ROOM("outside room", new OutsideRoomPanel()),
         INSIDE_ROOM("inside room", new InsideRoomPanel()),
-        INSIDE_MATCH("inside match", new InsideMatchPanel());
-
+        INSIDE_MATCH("inside match", new InsideMatchPanel()),
+        GAMEPLAY("gameplay", new GameplayPanel());
+        
         protected final String name;
         protected final MainWindowSubPanel panel;
 

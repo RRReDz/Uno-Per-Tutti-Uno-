@@ -227,18 +227,24 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     private void handleMatchClosingRequest(MatchClosingDialogueHandler source) {
         MatchClosingDialogueState state = source.getState();
+        
+        /* Risposta ricevuta, fine dialogo */
+        if(state == MatchClosingDialogueState.CLOSED || 
+                state == MatchClosingDialogueState.NOT_CLOSED) {
+            closingHandler.concludeDialogue();
+        }
+        
+        /* Gestione risposta */
         switch(state) {
             case CLOSED:
-                isClosed = true;
                 DebugHelper.log("Risposta da MatchServer: OK! La partita è stata chiusa.");
+                GiocarePartitaController.getInstance().matchClosed();
                 break;
             case NOT_CLOSED:
-                isClosed = false;
                 DebugHelper.log("Risposta da MatchServer: ERR! Impossibile chiudere la partita.");
+                GiocarePartitaController.getInstance().wakeUpController();
                 break;
         }
-        closingHandler.concludeDialogue();
-        GiocarePartitaController.getInstance().wakeUpController();
     }
     
     /**
@@ -294,11 +300,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     public boolean closeMatch() {
         closingHandler = new MatchClosingDialogueHandler(conn);
         closingHandler.addStateChangeObserver(this);
-        /**
-         * TODO: Ricevere OK dal server
-         */
         return closingHandler.startDialogue(matchName);
-        
     }
 
     /**
@@ -385,19 +387,17 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * @param msg 
      */
     private void handleMatchStartedMessage(P2PMessage msg) {
-        /**
-         * TODO notificare gui avvio partita
-         */
-        GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "Hey, questa partita sta iniziando!");
+        GiocarePartitaController.getInstance().matchStarted();
+        /* Avvio della partita... fine iterazione 4 */
     }
 
     private void handleMatchClosedMessage(P2PMessage msg) {
         /**
          * TODO eliminare questo match dalla propria room
          * Questo verrà fatto dall'utente partecipante 
-         * che riceve il mess di chiusura
+         * che riceve il messaggio di chiusura.
          */
-        GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "Hey, questa partita si è chiusa!");
+        GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "La partita è stata chiusa!");
         GiocarePartitaController.getInstance().receivedMatchClosure();
     }
 }

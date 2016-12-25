@@ -54,7 +54,6 @@ public class P2PConnection {
                     //System.out.println("Exception in " + (serverSide ? "Server: " : "Client: "));
                     Logger.getLogger(P2PConnection.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                // TODO in Step3: DO SOMETHING WITH MESSAGE
             } while (!isClosing());
             doClose();
         }
@@ -188,8 +187,6 @@ public class P2PConnection {
     }
 
     /**
-     * TODO
-     *
      * @param player
      * @param address
      * @param port
