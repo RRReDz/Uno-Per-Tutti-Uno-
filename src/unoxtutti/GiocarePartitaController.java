@@ -390,11 +390,9 @@ public class GiocarePartitaController implements MessageReceiver {
      * uscire poichè la partita sta chiudendo.
      */
     private void playerLeftAMatch() {
+        /* Rimozione dei listener della partita, verrà cancellata */
         P2PConnection conn = currentRoom.getConnection();
-        /* Rimozione dei listener relativi ad aggiornamento, inzio e chiusura partita */
-        conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_UPDATE_MSG);
-        conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_STARTED_MSG);
-        conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_CLOSED_MSG);
+        conn.removeMessageReceivedObserver(currentMatch);
         
         /* Rimozione del match */
         currentMatch = null;
@@ -426,10 +424,7 @@ public class GiocarePartitaController implements MessageReceiver {
      * Richiamato quando una partita viene chiusa.
      */
     public void matchClosed() {
-        currentRoom
-                .getConnection()
-                .removeMessageReceivedObserver(currentMatch);
-        currentMatch = null;
+        playerLeftAMatch();
         wakeUpController();
     }
 
