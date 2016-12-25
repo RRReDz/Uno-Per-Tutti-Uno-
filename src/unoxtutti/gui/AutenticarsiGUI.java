@@ -5,6 +5,7 @@
 package unoxtutti.gui;
 
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.configuration.ApplicationConfig;
@@ -38,15 +39,15 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
-        javax.swing.JPanel jPanel1 = new javax.swing.JPanel();
+        javax.swing.JPanel mainPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
-        javax.swing.JPanel jPanel4 = new javax.swing.JPanel();
+        loginPanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel1 = new javax.swing.JLabel();
         emailSigninField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel2 = new javax.swing.JLabel();
         passSigninField = new javax.swing.JTextField();
         signinButton = new javax.swing.JButton();
-        javax.swing.JPanel jPanel6 = new javax.swing.JPanel();
+        registerPanel = new javax.swing.JPanel();
         javax.swing.JLabel jLabel5 = new javax.swing.JLabel();
         nameSignupField = new javax.swing.JTextField();
         javax.swing.JLabel jLabel3 = new javax.swing.JLabel();
@@ -61,26 +62,32 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         setModalityType(java.awt.Dialog.ModalityType.DOCUMENT_MODAL);
         setResizable(false);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        jPanel1.setLayout(new java.awt.BorderLayout());
+        mainPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        mainPanel.setName(""); // NOI18N
+        mainPanel.setLayout(new java.awt.BorderLayout());
 
         tabbedPane.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        jPanel4.setLayout(new java.awt.GridBagLayout());
+        loginPanel.setLayout(new java.awt.GridBagLayout());
 
         jLabel1.setText("Email:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel4.add(jLabel1, gridBagConstraints);
+        loginPanel.add(jLabel1, gridBagConstraints);
 
         emailSigninField.setColumns(40);
         emailSigninField.setAlignmentX(0.0F);
+        emailSigninField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                signinFieldEnterKeyReleased(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel4.add(emailSigninField, gridBagConstraints);
+        loginPanel.add(emailSigninField, gridBagConstraints);
 
         jLabel2.setText("Password:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -88,16 +95,21 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
-        jPanel4.add(jLabel2, gridBagConstraints);
+        loginPanel.add(jLabel2, gridBagConstraints);
 
         passSigninField.setColumns(15);
         passSigninField.setAlignmentX(0.0F);
+        passSigninField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                signinFieldEnterKeyReleased(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel4.add(passSigninField, gridBagConstraints);
+        loginPanel.add(passSigninField, gridBagConstraints);
 
         signinButton.setText("Entra");
         signinButton.addActionListener(new java.awt.event.ActionListener() {
@@ -111,17 +123,17 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 5);
-        jPanel4.add(signinButton, gridBagConstraints);
+        loginPanel.add(signinButton, gridBagConstraints);
 
-        tabbedPane.addTab("Accedi", new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/login.png")), jPanel4); // NOI18N
+        tabbedPane.addTab("Accedi", new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/login.png")), loginPanel); // NOI18N
 
-        jPanel6.setLayout(new java.awt.GridBagLayout());
+        registerPanel.setLayout(new java.awt.GridBagLayout());
 
         jLabel5.setText("Nome utente:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(jLabel5, gridBagConstraints);
+        registerPanel.add(jLabel5, gridBagConstraints);
 
         nameSignupField.setColumns(40);
         nameSignupField.setAlignmentX(0.0F);
@@ -129,7 +141,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(nameSignupField, gridBagConstraints);
+        registerPanel.add(nameSignupField, gridBagConstraints);
 
         jLabel3.setText("Email:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -137,7 +149,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(jLabel3, gridBagConstraints);
+        registerPanel.add(jLabel3, gridBagConstraints);
 
         emailSignupField.setColumns(40);
         emailSignupField.setAlignmentX(0.0F);
@@ -147,7 +159,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(emailSignupField, gridBagConstraints);
+        registerPanel.add(emailSignupField, gridBagConstraints);
 
         jLabel4.setText("Password:");
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -155,7 +167,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(jLabel4, gridBagConstraints);
+        registerPanel.add(jLabel4, gridBagConstraints);
 
         passSignupField.setColumns(15);
         passSignupField.setAlignmentX(0.0F);
@@ -165,7 +177,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel6.add(passSignupField, gridBagConstraints);
+        registerPanel.add(passSignupField, gridBagConstraints);
 
         signupButton.setText("Crea nuovo utente");
         signupButton.addActionListener(new java.awt.event.ActionListener() {
@@ -179,13 +191,13 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(10, 5, 10, 5);
-        jPanel6.add(signupButton, gridBagConstraints);
+        registerPanel.add(signupButton, gridBagConstraints);
 
-        tabbedPane.addTab("Registrati", new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/register.png")), jPanel6); // NOI18N
+        tabbedPane.addTab("Registrati", new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/register.png")), registerPanel); // NOI18N
 
-        jPanel1.add(tabbedPane, java.awt.BorderLayout.CENTER);
+        mainPanel.add(tabbedPane, java.awt.BorderLayout.CENTER);
 
-        getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
+        getContentPane().add(mainPanel, java.awt.BorderLayout.CENTER);
 
         setBounds(100, 100, 537, 266);
     }// </editor-fold>//GEN-END:initComponents
@@ -220,26 +232,29 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_signupButtonActionPerformed
 
+    
+    private void signinFieldEnterKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_signinFieldEnterKeyReleased
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            this.signinButton.doClick();
+        }
+    }//GEN-LAST:event_signinFieldEnterKeyReleased
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-
         lookAndFeel();
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                AutenticarsiGUI dialog = new AutenticarsiGUI(new javax.swing.JFrame());
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            AutenticarsiGUI dialog = new AutenticarsiGUI(new javax.swing.JFrame());
+            dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosing(java.awt.event.WindowEvent e) {
+                    System.exit(0);
+                }
+            });
+            dialog.setVisible(true);
         });
     }
 
@@ -268,9 +283,11 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField emailSigninField;
     private javax.swing.JTextField emailSignupField;
+    private javax.swing.JPanel loginPanel;
     private javax.swing.JTextField nameSignupField;
     private javax.swing.JTextField passSigninField;
     private javax.swing.JTextField passSignupField;
+    private javax.swing.JPanel registerPanel;
     private javax.swing.JButton signinButton;
     private javax.swing.JButton signupButton;
     private javax.swing.JTabbedPane tabbedPane;
