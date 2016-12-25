@@ -512,15 +512,19 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         }
         
         /* Aggiorno gli altri client in partita se la richiesta è ok. */
-        if(match != null && isReqOk)
+        if(match != null && isReqOk) {
             match.notifyMatchStart(sender);
-        
+        }
     }
     
+    /**
+     * Gestisce la chiusura di una partita.
+     * @param msg Messaggio di chiusura
+     */
     private void handleMatchClosing(P2PMessage msg) {
         /* Controllo validità dati ricevuti e valori partita */
-        ServerMatch match = null;
         boolean isReqOk = true;
+        ServerMatch match = null;
         if (msg.getParametersCount() != 1) {
             isReqOk = false;
         } else {
@@ -529,15 +533,12 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 if(!matches.containsKey(matchName)) {
                     /* La partita non esiste */
                     isReqOk = false;
-                }
-                /* La partita desiderata esiste */
-                else {
-                    /* Recupero il match dal nome */
+                } else {
+                    /**
+                     * La partita desiderata esiste
+                     * Recupero il match dal nome
+                     */
                     match = matches.get(matchName);
-                    /* Controllo se partita già iniziata */
-                    if(match.isClosed())
-                        /* La partita è già stata chiusa */
-                        isReqOk = false;
                 }
             } catch (ClassCastException ex) {
                 isReqOk = false;
@@ -560,8 +561,8 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         parameters[0] = isReqOk;
         
         /**
-        * Invio della risposta al client creatore della partita
-        */
+         * Invio della risposta al client creatore della partita
+         */
         synchronized(this) {
             /**
              * Set parametro che indica che la partita è stata avviata
@@ -569,10 +570,10 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
              * sempre se richiesta è ok
              */
             if(match != null && isReqOk) {
-                match.setClosed(true);
                 playerClosedHisMatch(sender);
             }
-
+            
+            /* Invio risposta */
             try {
                 sender.sendMessage(reply);
             } catch (PartnerShutDownException ex) {

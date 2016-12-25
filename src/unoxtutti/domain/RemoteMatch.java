@@ -66,11 +66,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     private boolean isStarted = false;
     
     /**
-     * Indica se la partita è chiusa o meno.
-     */
-    private boolean isClosed = false;
-    
-    /**
      * Costruttore che memorizza le informazioni più importanti.
      * Questo costrutto viene utilizzato durante la creazione di una partita.
      * @param connectionToRoomHost Connessione con il proprietario della stanza.
@@ -146,7 +141,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 handleMatchClosedMessage(msg);
                 break;
             default:
-                break;
         }
     }
     
@@ -309,14 +303,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     public boolean isStarted() {
         return isStarted;
-    }
-    
-    /**
-     * @return isClosed <code>true</code> se il match è stato chiuso o meno
-     * <code>false</code> altrimenti
-     */
-    public boolean isClosed() {
-        return isClosed;
     }
     
     /**

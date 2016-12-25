@@ -287,8 +287,8 @@ public class P2PConnection {
         if(!receivers.contains(obs))
             receivers.add(obs);
         
-        /* debug */
-        System.out.println("\n - addMessageReceivedObserver - ");
+        /* Debug */
+        //System.out.println("- addMessageReceivedObserver - ");
         System.out.println("Aggiunto observer " + obs + " per messaggio " + messageName + " su connessione " + this.toString());
         
         ArrayList<P2PMessage> queue = unreadMessages.get(messageName);
@@ -320,6 +320,24 @@ public class P2PConnection {
             return;
         }
         receivers.remove(obs);
+    }
+    
+    /**
+     * Rimuove tutti i listener da un oggetto.
+     * @param obs Oggetto
+     */
+    public synchronized void removeMessageReceivedObserver(MessageReceiver obs) {
+        messageReceivers.values().stream().filter((receivers) -> (receivers.contains(obs))).forEachOrdered((receivers) -> {
+            receivers.remove(obs);
+        });
+    }
+    
+    /**
+     * Rimuove tutti i listener di un certo tipo.
+     * @param messageName Tipo di messaggio
+     */
+    public synchronized void removeMessageReceivedObserver(String messageName) {
+        messageReceivers.remove(messageName);
     }
 
     private synchronized void notifyMessageReceived(P2PMessage msg) {

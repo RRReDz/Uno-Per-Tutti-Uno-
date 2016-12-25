@@ -47,11 +47,6 @@ public class ServerMatch extends Match implements MessageReceiver {
     protected boolean started;
     
     /**
-     * Indica se la partita è stata chiusa
-     */
-    protected boolean closed;
-    
-    /**
      * Inizializza una partita
      * @param parentRoom Stanza di appartenenza
      * @param owner Proprietario della partita
@@ -93,22 +88,6 @@ public class ServerMatch extends Match implements MessageReceiver {
      */
     public boolean isStarted() {
         return started;
-    }
-    
-    /**
-     * Set del parametro relativo alla chiusura della partita
-     * @param close 
-     */
-    public void setClosed(boolean close) {
-        closed = close;
-    }
-    
-    /**
-     * Indica se la partita è stata chiusa oppure no
-     * @return 
-     */
-    public boolean isClosed() {
-        return closed;
     }
     
     /**
@@ -251,7 +230,7 @@ public class ServerMatch extends Match implements MessageReceiver {
         
         /* Preparazione del messaggio */
         P2PMessage msg = new P2PMessage(Match.MATCH_ACCESS_REQUEST_MSG);
-        Object[] pars = new Object[]{player};
+        Object[] pars = new Object[]{ player };
         msg.setParameters(pars);
         P2PConnection conn = room.getConnectionWithPlayer(owner);
         

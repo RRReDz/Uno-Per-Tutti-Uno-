@@ -155,14 +155,15 @@ public class GiocarePartitaController implements MessageReceiver {
      * Avvia la partita
      * @return 
      */
-    public boolean avviaPartita() throws Exception {
-            if (currentMatch == null) {
-                throw new Exception("Errore: Non esiste alcuna partita associata.");
-            }
-            /* Se la partita è già stata avviata */
-            if(currentMatch.isStarted()) {
-                throw new Exception("Errore: Questa partita è già stata avviata.");
-            }
+    public boolean avviaPartita() {
+        /* Non esiste alcuna partita */
+        if (currentMatch == null) {
+            throw new IllegalStateException("Errore: Non esiste alcuna partita associata.");
+        }
+        /* Se la partita è già stata avviata */
+        if(currentMatch.isStarted()) {
+            throw new IllegalStateException("Errore: Questa partita è già stata avviata.");
+        }
             
         synchronized (lock) {
             boolean isStarting = currentMatch.startMatch();
@@ -309,7 +310,7 @@ public class GiocarePartitaController implements MessageReceiver {
         if (currentMatch == null) {
             /* Partita inesistente */
             throw new IllegalStateException("Errore: non esiste alcuna partita associata.");
-        } else if (currentMatch.isClosed()) {
+        } else if (currentMatch.isStarted()) {
             /* Il match è già stato chiuso */
             throw new IllegalStateException("Errore: la partita è già stata avviata.");
         }
@@ -325,13 +326,7 @@ public class GiocarePartitaController implements MessageReceiver {
                     DebugHelper.log("InterruptedException durante una richiesta di ingresso: " + exc.getMessage());
                 }
             }
-            
-            /* Si la partita è stata chiusa con successo, si aggiorna l'interfaccia */
-            boolean isClosed = currentMatch == null;
-            if(isClosed) {
-                playerClosedHisMatch();
-            }
-            return isClosed;
+            return currentMatch == null;
         }
     }
     
@@ -400,20 +395,11 @@ public class GiocarePartitaController implements MessageReceiver {
         conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_UPDATE_MSG);
         conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_STARTED_MSG);
         conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_CLOSED_MSG);
+        
         /* Rimozione del match */
         currentMatch = null;
         /* Aggiornamento interfaccia grafica, ritorno alla stanza */
         UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.INSIDE_ROOM);
-    }
-    
-    /**
-     * Richiamato quando un proprietario chiude la propria partita.
-     */
-    private void playerClosedHisMatch() {
-        P2PConnection conn = currentRoom.getConnection();
-        /* Rimozione dei listener relativi ad aggiornamento, inzio e chiusura partita */
-        conn.removeMessageReceivedObserver(currentMatch, Match.MATCH_ACCESS_REQUEST_MSG);
-        /* L'aggiornamento della gui viene fatto in "InsideMatchPanel" */
     }
 
     /**
@@ -436,8 +422,13 @@ public class GiocarePartitaController implements MessageReceiver {
         UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.GAMEPLAY);
     }
     
-    
+    /**
+     * Richiamato quando una partita viene chiusa.
+     */
     public void matchClosed() {
+        currentRoom
+                .getConnection()
+                .removeMessageReceivedObserver(currentMatch);
         currentMatch = null;
         wakeUpController();
     }
