@@ -26,19 +26,82 @@ public class GameplayPanel extends MainWindowSubPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 700, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        jSplitPane1 = new javax.swing.JSplitPane();
+        turnsListPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        javax.swing.JList<String> turnsList = new javax.swing.JList<>();
+        mainPanel = new javax.swing.JPanel();
+        jSplitPane2 = new javax.swing.JSplitPane();
+        eventPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        javax.swing.JList<String> eventList = new javax.swing.JList<>();
+        cardsPanel = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        javax.swing.JList<String> cards = new javax.swing.JList<>();
+
+        setLayout(new java.awt.BorderLayout());
+
+        jSplitPane1.setDividerLocation(150);
+
+        turnsListPanel.setLayout(new java.awt.BorderLayout());
+
+        turnsList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Giocatore 1", "Giocatore 2", "Giocatore 3", "Giocatore 4" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        turnsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        turnsList.setEnabled(false);
+        jScrollPane1.setViewportView(turnsList);
+
+        turnsListPanel.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+
+        jSplitPane1.setLeftComponent(turnsListPanel);
+
+        mainPanel.setLayout(new java.awt.BorderLayout());
+
+        jSplitPane2.setDividerLocation(400);
+
+        eventPanel.setLayout(new java.awt.BorderLayout());
+
+        eventList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane2.setViewportView(eventList);
+
+        eventPanel.add(jScrollPane2, java.awt.BorderLayout.CENTER);
+
+        jSplitPane2.setLeftComponent(eventPanel);
+
+        cardsPanel.setLayout(new java.awt.BorderLayout());
+
+        cards.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Carta 1", "Carta 2", "Carta 3", "Carta 4", "Carta 5", "Carta 6", "Carta 7", "Carta 8", "Carta 9" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        cards.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane4.setViewportView(cards);
+
+        cardsPanel.add(jScrollPane4, java.awt.BorderLayout.CENTER);
+
+        jSplitPane2.setRightComponent(cardsPanel);
+
+        mainPanel.add(jSplitPane2, java.awt.BorderLayout.CENTER);
+
+        jSplitPane1.setRightComponent(mainPanel);
+
+        add(jSplitPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel cardsPanel;
+    private javax.swing.JPanel eventPanel;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JSplitPane jSplitPane2;
+    private javax.swing.JPanel mainPanel;
+    private javax.swing.JPanel turnsListPanel;
     // End of variables declaration//GEN-END:variables
 }
