@@ -4,11 +4,13 @@
  */
 package unoxtutti.domain;
 
+import java.io.Serializable;
+
 /**
  * Rappresenta una carta di un mazzo.
  * @author Davide
  */
-public class Card {
+public class Card implements Serializable {
     /**
      * Tipi di carte.
      */

@@ -4,6 +4,7 @@
  */
 package unoxtutti.domain;
 
+import java.util.Collection;
 import java.util.List;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
@@ -22,6 +23,7 @@ import unoxtutti.dialogue.MatchStartingDialogueHandler;
 import unoxtutti.dialogue.MatchStartingDialogueState;
 import unoxtutti.domain.dialogue.DialogueHandler;
 import unoxtutti.domain.dialogue.DialogueObserver;
+import unoxtutti.gui.GameplayPanel;
 import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.GUIUtils;
 
@@ -397,7 +399,20 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * @param msg Messaggio di aggiornamento.
      */
     private void handleStatusUpdateMessage(P2PMessage msg) {
-        GUIUtils.showInformationMessage(null, "Aggiornamento ricevuto.");
-        //throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            DebugHelper.log("Aggiornamento stato ricevuto.");
+            if(msg.getParametersCount() != 2) {
+                throw new IllegalArgumentException("Numero errato di argomenti: " + msg.getParametersCount());
+            }
+            MatchStatus status = (MatchStatus) msg.getParameter(0);
+            Collection<Card> mano = (Collection<Card>) msg.getParameter(1);
+            
+            /* Aggiornamento interfaccia grafica */
+            GameplayPanel userInterface = GiocarePartitaController.getInstance().gameplayPanel;
+            userInterface.updateTurns(status.turns, status.currentPlayer, status.turnsDirection);
+            userInterface.updateCards(mano);
+        } catch(ClassCastException e) {
+            throw new CommunicationException("Wrong parameter type in message " + msg.getName());
+        }
     }
 }

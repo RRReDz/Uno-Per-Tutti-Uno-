@@ -4,6 +4,7 @@
  */
 package unoxtutti.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * Contiene informazioni riguardanti lo stato di una partita.
  * @author Davide
  */
-public abstract class MatchStatus {
+public class MatchStatus implements Serializable {
     /* Messaggio di aggiornamento */
     public static final String STATUS_UPDATE_MSG = "statusUpdate";
     
@@ -72,5 +73,18 @@ public abstract class MatchStatus {
                 turnsDirection = MatchStatus.DIRECTION_FORWARD;
                 break;
         }
+    }
+    
+    
+    /**
+     * Crea una copia dell'istanza corrente.
+     * @return Stato della partita
+     */
+    protected MatchStatus creaCopia() {
+        MatchStatus upd = new MatchStatus(turns);
+        upd.cartaMazzoScarti = cartaMazzoScarti;
+        upd.currentPlayer = currentPlayer;
+        upd.turnsDirection = turnsDirection;
+        return upd;
     }
 }

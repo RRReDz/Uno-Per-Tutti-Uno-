@@ -4,6 +4,12 @@
  */
 package unoxtutti.gui;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.swing.DefaultListModel;
+import unoxtutti.domain.Card;
+import unoxtutti.domain.Player;
+
 /**
  *
  * @author Davide
@@ -29,15 +35,15 @@ public class GameplayPanel extends MainWindowSubPanel {
         jSplitPane1 = new javax.swing.JSplitPane();
         turnsListPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        javax.swing.JList<String> turnsList = new javax.swing.JList<>();
+        turnsList = new javax.swing.JList<>();
         mainPanel = new javax.swing.JPanel();
         jSplitPane2 = new javax.swing.JSplitPane();
         eventPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        javax.swing.JList<String> eventList = new javax.swing.JList<>();
+        eventList = new javax.swing.JList<>();
         cardsPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        javax.swing.JList<String> cards = new javax.swing.JList<>();
+        cardsList = new javax.swing.JList<>();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -45,11 +51,7 @@ public class GameplayPanel extends MainWindowSubPanel {
 
         turnsListPanel.setLayout(new java.awt.BorderLayout());
 
-        turnsList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Giocatore 1", "Giocatore 2", "Giocatore 3", "Giocatore 4" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
+        turnsList.setModel(new DefaultListModel());
         turnsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         turnsList.setEnabled(false);
         jScrollPane1.setViewportView(turnsList);
@@ -64,6 +66,7 @@ public class GameplayPanel extends MainWindowSubPanel {
 
         eventPanel.setLayout(new java.awt.BorderLayout());
 
+        eventList.setModel(new DefaultListModel());
         eventList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane2.setViewportView(eventList);
 
@@ -73,13 +76,9 @@ public class GameplayPanel extends MainWindowSubPanel {
 
         cardsPanel.setLayout(new java.awt.BorderLayout());
 
-        cards.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Carta 1", "Carta 2", "Carta 3", "Carta 4", "Carta 5", "Carta 6", "Carta 7", "Carta 8", "Carta 9" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        cards.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        jScrollPane4.setViewportView(cards);
+        cardsList.setModel(new DefaultListModel());
+        cardsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane4.setViewportView(cardsList);
 
         cardsPanel.add(jScrollPane4, java.awt.BorderLayout.CENTER);
 
@@ -94,7 +93,9 @@ public class GameplayPanel extends MainWindowSubPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JList<String> cardsList;
     private javax.swing.JPanel cardsPanel;
+    private javax.swing.JList<String> eventList;
     private javax.swing.JPanel eventPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -102,6 +103,35 @@ public class GameplayPanel extends MainWindowSubPanel {
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JList<String> turnsList;
     private javax.swing.JPanel turnsListPanel;
     // End of variables declaration//GEN-END:variables
+
+    
+    /**
+     * Aggiorna la lista dei turni.
+     * @param turns Ordine dei giocatori
+     * @param currentPlayer Giocatore a cui spetta il turno
+     * @param turnsDirection Direzione
+     */
+    public void updateTurns(ArrayList<Player> turns, Player currentPlayer, int turnsDirection) {
+        DefaultListModel model = (DefaultListModel) turnsList.getModel();
+        model.clear();
+        turns.forEach((p) -> {
+            model.addElement(p.getName());
+        });
+        // TODO: Evidenziare giocatore del turno corrente
+    }
+
+    /**
+     * Aggiorna la lista delle carte
+     * @param mano Carte possedute dal giocatore
+     */
+    public void updateCards(Collection<Card> mano) {
+        DefaultListModel model = (DefaultListModel) cardsList.getModel();
+        model.clear();
+        mano.forEach((c) -> {
+            model.addElement(c);
+        });
+    }
 }

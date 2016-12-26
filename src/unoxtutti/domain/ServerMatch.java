@@ -440,13 +440,18 @@ public class ServerMatch extends Match implements MessageReceiver {
      */
     void sendStatusUpdate() {
         synchronized(room) {
+            /* Informazioni comuni a tutti i messaggi di aggiornamento */
+            MatchStatus updatedStatus = status.creaCopia();
+            
             /* Si manda un messaggio di aggiornamento a tutti i giocatori */
             players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEachOrdered((c) -> {
                 try {
+                    /* Per ogni giocatore, si costruisce un messaggio di aggiornamento apposito */
                     P2PMessage upd = new P2PMessage(MatchStatus.STATUS_UPDATE_MSG);
-                    // TODO: Costruire oggetto stato fittizio con solo
-                    //       informazioni necessarie al giocatore specifico
-                    Object[] parameters = new Object[]{ };
+                    Object[] parameters = new Object[] {
+                        updatedStatus,
+                        status.getCardsOfPlayer(c.getPlayer())
+                    };
                     upd.setParameters(parameters);
                     c.sendMessage(upd);
                 } catch (PartnerShutDownException ex) {

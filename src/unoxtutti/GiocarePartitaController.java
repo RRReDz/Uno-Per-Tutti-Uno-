@@ -16,7 +16,9 @@ import unoxtutti.domain.MatchStatus;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
 import unoxtutti.domain.RemoteRoom;
+import unoxtutti.gui.GameplayPanel;
 import unoxtutti.gui.UnoXTuttiGUI;
+import unoxtutti.gui.UnoXTuttiGUI.GUIState;
 import unoxtutti.utils.DebugHelper;
 
 /**
@@ -57,6 +59,13 @@ public class GiocarePartitaController implements MessageReceiver {
      * Lock per richieste
      */
     private final Object lock;
+    
+    /**
+     * Pannello che visualizza a video le informazioni della partita.
+     * Memorizzato per poterlo richiamare quando è necessario aggiornare
+     * le informazioni riguardanti la partita.
+     */
+    public GameplayPanel gameplayPanel;
 
     /**
      * Non permette di generare oggetti della classe al di fuori del metodo
@@ -68,6 +77,7 @@ public class GiocarePartitaController implements MessageReceiver {
         currentMatch = null;
         matchInLimbo = null;
         accessRequestInLimbo = null;
+        gameplayPanel = null;
     }
 
     /**
@@ -419,7 +429,9 @@ public class GiocarePartitaController implements MessageReceiver {
      */
     public void matchStarted() {
         /* Ci si sposta nell'interfaccia della partita */
-        UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.GAMEPLAY);
+        GUIState guiState = UnoXTuttiGUI.GUIState.GAMEPLAY;
+        gameplayPanel = (GameplayPanel) guiState.getPanel();
+        UnoXTutti.mainWindow.setGuiState(guiState);
         
         /* Listener per messaggio di aggiornamento da parte del server */
         currentRoom.getConnection().addMessageReceivedObserver(currentMatch, MatchStatus.STATUS_UPDATE_MSG);
@@ -432,5 +444,4 @@ public class GiocarePartitaController implements MessageReceiver {
         playerLeftAMatch();
         wakeUpController();
     }
-
 }
