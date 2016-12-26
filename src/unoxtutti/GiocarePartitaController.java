@@ -12,6 +12,7 @@ import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.domain.Match;
 import unoxtutti.domain.MatchAccessRequest;
+import unoxtutti.domain.MatchStatus;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
 import unoxtutti.domain.RemoteRoom;
@@ -417,7 +418,11 @@ public class GiocarePartitaController implements MessageReceiver {
      * Aggiorna l'interfaccia.
      */
     public void matchStarted() {
+        /* Ci si sposta nell'interfaccia della partita */
         UnoXTutti.mainWindow.setGuiState(UnoXTuttiGUI.GUIState.GAMEPLAY);
+        
+        /* Listener per messaggio di aggiornamento da parte del server */
+        currentRoom.getConnection().addMessageReceivedObserver(currentMatch, MatchStatus.STATUS_UPDATE_MSG);
     }
     
     /**

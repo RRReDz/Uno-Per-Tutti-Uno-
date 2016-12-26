@@ -5,7 +5,6 @@
 package unoxtutti.domain;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -432,6 +431,31 @@ public class ServerMatch extends Match implements MessageReceiver {
         started = true;
         notifyMatchStart();
         
-        status = new ServerMatchStatus(players, room);
+        status = new ServerMatchStatus(players);
+        sendStatusUpdate();
+    }
+
+    /**
+     * Invia a tutti i giocatori lo stato aggiornato della partita.
+     */
+    void sendStatusUpdate() {
+        synchronized(room) {
+            /* Si manda un messaggio di aggiornamento a tutti i giocatori */
+            players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEachOrdered((c) -> {
+                try {
+                    P2PMessage upd = new P2PMessage(MatchStatus.STATUS_UPDATE_MSG);
+                    // TODO: Costruire oggetto stato fittizio con solo
+                    //       informazioni necessarie al giocatore specifico
+                    Object[] parameters = new Object[]{ };
+                    upd.setParameters(parameters);
+                    c.sendMessage(upd);
+                } catch (PartnerShutDownException ex) {
+                    /**
+                     * Si ignora il fatto che il giocatore abbia
+                     * perso la connessione, per ora
+                     */
+                }
+            });
+        }
     }
 }

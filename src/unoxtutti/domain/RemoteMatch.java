@@ -126,7 +126,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         switch (msg.getName()) {
             case Match.MATCH_UPDATE_MSG: //Handler ricezione aggiornamento partita
                 DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA AGGIORNATA");
-                handleUpdateMessage(msg);
+                handlePlayersUpdateMessage(msg);
                 break;
             case Match.MATCH_ACCESS_REQUEST_MSG: // Richiesta di accesso inoltrata dal RoomServer
                 DebugHelper.log("Ricevuto inoltro richiesta di accesso dal server.");
@@ -139,6 +139,10 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             case Match.MATCH_CLOSED_MSG: //Questo sarà l'handler della chiusura del match
                 DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA CHIUSA.");
                 handleMatchClosedMessage(msg);
+                break;
+            case MatchStatus.STATUS_UPDATE_MSG:
+                DebugHelper.log("Ricevuto aggiornamento dal server: STATO AGGIORNATO");
+                handleStatusUpdateMessage(msg);
                 break;
             default:
         }
@@ -309,7 +313,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * Gestione di un messaggio di aggiornamento
      * @param msg Messaggio di aggiornamento
      */
-    private void handleUpdateMessage(P2PMessage msg) {
+    private void handlePlayersUpdateMessage(P2PMessage msg) {
         try {
             /* Aggiornamento lista giocatori */
             List<Player> players = (List<Player>) msg.getParameter(0);
@@ -385,5 +389,15 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
          */
         GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "La partita è stata chiusa!");
         GiocarePartitaController.getInstance().receivedMatchClosure();
+    }
+    
+    
+    /**
+     * Ricevuto un messaggio di cambio di stato da parte del server.
+     * @param msg Messaggio di aggiornamento.
+     */
+    private void handleStatusUpdateMessage(P2PMessage msg) {
+        GUIUtils.showInformationMessage(null, "Aggiornamento ricevuto.");
+        //throw new UnsupportedOperationException("Not supported yet.");
     }
 }

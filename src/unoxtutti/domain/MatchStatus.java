@@ -48,6 +48,7 @@ public abstract class MatchStatus {
      * @param players Lista dei giocatori partecipanti
      */
     protected MatchStatus(List<Player> players) {
+        turns = new ArrayList<>();
         turns.addAll(players);
     }
     
