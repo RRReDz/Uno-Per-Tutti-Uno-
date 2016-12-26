@@ -495,25 +495,20 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         * Invio della risposta al client creatore della partita
         */
         synchronized(this) {
-            /* Set parametro che indica che la partita è stata avviata
-             * Set dei relativi listener per messaggi successivi
-             * sempre se richiesta è ok
-             */
+            /* Rimozione listener inutili */
             if(match != null && isReqOk) {
-                match.setStarted(true);
                 playerStartedHisMatch(sender);
             }
-
+            /* Invio risposta al proprietario */
             try {
                 sender.sendMessage(reply);
             } catch (PartnerShutDownException ex) {
                 sender.disconnect();
             }
-        }
-        
-        /* Aggiorno gli altri client in partita se la richiesta è ok. */
-        if(match != null && isReqOk) {
-            match.notifyMatchStart(sender);
+            /* Avvio partita */
+            if(match != null && isReqOk) {
+                match.start();
+            }
         }
     }
     
@@ -584,8 +579,8 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
         /* Aggiorno gli altri client in partita se la richiesta è andata a buon fine. */
         if(match != null && isReqOk) {
             /* Aggiornamento a giocatori in partita e rimozione della partita */
-            this.deleteMatchFromList(match.getMatchName());
-            match.notifyMatchClosure(sender);
+            deleteMatchFromList(match.getMatchName());
+            match.notifyMatchClosure();
         }
     }
     
@@ -768,6 +763,9 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      */
     void deleteMatchFromList(String matchName) {
         synchronized(this) {
+            connections.values().forEach((c) -> {
+                c.removeMessageReceivedObserver(matches.get(matchName));
+            });
             matches.remove(matchName);
         }
     }

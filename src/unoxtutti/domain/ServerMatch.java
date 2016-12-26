@@ -5,6 +5,7 @@
 package unoxtutti.domain;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,6 +48,11 @@ public class ServerMatch extends Match implements MessageReceiver {
     protected boolean started;
     
     /**
+     * Tiene traccia dello stato della partita.
+     */
+    protected ServerMatchStatus status;
+    
+    /**
      * Inizializza una partita
      * @param parentRoom Stanza di appartenenza
      * @param owner Proprietario della partita
@@ -72,14 +78,6 @@ public class ServerMatch extends Match implements MessageReceiver {
         return owner;
     }
     
-    
-    /**
-     * Set del parametro relativo all'avvio della partita
-     * @param start
-     */
-    public void setStarted(boolean start) {
-        started = start;
-    }
     
     /**
      * Indica se la partita è stata avviata oppure no.
@@ -111,7 +109,7 @@ public class ServerMatch extends Match implements MessageReceiver {
     /**
      * Metodo per notificare a tutti i giocatori in stanza l'inzio della partita.
      */
-    void notifyMatchStart(P2PConnection sender) {
+    void notifyMatchStart() {
         P2PMessage matchStartedMsg = new P2PMessage(Match.MATCH_STARTED_MSG);
         List<P2PConnection> lostConnections = new ArrayList<>(players.size());
        
@@ -154,10 +152,9 @@ public class ServerMatch extends Match implements MessageReceiver {
     }
     
     /**
-     * Metodo per notificare tutti gli utenti della chiusura della partita
-     * @param sender 
+     * Metodo per notificare tutti gli utenti della chiusura della partita.
      */
-    void notifyMatchClosure(P2PConnection sender) {
+    void notifyMatchClosure() {
         P2PMessage matchClosedMsg = new P2PMessage(Match.MATCH_CLOSED_MSG);
         List<P2PConnection> lostConnections = new ArrayList<>(players.size());
         
@@ -424,21 +421,17 @@ public class ServerMatch extends Match implements MessageReceiver {
             return false;
         }
     }
-
-    /**
-     * Metodo per rimuovere le informazioni della partita dalla stanza
-     * e per rimuoverla completamente
-     */
-    //void destroyMatch() {
-        /**
-        * TODO: 
-        * Rimozione informazioni presenti nella stanza relative a questa partita
-        * Distruzione partita
-        */
-
-       /* Non rimuovere giocatori dalla stanza, escono solo dalla partita */
-
-       /* Aggiunta nuovi listener come se il giocatore ri-entrasse in stanza */
-    //}
     
+    /**
+     * Richiamato quando la partita viene avviata.
+     * 
+     * Notifica tutti i giocatori dell'inizio della partita, tranne
+     * il proprietario in quanto lui lo sa già: è lui a farla iniziare.
+     */
+    void start() {
+        started = true;
+        notifyMatchStart();
+        
+        status = new ServerMatchStatus(players, room);
+    }
 }
