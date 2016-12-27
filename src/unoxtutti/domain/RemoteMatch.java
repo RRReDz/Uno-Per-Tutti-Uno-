@@ -411,6 +411,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             GameplayPanel userInterface = GiocarePartitaController.getInstance().gameplayPanel;
             userInterface.updateTurns(status.turns, status.currentPlayer, status.turnsDirection);
             userInterface.updateCards(mano);
+            userInterface.updateEvents(status.events);
         } catch(ClassCastException e) {
             throw new CommunicationException("Wrong parameter type in message " + msg.getName());
         }

@@ -9,6 +9,7 @@ import java.util.Collection;
 import javax.swing.DefaultListModel;
 import unoxtutti.domain.Card;
 import unoxtutti.domain.Player;
+import unoxtutti.utils.GUIUtils;
 
 /**
  *
@@ -133,5 +134,27 @@ public class GameplayPanel extends MainWindowSubPanel {
         mano.forEach((c) -> {
             model.addElement(c);
         });
+    }
+
+    /**
+     * Aggiorna la lista degli eventi
+     * @param events Eventi accaduti durante la partita
+     */
+    public void updateEvents(Collection<String> events) {
+        DefaultListModel model = (DefaultListModel) eventList.getModel();
+        GUIUtils.showInformationMessage(null, "Update eventi: " + events.size());
+        if(events.getClass() != ArrayList.class) {
+            /* Refresh completo lista */
+            model.clear();
+            events.forEach((c) -> {
+                model.addElement(c);
+            });
+        } else {
+            /* Append dei nuovi elementi */
+            ArrayList<String> list = (ArrayList<String>) events;
+            for(int i = model.size(); i < list.size(); i++) {
+                model.addElement(list.get(i));
+            }
+        }
     }
 }

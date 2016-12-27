@@ -289,19 +289,17 @@ public class P2PConnection {
         
         /* Debug */
         //System.out.println("- addMessageReceivedObserver - ");
-        System.out.println("Aggiunto observer " + obs + " per messaggio " + messageName + " su connessione " + this.toString());
+        //System.out.println("Aggiunto observer " + obs + " per messaggio " + messageName + " su connessione " + this.toString());
         
         ArrayList<P2PMessage> queue = unreadMessages.get(messageName);
         if (queue != null) {
             for (P2PMessage msg : queue) {
                 /* debug */
-                System.out.println("Messaggio non letto (" + msg + ") per " + obs);
+                //System.out.println("Messaggio non letto (" + msg + ") per " + obs);
                 obs.updateMessageReceived(msg);
             }
             queue.clear();
         }
-        /* debug */
-        System.out.println();
     }
 
     /**

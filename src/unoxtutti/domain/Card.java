@@ -10,7 +10,7 @@ import java.io.Serializable;
  * Rappresenta una carta di un mazzo.
  * @author Davide
  */
-public class Card implements Serializable {
+public class Card implements Serializable, Comparable {
     /**
      * Tipi di carte.
      */
@@ -249,5 +249,23 @@ public class Card implements Serializable {
                 return getDetailName(tipo, dettaglio);
         }
         throw new IllegalStateException("Tipo non riconosciuto.");
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        /* Verifica validità argomento */
+        if(o == null) {
+            throw new IllegalArgumentException("L'argomento non può essere nullo.");
+        }
+        if(getClass() != o.getClass()) {
+            throw new IllegalArgumentException(
+                    "L'oggetto argomento deve essere di tipo \"Card\", \""
+                            + o.getClass() + "\" ricevuto."
+            );
+        }
+        
+        /* Ritorno la differenza di valore tra le due carte */
+        final Card other = (Card) o;
+        return getCardValue() - other.getCardValue();
     }
 }

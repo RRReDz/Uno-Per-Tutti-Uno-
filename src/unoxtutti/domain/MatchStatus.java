@@ -7,6 +7,8 @@ package unoxtutti.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import unoxtutti.utils.DebugHelper;
+import unoxtutti.utils.TimeUtils;
 
 /**
  * Contiene informazioni riguardanti lo stato di una partita.
@@ -45,12 +47,15 @@ public class MatchStatus implements Serializable {
     protected Card cartaMazzoScarti;
     
     /**
-     * Inizializza lo stato di una partita
-     * @param players Lista dei giocatori partecipanti
+     * Descrizione degli eventi accaduti durante la partita.
      */
-    protected MatchStatus(List<Player> players) {
-        turns = new ArrayList<>();
-        turns.addAll(players);
+    protected ArrayList<String> events;
+    
+    /**
+     * Inizializza la lista di eventi
+     */
+    protected MatchStatus() {
+        events = new ArrayList<>(100);
     }
     
     /**
@@ -81,10 +86,23 @@ public class MatchStatus implements Serializable {
      * @return Stato della partita
      */
     protected MatchStatus creaCopia() {
-        MatchStatus upd = new MatchStatus(turns);
-        upd.cartaMazzoScarti = cartaMazzoScarti;
+        MatchStatus upd = new MatchStatus();
+        upd.turns = new ArrayList<>(turns);
         upd.currentPlayer = currentPlayer;
         upd.turnsDirection = turnsDirection;
+        upd.cartaMazzoScarti = cartaMazzoScarti;
+        upd.events = events;
         return upd;
+    }
+    
+    
+    /**
+     * Traccia un evento, aggiunge un prefisso con l'ora dell'evento.
+     * @param eventMessage Descrizione dell'evento.
+     */
+    protected void trackEvent(String eventMessage) {
+        String prefix = "[" + TimeUtils.getCurrentTimeStamp("HH:mm:ss") + "] ";
+        events.add(prefix + eventMessage);
+        DebugHelper.log("EVENTO PARTITA: " + eventMessage);
     }
 }
