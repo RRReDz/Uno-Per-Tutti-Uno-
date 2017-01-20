@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import unoxtutti.AutenticarsiController;
 import unoxtutti.utils.MapUtils;
 
 /**
@@ -55,6 +56,9 @@ public class ServerMatchStatus extends MatchStatus {
         
         /* Inizializzazione mazzi */
         mazzoPesca = new Deck();
+        
+        /* Inizializzazione giocatore */
+        currentPlayer = AutenticarsiController.getInstance().getPlayer();
         
         /* Inizializzazioni mani */
         super.trackEvent("Distribuzione delle carte...");

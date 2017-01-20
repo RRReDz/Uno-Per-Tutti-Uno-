@@ -7,11 +7,11 @@ package unoxtutti.gui;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.DefaultListModel;
+import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Card;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
-import unoxtutti.utils.GUIUtils;
 
 /**
  *
@@ -100,16 +100,6 @@ public class GameplayPanel extends MainWindowSubPanel {
 
         cardsPanel.add(jScrollPane4, java.awt.BorderLayout.CENTER);
 
-        buttonDiscard.setText("Scarta carta");
-        buttonDiscard.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonDiscardActionPerformed(evt);
-            }
-        });
-        jPanel1.add(buttonDiscard);
-
-        cardsPanel.add(jPanel1, java.awt.BorderLayout.PAGE_END);
-
         jSplitPane2.setRightComponent(cardsPanel);
 
         mainPanel.add(jSplitPane2, java.awt.BorderLayout.CENTER);
@@ -133,22 +123,17 @@ public class GameplayPanel extends MainWindowSubPanel {
         add(footerPanel, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void buttonDiscardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDiscardActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_buttonDiscardActionPerformed
-
     private void cardsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cardsListMouseClicked
         Card card = (Card) cardsList.getSelectedValue();
         remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
         
         if(!remoteMatch.isCardPlayable(card))
-            buttonDiscard.setVisible(false);
+            playCardButton.setVisible(false);
         else
-            buttonDiscard.setVisible(true);
+            playCardButton.setVisible(true);
     }//GEN-LAST:event_cardsListMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonDiscard;
     private javax.swing.JList<Card> cardsList;
     private javax.swing.JPanel cardsPanel;
     private javax.swing.JButton checkBluffButton;
@@ -156,6 +141,7 @@ public class GameplayPanel extends MainWindowSubPanel {
     private javax.swing.JList<String> eventList;
     private javax.swing.JPanel eventPanel;
     private javax.swing.JPanel footerPanel;
+    private javax.swing.JButton jButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
