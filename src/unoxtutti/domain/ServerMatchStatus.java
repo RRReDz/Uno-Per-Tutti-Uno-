@@ -77,6 +77,7 @@ public class ServerMatchStatus extends MatchStatus {
         
         /* Carta iniziale sul tavolo */
         cartaMazzoScarti = mazzoPesca.pescaCarta();
+        super.trackEvent("Carta iniziale sul tavolo: " + cartaMazzoScarti);
     }
     
     
