@@ -204,7 +204,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
 
     private void infoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoButtonActionPerformed
         if (selectedRoom != null) {
-            JOptionPane.showMessageDialog(mainWindow, selectedRoom.getInfo());
+            GUIUtils.showInformationMessage(mainWindow, selectedRoom.getInfo());
         }
         DebugHelper.log("ERR: Nessuna stanza selezionata.");
     }//GEN-LAST:event_infoButtonActionPerformed
@@ -219,7 +219,7 @@ public class OutsideRoomPanel extends MainWindowSubPanel {
             roomPort = 0;
         }
         if (roomPort < 1024 || roomPort > 65535) {
-            JOptionPane.showMessageDialog(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
+            GUIUtils.showInformationMessage(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
             DebugHelper.log("ERR: La porta deve essere un numero compreso fra 1024 e 65535.");
         } else {
             this.mainWindow.setWaiting(true);

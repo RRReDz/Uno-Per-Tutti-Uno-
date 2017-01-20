@@ -6,6 +6,7 @@ package unoxtutti.gui;
 
 import javax.swing.JOptionPane;
 import unoxtutti.utils.DebugHelper;
+import unoxtutti.utils.GUIUtils;
 
 /**
  *
@@ -109,12 +110,12 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
             num = Integer.parseInt(this.portaStanzaField.getText().trim());
         } catch (NumberFormatException ex) {
             ok = false;
-            JOptionPane.showMessageDialog(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
+            GUIUtils.showInformationMessage(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
             DebugHelper.log("ERR: La porta deve essere un numero\ncompreso fra 1024 e 65535.");
         }
         if (ok && (num < 1024 || num > 65535)) {
             ok = false;
-            JOptionPane.showMessageDialog(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
+            GUIUtils.showInformationMessage(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
             DebugHelper.log("ERR: La porta deve essere un numero\ncompreso fra 1024 e 65535.");
         }
         if (ok) {

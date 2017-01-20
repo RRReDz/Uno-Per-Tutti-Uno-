@@ -6,7 +6,6 @@ package unoxtutti.gui;
 
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.configuration.ApplicationConfig;
 import unoxtutti.domain.Player;
@@ -209,7 +208,7 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         Player pl = UnoXTutti.theAutController.accedi(email, password);
         if (pl == null) {
             DebugHelper.log("ERR: Credenziali NON valide, impossibile accedere.");
-            JOptionPane.showMessageDialog(this, "Credenziali non valide. Impossibile accedere.");
+            GUIUtils.showInformationMessage(this, "Credenziali non valide. Impossibile accedere.");
         } else {
             DebugHelper.log("OK: Credenziali corrette, avvio interfaccia gestione stanze.");
             setVisible(false);
@@ -224,10 +223,10 @@ public class AutenticarsiGUI extends javax.swing.JDialog {
         boolean ok = UnoXTutti.theAutController.registra(userName, email, password);
         if (!ok) {
             DebugHelper.log("ERR: La registrazione NON è andata a buon fine.");
-            JOptionPane.showMessageDialog(this, "Impossibile creare untente con questi dati. Riprova.");
+            GUIUtils.showInformationMessage(this, "Impossibile creare untente con questi dati. Riprova.");
         } else {
             DebugHelper.log("OK: La registrazione è andata a buon fine.");
-            JOptionPane.showMessageDialog(this, "Giocatore " + userName + " creato. Ora puoi accedere.");
+            GUIUtils.showInformationMessage(this, "Giocatore " + userName + " creato. Ora puoi accedere.");
             this.tabbedPane.setSelectedIndex(0);
         }
     }//GEN-LAST:event_signupButtonActionPerformed

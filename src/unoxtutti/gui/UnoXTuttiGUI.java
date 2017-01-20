@@ -7,10 +7,10 @@ package unoxtutti.gui;
 import java.awt.CardLayout;
 import java.awt.Cursor;
 import java.awt.Toolkit;
-import javax.swing.JOptionPane;
 import unoxtutti.UnoXTutti;
 import unoxtutti.configuration.ApplicationConfig;
 import unoxtutti.utils.DebugHelper;
+import unoxtutti.utils.GUIUtils;
 
 /**
  *
@@ -78,7 +78,7 @@ public class UnoXTuttiGUI extends javax.swing.JFrame {
     }
 
     public void showMessage(String message) {
-        JOptionPane.showMessageDialog(this, message);
+        GUIUtils.showInformationMessage(this, message);
     }
 
     public final void setGuiState(GUIState s) {

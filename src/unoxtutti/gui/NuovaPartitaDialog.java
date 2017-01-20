@@ -5,6 +5,7 @@
 package unoxtutti.gui;
 
 import javax.swing.JOptionPane;
+import unoxtutti.utils.GUIUtils;
 
 
 public class NuovaPartitaDialog extends javax.swing.JDialog {
@@ -99,7 +100,7 @@ public class NuovaPartitaDialog extends javax.swing.JDialog {
         
         if (txtNomePartita.getText().isEmpty()) {
             ok = false;
-            JOptionPane.showMessageDialog(this, "Inserire il nome della partita!");
+            GUIUtils.showInformationMessage(this, "Inserire il nome della partita!");
             txtNomePartita.requestFocus();
         }
         

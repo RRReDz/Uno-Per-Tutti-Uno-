@@ -6,7 +6,6 @@ package unoxtutti.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
 import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.TimeUtils;
 
