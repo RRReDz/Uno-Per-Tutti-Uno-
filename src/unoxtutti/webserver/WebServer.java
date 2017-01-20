@@ -7,11 +7,13 @@ package unoxtutti.webserver;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.sql.SQLException;
+import java.sql.SQLNonTransientConnectionException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -189,8 +191,11 @@ public class WebServer implements Runnable {
 
     public static void main(String[] args) {
         try {
+            GUIUtils.installLookAndFeel();
+            
             DBController dbc = new DBController();
             dbc.connect();
+            
             WebServer app = new WebServer(dbc);
 
             /* Aggiungere qui altri request handler */
@@ -207,6 +212,13 @@ public class WebServer implements Runnable {
             log("Web Server avviato...");
             stopDialog.setVisible(true);
             dbc.disconnect();
+        } catch(SQLNonTransientConnectionException ex) {
+            Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
+            GUIUtils.showErrorMessage(
+                    null,
+                    "Impossibile connettersi al database: controllare di aver avviato il servizio correttamente.",
+                    "Errore database"
+            );
         } catch (SQLException ex) {
             Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
         }
