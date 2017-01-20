@@ -7,6 +7,7 @@ package unoxtutti.gui;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.swing.DefaultListModel;
+import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Card;
 import unoxtutti.domain.Player;
 import unoxtutti.utils.GUIUtils;
@@ -45,6 +46,11 @@ public class GameplayPanel extends MainWindowSubPanel {
         cardsPanel = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         cardsList = new javax.swing.JList<>();
+        footerPanel = new javax.swing.JPanel();
+        playCardButton = new javax.swing.JButton();
+        pickCardButton = new javax.swing.JButton();
+        checkBluffButton = new javax.swing.JButton();
+        declareUNOButton = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
 
@@ -90,20 +96,39 @@ public class GameplayPanel extends MainWindowSubPanel {
         jSplitPane1.setRightComponent(mainPanel);
 
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
+
+        playCardButton.setText("Scarta carta");
+        footerPanel.add(playCardButton);
+
+        pickCardButton.setText("Pesca una carta");
+        footerPanel.add(pickCardButton);
+
+        checkBluffButton.setText("Dubita bluff");
+        footerPanel.add(checkBluffButton);
+
+        declareUNOButton.setText("Dichiara UNO!");
+        footerPanel.add(declareUNOButton);
+
+        add(footerPanel, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> cardsList;
     private javax.swing.JPanel cardsPanel;
+    private javax.swing.JButton checkBluffButton;
+    private javax.swing.JButton declareUNOButton;
     private javax.swing.JList<String> eventList;
     private javax.swing.JPanel eventPanel;
+    private javax.swing.JPanel footerPanel;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JSplitPane jSplitPane2;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JButton pickCardButton;
+    private javax.swing.JButton playCardButton;
     private javax.swing.JList<String> turnsList;
     private javax.swing.JPanel turnsListPanel;
     // End of variables declaration//GEN-END:variables
@@ -125,15 +150,38 @@ public class GameplayPanel extends MainWindowSubPanel {
     }
 
     /**
-     * Aggiorna la lista delle carte
+     * Aggiorna la lista delle carte e la carta del mazzo scarti.
      * @param mano Carte possedute dal giocatore
+     * @param cartaMazzoScarti Carta del mazzo scarti attualmente sul tavolo
+     * @param currentPlayer Giocatore a cui spetta il turno
      */
-    public void updateCards(Collection<Card> mano) {
+    public void updateCards(Collection<Card> mano, Card cartaMazzoScarti, Player currentPlayer) {
         DefaultListModel model = (DefaultListModel) cardsList.getModel();
         model.clear();
         mano.forEach((c) -> {
             model.addElement(c);
         });
+        
+        /**
+         * Se tocca al giocatore, e quello precedente ha 
+         * giocato un Jolly Pesca Quattro, il giocatore
+         * corrente può dubitare un eventuale bluff.
+         */
+        if(cartaMazzoScarti.isJollyPescaQuattro() &&
+                currentPlayer.equals(UnoXTutti.theUxtController.getPlayer())) {
+            checkBluffButton.setEnabled(true);
+            pickCardButton.setText("Pesca quattro carte");
+        } else {
+            checkBluffButton.setEnabled(false);
+            pickCardButton.setText("Pesca una carta");
+        }
+        
+        /* Se il giocatore corrente ha una carta, può dichiarare UNO! */
+        if(mano.size() == 1) {
+            declareUNOButton.setEnabled(true);
+        } else {
+            declareUNOButton.setEnabled(false);
+        }
     }
 
     /**
@@ -142,7 +190,6 @@ public class GameplayPanel extends MainWindowSubPanel {
      */
     public void updateEvents(Collection<String> events) {
         DefaultListModel model = (DefaultListModel) eventList.getModel();
-        GUIUtils.showInformationMessage(null, "Update eventi: " + events.size());
         if(events.getClass() != ArrayList.class) {
             /* Refresh completo lista */
             model.clear();
@@ -156,5 +203,9 @@ public class GameplayPanel extends MainWindowSubPanel {
                 model.addElement(list.get(i));
             }
         }
+    }
+
+    private void isJollyPescaQuattro() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

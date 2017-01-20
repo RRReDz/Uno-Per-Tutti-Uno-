@@ -268,4 +268,14 @@ public class Card implements Serializable, Comparable {
         final Card other = (Card) o;
         return getCardValue() - other.getCardValue();
     }
+
+    
+    /**
+     * Indica se la carta è un Jolly Pesca Quattro.
+     * @return <code>true</code> se la carta è un Jolly Pesca Quattro,
+     * <code>false</code> altrimenti.
+     */
+    public boolean isJollyPescaQuattro() {
+        return tipo == CARTA_JOLLY && dettaglio == JOLLY_PESCA_QUATTRO;
+    }
 }

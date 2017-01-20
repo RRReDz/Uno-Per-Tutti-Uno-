@@ -164,5 +164,36 @@
         </Container>
       </SubComponents>
     </Container>
+    <Container class="javax.swing.JPanel" name="footerPanel">
+      <Constraints>
+        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout" value="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout$BorderConstraintsDescription">
+          <BorderConstraints direction="South"/>
+        </Constraint>
+      </Constraints>
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout"/>
+      <SubComponents>
+        <Component class="javax.swing.JButton" name="playCardButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Scarta carta"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="pickCardButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Pesca una carta"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="checkBluffButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Dubita bluff"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="declareUNOButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Dichiara UNO!"/>
+          </Properties>
+        </Component>
+      </SubComponents>
+    </Container>
   </SubComponents>
 </Form>
