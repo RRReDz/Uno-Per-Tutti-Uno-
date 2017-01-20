@@ -68,6 +68,11 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     private boolean isStarted = false;
     
     /**
+     * Indica la carta in cima al mazzo scarti
+     */
+    private Card cartaMazzoScarti;
+    
+    /**
      * Costruttore che memorizza le informazioni più importanti.
      * Questo costrutto viene utilizzato durante la creazione di una partita.
      * @param connectionToRoomHost Connessione con il proprietario della stanza.
@@ -406,6 +411,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             }
             MatchStatus status = (MatchStatus) msg.getParameter(0);
             Collection<Card> mano = (Collection<Card>) msg.getParameter(1);
+            cartaMazzoScarti = status.cartaMazzoScarti;
             
             /* Aggiornamento interfaccia grafica */
             GameplayPanel userInterface = GiocarePartitaController.getInstance().gameplayPanel;
@@ -416,4 +422,16 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             throw new CommunicationException("Wrong parameter type in message " + msg.getName());
         }
     }
+    
+    /**
+     * Indica se la carta è scartabile o meno
+     * @param card
+     * @return 
+     */
+    public boolean isCardPlayable(Card card) {
+        return card.getColore() == cartaMazzoScarti.getColore() ||
+                card.getDettaglio() == cartaMazzoScarti.getDettaglio() ||
+                card.getTipo() == Card.CARTA_JOLLY;
+    }
+    
 }

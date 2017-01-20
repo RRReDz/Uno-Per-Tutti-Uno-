@@ -10,6 +10,7 @@ import javax.swing.DefaultListModel;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Card;
 import unoxtutti.domain.Player;
+import unoxtutti.domain.RemoteMatch;
 import unoxtutti.utils.GUIUtils;
 
 /**
@@ -18,6 +19,8 @@ import unoxtutti.utils.GUIUtils;
  */
 public class GameplayPanel extends MainWindowSubPanel {
 
+    private RemoteMatch remoteMatch;
+    
     /**
      * Creates new form GameplayPanel
      */
@@ -34,6 +37,7 @@ public class GameplayPanel extends MainWindowSubPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton2 = new javax.swing.JButton();
         jSplitPane1 = new javax.swing.JSplitPane();
         turnsListPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -51,6 +55,8 @@ public class GameplayPanel extends MainWindowSubPanel {
         pickCardButton = new javax.swing.JButton();
         checkBluffButton = new javax.swing.JButton();
         declareUNOButton = new javax.swing.JButton();
+
+        jButton2.setText("jButton2");
 
         setLayout(new java.awt.BorderLayout());
 
@@ -85,9 +91,24 @@ public class GameplayPanel extends MainWindowSubPanel {
 
         cardsList.setModel(new DefaultListModel());
         cardsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        cardsList.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cardsListMouseClicked(evt);
+            }
+        });
         jScrollPane4.setViewportView(cardsList);
 
         cardsPanel.add(jScrollPane4, java.awt.BorderLayout.CENTER);
+
+        buttonDiscard.setText("Scarta carta");
+        buttonDiscard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDiscardActionPerformed(evt);
+            }
+        });
+        jPanel1.add(buttonDiscard);
+
+        cardsPanel.add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
         jSplitPane2.setRightComponent(cardsPanel);
 
@@ -112,9 +133,23 @@ public class GameplayPanel extends MainWindowSubPanel {
         add(footerPanel, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void buttonDiscardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDiscardActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonDiscardActionPerformed
+
+    private void cardsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cardsListMouseClicked
+        Card card = (Card) cardsList.getSelectedValue();
+        remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+        
+        if(!remoteMatch.isCardPlayable(card))
+            buttonDiscard.setVisible(false);
+        else
+            buttonDiscard.setVisible(true);
+    }//GEN-LAST:event_cardsListMouseClicked
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList<String> cardsList;
+    private javax.swing.JButton buttonDiscard;
+    private javax.swing.JList<Card> cardsList;
     private javax.swing.JPanel cardsPanel;
     private javax.swing.JButton checkBluffButton;
     private javax.swing.JButton declareUNOButton;
