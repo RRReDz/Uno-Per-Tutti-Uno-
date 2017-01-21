@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import unoxtutti.connection.InvalidRequestException;
 import unoxtutti.utils.MapUtils;
 
 /**
@@ -93,4 +94,43 @@ public class ServerMatchStatus extends MatchStatus {
         /* Carte possedute dal giocatore */
         return mani.get(player);
     }
+
+    /**
+     * Gestisce una richiesta di scarto carta.
+     * @param player Giocatore richiedente
+     * @param card Carta che il giocatore desidera scartare
+     */
+    void handlePlayCardRequest(Player player, Card card) throws InvalidRequestException {
+        /* Innazitutto il giocatore deve possedere la carta */
+        if(!mani.get(player).contains(card)) {
+            throw new InvalidRequestException("Non possiedi la carta " + card.toString());
+        }
+        
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Gestisce una richiesta di tipo "Pesca carta/e".
+     * @param player Giocatore richiedente
+     */
+    void handlePickCardRequest(Player player) throws InvalidRequestException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Gestisce una richiesta di tipo "Dubita bluff".
+     * @param player Giocatore richiedente
+     */
+    void handleCheckBluffRequest(Player player) throws InvalidRequestException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Gestisce una richiesta di tipo "Dichiara UNO!".
+     * @param player Giocatore richiedente
+     */
+    void handleDeclareUNORequest(Player player) throws InvalidRequestException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
 }

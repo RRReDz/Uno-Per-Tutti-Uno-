@@ -435,6 +435,8 @@ public class GiocarePartitaController implements MessageReceiver {
         
         /* Listener per messaggio di aggiornamento da parte del server */
         currentRoom.getConnection().addMessageReceivedObserver(currentMatch, MatchStatus.STATUS_UPDATE_MSG);
+        /* Listener per la visualizzazione di messaggi di errore inviati dal server */
+        currentRoom.getConnection().addMessageReceivedObserver(currentMatch, MatchStatus.STATUS_ERROR_MESSAGE);
     }
     
     /**

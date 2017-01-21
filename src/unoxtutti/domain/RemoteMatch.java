@@ -159,6 +159,15 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 DebugHelper.log("Ricevuto aggiornamento dal server: STATO AGGIORNATO");
                 handleStatusUpdateMessage(msg);
                 break;
+            case MatchStatus.STATUS_ERROR_MESSAGE:
+                try {
+                    String errorMessage = (String) msg.getParameter(0);
+                    DebugHelper.log("Errore ricevuto dal server: " + errorMessage);
+                    GUIUtils.showErrorMessage(UnoXTutti.mainWindow, errorMessage, "Notifica dal server");
+                } catch(ClassCastException ex) {
+                    /* Messaggio di notifica errato */
+                    Logger.getLogger(RemoteMatch.class.getName()).log(Level.SEVERE, null, ex);
+                }
             default:
         }
     }

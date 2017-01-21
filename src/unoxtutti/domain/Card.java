@@ -53,7 +53,7 @@ public class Card implements Serializable, Comparable {
     /**
      * Colore della carta.
      */
-    private final int colore;
+    private int colore;
     
     /**
      * Crea una carta
@@ -101,6 +101,9 @@ public class Card implements Serializable, Comparable {
         if(colore == COLORE_NESSUNO && tipo != CARTA_JOLLY) {
             throw new IllegalArgumentException("Solo le carte jolly sono incolore.");
         }
+        if(tipo == CARTA_JOLLY && colore != COLORE_NESSUNO) {
+            throw new IllegalArgumentException("I jolly devono essere creati incolore.");
+        }
         this.colore = colore;
     }
     
@@ -135,6 +138,21 @@ public class Card implements Serializable, Comparable {
      */
     public int getColore() {
         return colore;
+    }
+    
+    /**
+     * Imposta il colore di una carta jolly.
+     * @param newColor Colore da assegnare alla carta.
+     */
+    public void setColore(int newColor) {
+        if(tipo != CARTA_JOLLY) {
+            throw new UnsupportedOperationException("È possibile modificare il colore solamente alle carte jolly.");
+        }
+        if(colore != COLORE_ROSSO && colore != COLORE_GIALLO &&
+                colore != COLORE_VERDE && colore != COLORE_BLU) {
+            throw new IllegalArgumentException("Il colore specificato non è valido.");
+        }
+        colore = newColor;
     }
     
     /**
@@ -224,8 +242,12 @@ public class Card implements Serializable, Comparable {
             return false;
         }
         final Card other = (Card) obj;
-        if (this.tipo != other.tipo || this.dettaglio != other.dettaglio
-                || this.colore != other.colore) {
+        /* Si controlla che tipo e dettaglio siano uguali */
+        if (this.tipo != other.tipo || this.dettaglio != other.dettaglio) {
+            return false;
+        }
+        /* Il colore non viene controllato per le carte Jolly */
+        if (this.tipo == CARTA_JOLLY && this.colore != other.colore) {
             return false;
         }
         return true;

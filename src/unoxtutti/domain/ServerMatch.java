@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import unoxtutti.connection.CommunicationException;
+import unoxtutti.connection.InvalidRequestException;
 import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
@@ -254,27 +255,64 @@ public class ServerMatch extends Match implements MessageReceiver {
      */
     @Override
     public void updateMessageReceived(P2PMessage msg) {
-        switch(msg.getName()) {
-            case Match.MATCH_ACCESS_REQUEST_REPLY_MSG:
-                /* Messaggio di risposta del proprietario ad una richiesta di accesso */
-                handleMatchAccessAnswer(msg);
-                break;
-            case MatchStatus.STATUS_PLAY_CARD_MSG:
-                /* Il giocatore desidera giocare una carta */
-                
-                break;
-            case MatchStatus.STATUS_PICK_CARD_MSG:
-                /* Il giocatore desidera pescare una o più carte */
-                
-                break;
-            case MatchStatus.STATUS_CHECK_BLUFF_MSG:
-                /* Il giocatore desidera controllare un bluff */
-                
-                break;
-            case MatchStatus.STATUS_DECLARE_UNO_MSG:
-                /* Il giocatore desidera dichiarare UNO! */
-                
-                break;
+        try {
+            Player sender = msg.getSenderConnection().getPlayer();
+            if(!players.contains(sender)) {
+                throw new InvalidRequestException("Il giocatore non appartiene alla partita.");
+            }
+            
+            switch(msg.getName()) {
+                case Match.MATCH_ACCESS_REQUEST_REPLY_MSG:
+                    /* Messaggio di risposta del proprietario ad una richiesta di accesso */
+                    handleMatchAccessAnswer(msg);
+                    break;
+                case MatchStatus.STATUS_PLAY_CARD_MSG:
+                    /* Il giocatore desidera giocare una carta */
+                    
+                    /* Si verifica che come parametro sia passata una carta */
+                    boolean validRequest = true;
+                    Card card = null;
+                    try {
+                        if(msg.getParametersCount() != 1) {
+                            validRequest = false;
+                        } else {
+                            card = (Card) msg.getParameter(0);
+                        }
+                    } catch (ClassCastException e) {
+                        validRequest = false;
+                    }
+                    if (!validRequest) {
+                        throw new InvalidRequestException(
+                            "La richiesta inviata è stata ignorata in quanto "
+                                    + " contenente argomenti non validi o errati."
+                        );
+                    }
+                    
+                    /* Si gestisce la richiesta */
+                    status.handlePlayCardRequest(sender, card);
+                    break;
+                case MatchStatus.STATUS_PICK_CARD_MSG:
+                    /* Il giocatore desidera pescare una o più carte */
+                    status.handlePickCardRequest(sender);
+                    break;
+                case MatchStatus.STATUS_CHECK_BLUFF_MSG:
+                    /* Il giocatore desidera controllare un bluff */
+                    status.handleCheckBluffRequest(sender);
+                    break;
+                case MatchStatus.STATUS_DECLARE_UNO_MSG:
+                    /* Il giocatore desidera dichiarare UNO! */
+                    status.handleDeclareUNORequest(sender);
+                    break;
+            }
+        } catch(InvalidRequestException ex) {
+            try {
+                /* Si notifica il giocatore dell'errore */
+                P2PMessage errorNotificationMessage = new P2PMessage(MatchStatus.STATUS_ERROR_MESSAGE);
+                errorNotificationMessage.setParameters(new Object[] { ex.getMessage() });
+                msg.getSenderConnection().sendMessage(errorNotificationMessage);
+            } catch (PartnerShutDownException psde) {
+                Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, psde);
+            }
         }
     }
     
