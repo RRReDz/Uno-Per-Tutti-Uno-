@@ -110,7 +110,7 @@ public class ServerMatchStatus extends MatchStatus {
      * @param player Giocatore richiedente
      * @param card Carta che il giocatore desidera scartare
      */
-    void handlePlayCardRequest(Player player, Card card) throws InvalidRequestException, StatusChangedException {
+    synchronized void handlePlayCardRequest(Player player, Card card) throws InvalidRequestException, StatusChangedException {
         Collection<Card> mano = mani.get(player);
         
         /* Innazitutto il giocatore deve possedere la carta */
@@ -159,7 +159,7 @@ public class ServerMatchStatus extends MatchStatus {
      * Gestisce una richiesta di tipo "Pesca carta/e".
      * @param player Giocatore richiedente
      */
-    void handlePickCardRequest(Player player) throws InvalidRequestException, StatusChangedException {
+    synchronized void handlePickCardRequest(Player player) throws InvalidRequestException, StatusChangedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -167,7 +167,7 @@ public class ServerMatchStatus extends MatchStatus {
      * Gestisce una richiesta di tipo "Dubita bluff".
      * @param player Giocatore richiedente
      */
-    void handleCheckBluffRequest(Player player) throws InvalidRequestException, StatusChangedException {
+    synchronized void handleCheckBluffRequest(Player player) throws InvalidRequestException, StatusChangedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -175,7 +175,7 @@ public class ServerMatchStatus extends MatchStatus {
      * Gestisce una richiesta di tipo "Dichiara UNO!".
      * @param player Giocatore richiedente
      */
-    void handleDeclareUNORequest(Player player) throws InvalidRequestException, StatusChangedException {
+    synchronized void handleDeclareUNORequest(Player player) throws InvalidRequestException, StatusChangedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
