@@ -12,6 +12,7 @@ import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Card;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
+import unoxtutti.utils.GUIUtils;
 
 /**
  *
@@ -109,15 +110,35 @@ public class GameplayPanel extends MainWindowSubPanel {
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         playCardButton.setText("Scarta carta");
+        playCardButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playCardButtonActionPerformed(evt);
+            }
+        });
         footerPanel.add(playCardButton);
 
         pickCardButton.setText("Pesca una carta");
+        pickCardButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pickCardButtonActionPerformed(evt);
+            }
+        });
         footerPanel.add(pickCardButton);
 
         checkBluffButton.setText("Dubita bluff");
+        checkBluffButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkBluffButtonActionPerformed(evt);
+            }
+        });
         footerPanel.add(checkBluffButton);
 
         declareUNOButton.setText("Dichiara UNO!");
+        declareUNOButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                declareUNOButtonActionPerformed(evt);
+            }
+        });
         footerPanel.add(declareUNOButton);
 
         add(footerPanel, java.awt.BorderLayout.SOUTH);
@@ -127,11 +148,64 @@ public class GameplayPanel extends MainWindowSubPanel {
         Card card = (Card) cardsList.getSelectedValue();
         remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
         
-        if(!remoteMatch.isCardPlayable(card))
-            playCardButton.setVisible(false);
-        else
-            playCardButton.setVisible(true);
+        if(!remoteMatch.isCardPlayable(card)) {
+            playCardButton.setEnabled(false);
+        } else {
+            playCardButton.setEnabled(true);
+        }
     }//GEN-LAST:event_cardsListMouseClicked
+    
+    
+    /**
+     * L'utente desidera scartare una carta.
+     * @param evt 
+     */
+    private void playCardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playCardButtonActionPerformed
+        Card card = (Card) cardsList.getSelectedValue();
+        if (card == null) {
+            GUIUtils.showErrorMessage(mainWindow, "Non è stata selezionata alcuna carta!");
+            return;
+        }
+        
+        try {
+            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+            remoteMatch.playCard(card);
+        } catch(Exception e) {
+            GUIUtils.showException(e, mainWindow);
+        }
+    }//GEN-LAST:event_playCardButtonActionPerformed
+
+    
+    /**
+     * L'utente desidera pescare una carta.
+     * @param evt 
+     */
+    private void pickCardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pickCardButtonActionPerformed
+        try {
+            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+            remoteMatch.pickCard();
+        } catch(Exception e) {
+            GUIUtils.showException(e, mainWindow);
+        }
+    }//GEN-LAST:event_pickCardButtonActionPerformed
+
+    private void checkBluffButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBluffButtonActionPerformed
+        try {
+            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+            remoteMatch.pickCard();
+        } catch(Exception e) {
+            GUIUtils.showException(e, mainWindow);
+        }
+    }//GEN-LAST:event_checkBluffButtonActionPerformed
+
+    private void declareUNOButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_declareUNOButtonActionPerformed
+        try {
+            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+            remoteMatch.pickCard();
+        } catch(Exception e) {
+            GUIUtils.showException(e, mainWindow);
+        }
+    }//GEN-LAST:event_declareUNOButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<Card> cardsList;
@@ -224,9 +298,5 @@ public class GameplayPanel extends MainWindowSubPanel {
                 model.addElement(list.get(i));
             }
         }
-    }
-
-    private void isJollyPescaQuattro() {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

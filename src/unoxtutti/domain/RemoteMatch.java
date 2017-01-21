@@ -68,9 +68,15 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     private boolean isStarted = false;
     
     /**
-     * Indica la carta in cima al mazzo scarti
+     * Ultimo stato della partita ricevuto.
      */
-    private Card cartaMazzoScarti;
+    private MatchStatus currentStatus;
+    
+    /**
+     * Carte che il giocatore ha attualmente in mano.
+     */
+    private Collection<Card> currentCards;
+
     
     /**
      * Costruttore che memorizza le informazioni più importanti.
@@ -411,7 +417,8 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             }
             MatchStatus status = (MatchStatus) msg.getParameter(0);
             Collection<Card> mano = (Collection<Card>) msg.getParameter(1);
-            cartaMazzoScarti = status.cartaMazzoScarti;
+            this.currentStatus = status;
+            this.currentCards = mano;
             
             /* Aggiornamento interfaccia grafica */
             GameplayPanel userInterface = GiocarePartitaController.getInstance().gameplayPanel;
@@ -424,14 +431,31 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
     /**
-     * Indica se la carta è scartabile o meno
-     * @param card
-     * @return 
+     * Indica se la carta è scartabile o meno.
+     * @param card Carta che il giocatore desidererebbe scartare.
+     * @return <code>true</code> se è possibile scartare una determinata carta,
+     *          <code>false</code> altrimenti.
      */
     public boolean isCardPlayable(Card card) {
-        return card.getColore() == cartaMazzoScarti.getColore() ||
-                card.getDettaglio() == cartaMazzoScarti.getDettaglio() ||
-                card.getTipo() == Card.CARTA_JOLLY;
+        return currentStatus.canPlayerPlayCard(
+                UnoXTutti.theUxtController.getPlayer(),
+                card
+        );
     }
     
+    public void playCard(Card card) {
+        GUIUtils.showErrorMessage(null, "Not implemented yet!", "Play Card");
+    }
+    
+    public void pickCard() {
+        GUIUtils.showErrorMessage(null, "Not implemented yet!", "Pick Card");
+    } 
+    
+    public void checkBluff() {
+        GUIUtils.showErrorMessage(null, "Not implemented yet!", "Check Bluff");
+    }
+    
+    public void declareUNO() {
+        GUIUtils.showErrorMessage(null, "Not implemented yet!", "Declare UNO");
+    }
 }
