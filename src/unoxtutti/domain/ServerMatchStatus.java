@@ -46,6 +46,7 @@ public class ServerMatchStatus extends MatchStatus {
         
         /* Inizializzazione ordine turni */
         /* Mazzo temporaneo per stabilire l'ordine dei turni*/
+        super.trackEvent("Inizializzazione ordine dei turni...");
         Deck rndDeck = new Deck();
         Map<Player, Card> randomCards = new HashMap<>();
         players.forEach((p) -> {
@@ -56,7 +57,6 @@ public class ServerMatchStatus extends MatchStatus {
         });
         
         /* Si aggiorna l'ordine della lista dei turni */
-        super.trackEvent("Inizializzazione ordine dei turni...");
         turns = new ArrayList<>();
         Map<Player, Card> orderedTurns = MapUtils.sortByValueReverseOrder(randomCards);
         orderedTurns.forEach((player, card) -> {
@@ -160,7 +160,31 @@ public class ServerMatchStatus extends MatchStatus {
      * @param player Giocatore richiedente
      */
     synchronized void handlePickCardRequest(Player player) throws InvalidRequestException, StatusChangedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        /* Il giocatore può pescare carte soltanto durante il proprio turno. */
+        if(!currentPlayer.equals(player)) {
+            throw new InvalidRequestException("Non è il tuo turno.");
+        }
+        
+        /* Il giocatore pesca una o più carte */
+        Collection<Card> mano = mani.get(player);
+        for(int i = 0; i < cardsToPick; i++) {
+            mano.add(mazzoPesca.pescaCarta());
+        }
+        
+        /* Messaggio di notifica */
+        if(cardsToPick == 1) {
+            trackEvent(player.getName() + " ha pescato una carta.");
+        } else {
+            trackEvent(player.getName() + " ha pescato " + cardsToPick + " carte.");
+        }
+        
+        /* Ripristino contatore */
+        cardsToPick = 1;
+        
+        /* Giocatore successivo */
+        nextPlayer();
+        
+        throw new StatusChangedException();
     }
 
     /**
