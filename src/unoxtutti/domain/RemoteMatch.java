@@ -6,6 +6,8 @@ package unoxtutti.domain;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.ListModel;
 import unoxtutti.GiocarePartitaController;
@@ -443,19 +445,51 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
         );
     }
     
+    /**
+     * Informa il server che il giocatore desidera scartare una carta.
+     * @param card Carta che si desidera scartare.
+     */
     public void playCard(Card card) {
-        GUIUtils.showErrorMessage(null, "Not implemented yet!", "Play Card");
+        sendActionMessage(MatchStatus.STATUS_PLAY_CARD_MSG, new Object[] { card });
     }
     
+    /**
+     * Informa il server che il giocatore desidera pescare una o più carte.
+     */
     public void pickCard() {
-        GUIUtils.showErrorMessage(null, "Not implemented yet!", "Pick Card");
+        sendActionMessage(MatchStatus.STATUS_PICK_CARD_MSG, null);
     } 
     
+    /**
+     * Informa il server che il giocatore desidera verificare un bluff.
+     */
     public void checkBluff() {
-        GUIUtils.showErrorMessage(null, "Not implemented yet!", "Check Bluff");
+        sendActionMessage(MatchStatus.STATUS_CHECK_BLUFF_MSG, null);
     }
     
+    /**
+     * Informa il server che il giocatore desidera dichiarare UNO!.
+     */
     public void declareUNO() {
-        GUIUtils.showErrorMessage(null, "Not implemented yet!", "Declare UNO");
+        sendActionMessage(MatchStatus.STATUS_DECLARE_UNO_MSG, null);
+    }
+    
+    /**
+     * Invia un messaggio al Room Server.
+     * @param messageType Tipo di messaggio da inviare
+     * @param parameters Eventuali parametri da allegare al messaggio
+     */
+    private void sendActionMessage(String messageType, Object[] parameters) {
+        try {
+            P2PMessage msg = new P2PMessage(messageType);
+            
+            if(parameters != null) {
+                msg.setParameters(parameters);
+            }
+            
+            conn.sendMessage(msg);
+        } catch (PartnerShutDownException ex) {
+            Logger.getLogger(RemoteMatch.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

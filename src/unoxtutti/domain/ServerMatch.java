@@ -14,6 +14,7 @@ import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
 import unoxtutti.utils.DebugHelper;
+import unoxtutti.utils.GUIUtils;
 
 /**
  * Rappresenta una partita lato server.
@@ -253,9 +254,27 @@ public class ServerMatch extends Match implements MessageReceiver {
      */
     @Override
     public void updateMessageReceived(P2PMessage msg) {
-        /* Messaggio di risposta del proprietario ad una richiesta di accesso */
-        if(msg.getName().equals(Match.MATCH_ACCESS_REQUEST_REPLY_MSG)) {
-            handleMatchAccessAnswer(msg);
+        switch(msg.getName()) {
+            case Match.MATCH_ACCESS_REQUEST_REPLY_MSG:
+                /* Messaggio di risposta del proprietario ad una richiesta di accesso */
+                handleMatchAccessAnswer(msg);
+                break;
+            case MatchStatus.STATUS_PLAY_CARD_MSG:
+                /* Il giocatore desidera giocare una carta */
+                
+                break;
+            case MatchStatus.STATUS_PICK_CARD_MSG:
+                /* Il giocatore desidera pescare una o più carte */
+                
+                break;
+            case MatchStatus.STATUS_CHECK_BLUFF_MSG:
+                /* Il giocatore desidera controllare un bluff */
+                
+                break;
+            case MatchStatus.STATUS_DECLARE_UNO_MSG:
+                /* Il giocatore desidera dichiarare UNO! */
+                
+                break;
         }
     }
     
@@ -430,6 +449,17 @@ public class ServerMatch extends Match implements MessageReceiver {
     void start() {
         started = true;
         notifyMatchStart();
+        
+        /**
+         * Si aggiornano i listener al fine di poter ricevere messaggi dai giocatori.
+         */
+        for(Player p : players) {
+            P2PConnection conn = room.getConnectionWithPlayer(p);
+            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_PLAY_CARD_MSG);
+            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_PICK_CARD_MSG);
+            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_CHECK_BLUFF_MSG);
+            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_DECLARE_UNO_MSG);
+        }
         
         status = new ServerMatchStatus(players);
         sendStatusUpdate();

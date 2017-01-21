@@ -468,8 +468,9 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                     /* Recupero il match dal nome */
                     match = matches.get(matchName);
                     /* Controllo se partita già iniziata */
-                    if(match.isStarted())
+                    if(match.isStarted()) {
                         isReqOk = false;
+                    }
                 }
             } catch (ClassCastException ex) {
                 isReqOk = false;
