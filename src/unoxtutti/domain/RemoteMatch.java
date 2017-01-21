@@ -442,19 +442,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
     /**
-     * Indica se la carta è scartabile o meno.
-     * @param card Carta che il giocatore desidererebbe scartare.
-     * @return <code>true</code> se è possibile scartare una determinata carta,
-     *          <code>false</code> altrimenti.
-     */
-    public boolean isCardPlayable(Card card) {
-        return currentStatus.canPlayerPlayCard(
-                UnoXTutti.theUxtController.getPlayer(),
-                card
-        );
-    }
-    
-    /**
      * Informa il server che il giocatore desidera scartare una carta.
      * @param card Carta che si desidera scartare.
      */

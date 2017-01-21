@@ -71,21 +71,6 @@ public class MatchStatus implements Serializable {
     }
     
     /**
-     * Inverte la direzionedei turni
-     */
-    protected void changeDirection() {
-        switch(turnsDirection) {
-            case DIRECTION_FORWARD:
-                turnsDirection = MatchStatus.DIRECTION_BACKWARD;
-                break;
-            case DIRECTION_BACKWARD:
-                turnsDirection = MatchStatus.DIRECTION_FORWARD;
-                break;
-        }
-    }
-    
-    
-    /**
      * Crea una copia dell'istanza corrente.
      * @return Stato della partita
      */
@@ -108,23 +93,5 @@ public class MatchStatus implements Serializable {
         String prefix = "[" + TimeUtils.getCurrentTimeStamp("HH:mm:ss") + "] ";
         events.add(prefix + eventMessage);
         DebugHelper.log("EVENTO PARTITA: " + eventMessage);
-    }
-    
-    
-    /**
-     * Indica se un giocatore può scartare una determinata carta.
-     * @param player Giocatore che desidererebbe effettuare l'azione.
-     * @param card Carta che il giocatore vorrebbe scartare.
-     * @return <code>true</code> se il giocatore potrebbe scartare una determinata carta,
-     *          <code>false</code> altrimenti.
-     */
-    public boolean canPlayerPlayCard(Player player, Card card) {
-        // TODO: Fare funzione
-        return true;
-        /*
-        return card.getColore() == cartaMazzoScarti.getColore() ||
-                card.getDettaglio() == cartaMazzoScarti.getDettaglio() ||
-                card.getTipo() == Card.CARTA_JOLLY;
-        */
     }
 }

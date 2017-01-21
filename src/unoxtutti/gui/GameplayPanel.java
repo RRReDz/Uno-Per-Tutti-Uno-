@@ -92,11 +92,6 @@ public class GameplayPanel extends MainWindowSubPanel {
 
         cardsList.setModel(new DefaultListModel());
         cardsList.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        cardsList.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                cardsListMouseClicked(evt);
-            }
-        });
         jScrollPane4.setViewportView(cardsList);
 
         cardsPanel.add(jScrollPane4, java.awt.BorderLayout.CENTER);
@@ -143,17 +138,6 @@ public class GameplayPanel extends MainWindowSubPanel {
 
         add(footerPanel, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
-
-    private void cardsListMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cardsListMouseClicked
-        Card card = (Card) cardsList.getSelectedValue();
-        remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
-        
-        if(!remoteMatch.isCardPlayable(card)) {
-            playCardButton.setEnabled(false);
-        } else {
-            playCardButton.setEnabled(true);
-        }
-    }//GEN-LAST:event_cardsListMouseClicked
     
     
     /**

@@ -355,7 +355,7 @@ public class GiocarePartitaController implements MessageReceiver {
                 try {
                     String matchName = (String) msg.getParameter(0);
                     Player owner = (Player) msg.getParameter(1);
-                    // TODO: ricevere regole della partita
+                    // TODO: Ricevere regole della partita
                     
                     currentMatch = new RemoteMatch(msg.getSenderConnection(), owner, matchName, new Object());
                     playerJoinedAMatch();

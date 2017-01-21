@@ -14,6 +14,7 @@ import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
+import unoxtutti.connection.StatusChangedException;
 import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.GUIUtils;
 
@@ -305,6 +306,7 @@ public class ServerMatch extends Match implements MessageReceiver {
                     break;
             }
         } catch(InvalidRequestException ex) {
+            /* Richiesta non valida */
             try {
                 /* Si notifica il giocatore dell'errore */
                 P2PMessage errorNotificationMessage = new P2PMessage(MatchStatus.STATUS_ERROR_MESSAGE);
@@ -313,6 +315,9 @@ public class ServerMatch extends Match implements MessageReceiver {
             } catch (PartnerShutDownException psde) {
                 Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, psde);
             }
+        } catch(StatusChangedException ex) {
+            /* Stato cambiato */
+            sendStatusUpdate();
         }
     }
     

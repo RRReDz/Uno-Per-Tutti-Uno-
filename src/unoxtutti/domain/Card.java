@@ -300,4 +300,31 @@ public class Card implements Serializable, Comparable {
     public boolean isJollyPescaQuattro() {
         return tipo == CARTA_JOLLY && dettaglio == JOLLY_PESCA_QUATTRO;
     }
+    
+    /**
+     * Indica se la carta è di tipo "Cambio giro".
+     * @return <code>true</code> se si tratta di una carta "Cambio giro",
+     *          <code>false</code> altrimenti.
+     */
+    public boolean isChangeDirection() {
+        return tipo == CARTA_AZIONE && dettaglio == AZIONE_CAMBIO_GIRO;
+    }
+    
+    /**
+     * Indica se la carta è di tipo "Salta turno".
+     * @return <code>true</code> se si tratta di una carta "Salta turno",
+     *          <code>false</code> altrimenti.
+     */
+    public boolean isSkipTurn() {
+        return tipo == CARTA_AZIONE && dettaglio == AZIONE_SALTA_TURNO;
+    }
+    
+    /**
+     * Indica se la carta è di tipo "Pesca due".
+     * @return <code>true</code> se si tratta di una carta "Pesca due",
+     *          <code>false</code> altrimenti.
+     */
+    public boolean isPickTwo() {
+        return tipo == CARTA_AZIONE && dettaglio == AZIONE_PESCA_DUE;
+    }
 }

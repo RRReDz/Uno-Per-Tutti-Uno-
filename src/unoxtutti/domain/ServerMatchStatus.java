@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import unoxtutti.connection.InvalidRequestException;
+import unoxtutti.connection.StatusChangedException;
 import unoxtutti.utils.MapUtils;
 
 /**
@@ -18,14 +19,19 @@ import unoxtutti.utils.MapUtils;
  */
 public class ServerMatchStatus extends MatchStatus {
     /**
-     * Mazzo di pesca
+     * Mazzo di pesca.
      */
     private final Deck mazzoPesca;
     
     /**
-     * Mani (carte possedute) di ogni giocatore
+     * Mani (carte possedute) di ogni giocatore.
      */
     private final HashMap<Player, Collection<Card>> mani;
+    
+    /**
+     * Indica il numero di carte che il giocatore di turno dovrebbe pescare,
+     */
+    private int cardsToPick;
     
     /**
      * Inizializzazione dello stato di una partita
@@ -34,6 +40,9 @@ public class ServerMatchStatus extends MatchStatus {
     ServerMatchStatus(List<Player> players) {
         super();
         super.trackEvent("La partita è stata avviata.");
+        
+        /* Inizializzazione del contatore di carte da pescare */
+        cardsToPick = 1;
         
         /* Inizializzazione ordine turni */
         /* Mazzo temporaneo per stabilire l'ordine dei turni*/
@@ -78,6 +87,7 @@ public class ServerMatchStatus extends MatchStatus {
         /* Carta iniziale sul tavolo */
         cartaMazzoScarti = mazzoPesca.pescaCarta();
         super.trackEvent("Carta sul tavolo: " + cartaMazzoScarti);
+        super.trackEvent("È il turno di " + currentPlayer.getName() + ".");
     }
     
     
@@ -100,20 +110,56 @@ public class ServerMatchStatus extends MatchStatus {
      * @param player Giocatore richiedente
      * @param card Carta che il giocatore desidera scartare
      */
-    void handlePlayCardRequest(Player player, Card card) throws InvalidRequestException {
+    void handlePlayCardRequest(Player player, Card card) throws InvalidRequestException, StatusChangedException {
+        Collection<Card> mano = mani.get(player);
+        
         /* Innazitutto il giocatore deve possedere la carta */
-        if(!mani.get(player).contains(card)) {
+        if(!mano.contains(card)) {
             throw new InvalidRequestException("Non possiedi la carta " + card.toString());
         }
         
-        throw new UnsupportedOperationException("Not supported yet.");
+        /* Se non è il turno del giocatore, si tratta di un interruzione di turno. */
+        if(currentPlayer.equals(player)) {
+            /* È il turno del giocatore */
+            // TODO: Turno del giocatore corrente
+            
+        } else {
+            /* Interruzione di turno */
+            if(cardsToPick != 1) {
+                throw new InvalidRequestException("Non puoi interrompere il turno "
+                        + "quando un altro giocatore deve pescare delle carte.");
+            }
+            if(!card.equals(cartaMazzoScarti)) {
+                throw new InvalidRequestException("Non è possibile interrompere "
+                        + "il turno con un " + card.toString());
+            }
+            
+            /* Il giocatore si impadrona del turno */
+            currentPlayer = player;
+        }
+        
+        /* La carta viene scartata */
+        mano.remove(card);
+        cartaMazzoScarti = card;
+        nextPlayer();
+        
+        /**
+         * Se la carta è di tipo "Salta Turno", il giocatore
+         * successivo salterà il proprio turno.
+         */
+        if(cartaMazzoScarti.isSkipTurn()) {
+            trackEvent(currentPlayer.getName() + " salta il proprio turno.");
+            nextPlayer();
+        }
+        
+        throw new StatusChangedException();
     }
 
     /**
      * Gestisce una richiesta di tipo "Pesca carta/e".
      * @param player Giocatore richiedente
      */
-    void handlePickCardRequest(Player player) throws InvalidRequestException {
+    void handlePickCardRequest(Player player) throws InvalidRequestException, StatusChangedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -121,7 +167,7 @@ public class ServerMatchStatus extends MatchStatus {
      * Gestisce una richiesta di tipo "Dubita bluff".
      * @param player Giocatore richiedente
      */
-    void handleCheckBluffRequest(Player player) throws InvalidRequestException {
+    void handleCheckBluffRequest(Player player) throws InvalidRequestException, StatusChangedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -129,8 +175,44 @@ public class ServerMatchStatus extends MatchStatus {
      * Gestisce una richiesta di tipo "Dichiara UNO!".
      * @param player Giocatore richiedente
      */
-    void handleDeclareUNORequest(Player player) throws InvalidRequestException {
+    void handleDeclareUNORequest(Player player) throws InvalidRequestException, StatusChangedException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
+    
+    /**
+     * Inverte la direzionedei turni
+     */
+    private void changeDirection() {
+        switch(turnsDirection) {
+            case DIRECTION_FORWARD:
+                turnsDirection = MatchStatus.DIRECTION_BACKWARD;
+                break;
+            case DIRECTION_BACKWARD:
+                turnsDirection = MatchStatus.DIRECTION_FORWARD;
+                break;
+        }
+    }
+    
+    
+    /**
+     * Assegna il turno al giocatore successivo.
+     */
+    private void nextPlayer() {
+        int currentIndex = turns.indexOf(currentPlayer);
+        if(turnsDirection == MatchStatus.DIRECTION_FORWARD) {
+            currentIndex += 1;
+            if(currentIndex == turns.size()) {
+                currentIndex = 0;
+            }
+        } else {
+            currentIndex -= 1;
+            if(currentIndex < 0) {
+                currentIndex = turns.size() - 1;
+            }
+        }
+        
+        currentPlayer = turns.get(currentIndex);
+        trackEvent("È il turno di " + currentPlayer.getName() + ".");
+    }
 }
