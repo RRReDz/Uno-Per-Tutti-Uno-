@@ -148,8 +148,8 @@ public class Card implements Serializable, Comparable {
         if(tipo != CARTA_JOLLY) {
             throw new UnsupportedOperationException("È possibile modificare il colore solamente alle carte jolly.");
         }
-        if(colore != COLORE_ROSSO && colore != COLORE_GIALLO &&
-                colore != COLORE_VERDE && colore != COLORE_BLU) {
+        if(newColor != COLORE_ROSSO && newColor != COLORE_GIALLO &&
+                newColor != COLORE_VERDE && newColor != COLORE_BLU) {
             throw new IllegalArgumentException("Il colore specificato non è valido.");
         }
         colore = newColor;
