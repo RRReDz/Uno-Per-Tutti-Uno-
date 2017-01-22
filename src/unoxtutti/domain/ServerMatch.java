@@ -507,7 +507,7 @@ public class ServerMatch extends Match implements MessageReceiver {
         status = new ServerMatchStatus(players);
         sendStatusUpdate();
     }
-
+    
     /**
      * Invia a tutti i giocatori lo stato aggiornato della partita.
      */
@@ -516,15 +516,31 @@ public class ServerMatch extends Match implements MessageReceiver {
             /* Informazioni comuni a tutti i messaggi di aggiornamento */
             MatchStatus updatedStatus = status.creaCopia();
             
-            /* Si manda un messaggio di aggiornamento a tutti i giocatori */
             players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEachOrdered((c) -> {
                 try {
                     /* Per ogni giocatore, si costruisce un messaggio di aggiornamento apposito */
                     P2PMessage upd = new P2PMessage(MatchStatus.STATUS_UPDATE_MSG);
+                    
                     Object[] parameters = new Object[] {
-                        updatedStatus,
-                        status.getCardsOfPlayer(c.getPlayer())
+                        status.cartaMazzoScarti,
+                        status.currentPlayer,
+                        new ArrayList<>(status.events),
+                        new ArrayList<>(status.turns),
+                        status.turnsDirection,
+                        new ArrayList<>(status.getCardsOfPlayer(c.getPlayer()))
                     };
+                    
+                    /**
+                     * Creare una copia di MatchStatus non sembra funzionare.
+                     * L'oggetto viene passato correttamente ma dall'altra parte
+                     * si ricevono sempre gli stessi dati.
+                        Object[] parameters = new Object[] {
+                            updatedStatus,
+                            status.getCardsOfPlayer(c.getPlayer()),
+                            status.getCardsOfPlayer(c.getPlayer()).toArray(new Card[0])
+                        };
+                     */
+                    
                     upd.setParameters(parameters);
                     c.sendMessage(upd);
                 } catch (PartnerShutDownException ex) {
