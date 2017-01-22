@@ -10,6 +10,7 @@ import javax.swing.DefaultListModel;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Card;
+import unoxtutti.domain.MatchStatus;
 import unoxtutti.domain.Player;
 import unoxtutti.domain.RemoteMatch;
 import unoxtutti.utils.GUIUtils;
@@ -176,7 +177,7 @@ public class GameplayPanel extends MainWindowSubPanel {
     private void checkBluffButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBluffButtonActionPerformed
         try {
             remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
-            remoteMatch.pickCard();
+            remoteMatch.checkBluff();
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         }
@@ -185,7 +186,7 @@ public class GameplayPanel extends MainWindowSubPanel {
     private void declareUNOButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_declareUNOButtonActionPerformed
         try {
             remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
-            remoteMatch.pickCard();
+            remoteMatch.declareUNO();
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         }
@@ -215,42 +216,62 @@ public class GameplayPanel extends MainWindowSubPanel {
     
     /**
      * Aggiorna la lista dei turni.
-     * @param turns Ordine dei giocatori
-     * @param currentPlayer Giocatore a cui spetta il turno
-     * @param turnsDirection Direzione
+     * @param status Stato della partita
      */
-    public void updateTurns(ArrayList<Player> turns, Player currentPlayer, int turnsDirection) {
+    public void updateTurns(MatchStatus status) {
         DefaultListModel model = (DefaultListModel) turnsList.getModel();
         model.clear();
+        
+        ArrayList<Player> turns = status.getTurns();
         turns.forEach((p) -> {
             model.addElement(p.getName());
         });
-        // TODO: Evidenziare giocatore del turno corrente
     }
 
     /**
      * Aggiorna la lista delle carte e la carta del mazzo scarti.
      * @param mano Carte possedute dal giocatore
-     * @param cartaMazzoScarti Carta del mazzo scarti attualmente sul tavolo
-     * @param currentPlayer Giocatore a cui spetta il turno
+     * @param status Stato della partita
      */
-    public void updateCards(Collection<Card> mano, Card cartaMazzoScarti, Player currentPlayer) {
+    public void updateCards(Collection<Card> mano, MatchStatus status) {
         DefaultListModel model = (DefaultListModel) cardsList.getModel();
         model.clear();
         mano.forEach((c) -> {
             model.addElement(c);
         });
         
-        /**
-         * Se tocca al giocatore, e quello precedente ha 
-         * giocato un Jolly Pesca Quattro, il giocatore
-         * corrente può dubitare un eventuale bluff.
-         */
-        if(cartaMazzoScarti.isJollyPescaQuattro() &&
-                currentPlayer.equals(UnoXTutti.theUxtController.getPlayer())) {
-            checkBluffButton.setEnabled(true);
-            pickCardButton.setText("Pesca quattro carte");
+        Player currentPlayer = status.getCurrentPlayer();
+        boolean isItMyTurn = currentPlayer.equals(UnoXTutti.theUxtController.getPlayer());
+        Card cartaMazzoScarti = status.getCartaMazzoScarti();
+        
+        boolean resetButton = false;
+        if(isItMyTurn) {
+            pickCardButton.setEnabled(true);
+            
+            /**
+             * Se è il turno del giocatore corrente, controllo se deve
+             * pescare più di una carta.
+             */
+            if(status.getCardsToPick() == 1) {
+                /* Il giocatore non è afflitto da penalità */
+                resetButton = true;
+            } else if(cartaMazzoScarti.isJollyPescaQuattro()) {
+                /* Se si tratta di un Jolly Pesca Quattro, si può verificare il bluff */
+                checkBluffButton.setEnabled(true);
+            }
+            
+            if(!resetButton) {
+                /* Il giocatore è afflitto da penalità */
+                pickCardButton.setText("Pesca " + status.getCardsToPick() + " carte");
+            }
         } else {
+            /* Non si possono pescare carte nei turni altrui */
+            pickCardButton.setEnabled(false);
+            resetButton = true;
+        }
+        
+        /* Il giocatore non è afflitto da penalità */
+        if(resetButton) {
             checkBluffButton.setEnabled(false);
             pickCardButton.setText("Pesca una carta");
         }
@@ -265,10 +286,11 @@ public class GameplayPanel extends MainWindowSubPanel {
 
     /**
      * Aggiorna la lista degli eventi
-     * @param events Eventi accaduti durante la partita
+     * @param status Stato della partita
      */
-    public void updateEvents(Collection<String> events) {
+    public void updateEvents(MatchStatus status) {
         DefaultListModel model = (DefaultListModel) eventList.getModel();
+        Collection<String> events = status.getEvents();
         if(events.getClass() != ArrayList.class) {
             /* Refresh completo lista */
             model.clear();

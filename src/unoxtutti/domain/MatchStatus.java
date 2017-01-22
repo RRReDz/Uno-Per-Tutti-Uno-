@@ -7,7 +7,6 @@ package unoxtutti.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.TimeUtils;
 
@@ -37,8 +36,6 @@ public class MatchStatus implements Serializable {
     
     /**
      * Indica la direzione dei turni.
-     * <code>true</code> significa avanti,
-     * <code>false</code> significa indietro.
      */
     protected int turnsDirection = MatchStatus.DIRECTION_FORWARD;
     
@@ -67,6 +64,7 @@ public class MatchStatus implements Serializable {
      */
     protected MatchStatus() {
         events = new ArrayList<>(100);
+        cardsToPick = 1;
     }
     
     /**
@@ -92,6 +90,7 @@ public class MatchStatus implements Serializable {
         upd.turnsDirection = turnsDirection;
         upd.cartaMazzoScarti = cartaMazzoScarti;
         upd.events = new ArrayList<>(events);
+        upd.cardsToPick = cardsToPick;
         return upd;
     }
     
@@ -104,5 +103,53 @@ public class MatchStatus implements Serializable {
         String prefix = "[" + TimeUtils.getCurrentTimeStamp("HH:mm:ss") + "] ";
         events.add(prefix + eventMessage);
         DebugHelper.log("EVENTO PARTITA: " + eventMessage);
+    }
+
+    /**
+     * Ritorna la lista dei giocatori in ordine di turno.
+     * @return Ordine dei turni.
+     */
+    public ArrayList<Player> getTurns() {
+        return new ArrayList<>(turns);
+    }
+    
+    /**
+     * Ritorna il senso di marcio della partita.
+     * @return Senso di marcia.
+     */
+    public int getTurnsDirection() {
+        return turnsDirection;
+    }
+
+    /**
+     * Indica il giocatore a cui spetta il turno.
+     * @return Giocatore a cui spetta il turno.
+     */
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+
+    /**
+     * Ritorna la carta attualmente sul tavolo.
+     * @return Carta in cima al mazzo degli scarti.
+     */
+    public Card getCartaMazzoScarti() {
+        return cartaMazzoScarti;
+    }
+
+    /**
+     * Lista degli eventi della partita.
+     * @return Lista di eventi accaduti durante la partita.
+     */
+    public ArrayList<String> getEvents() {
+        return new ArrayList<>(events);
+    }
+
+    /**
+     * Indica il numero di carte da pescare.
+     * @return Numero di carte da pescare.
+     */
+    public int getCardsToPick() {
+        return cardsToPick;
     }
 }

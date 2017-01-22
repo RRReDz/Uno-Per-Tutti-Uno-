@@ -305,7 +305,7 @@ public class ServerMatch extends Match implements MessageReceiver {
                     status.handleDeclareUNORequest(sender);
                     break;
             }
-        } catch(InvalidRequestException ex) {
+        } catch(InvalidRequestException | UnsupportedOperationException ex) {
             /* Richiesta non valida */
             try {
                 /* Si notifica il giocatore dell'errore */

@@ -30,15 +30,17 @@ public class ServerMatchStatus extends MatchStatus {
     private final HashMap<Player, Collection<Card>> mani;
     
     /**
+     * Tiene traccia dei giocatori che hanno dichiarato UNO!.
+     */
+    private final HashMap<Player, Boolean> declarations;
+    
+    /**
      * Inizializzazione dello stato di una partita
      * @param players Giocatori partecipanti
      */
     ServerMatchStatus(List<Player> players) {
         super();
         super.trackEvent("La partita è stata avviata.");
-        
-        /* Inizializzazione del contatore di carte da pescare */
-        cardsToPick = 1;
         
         /* Inizializzazione ordine turni */
         /* Mazzo temporaneo per stabilire l'ordine dei turni*/
@@ -80,10 +82,19 @@ public class ServerMatchStatus extends MatchStatus {
         }
         super.trackEvent("Le carte sono state distribuite.");
         
-        /* Carta iniziale sul tavolo */
+        /* Inizializzazione dichiarazioni UNO */
+        declarations = new HashMap<>();
+        players.forEach((p) -> {
+            declarations.put(p, Boolean.FALSE);
+        });
+        
+        /* Carta iniziale sul tavolo, giocata dal server */
         cartaMazzoScarti = mazzoPesca.pescaCarta();
         super.trackEvent("Carta sul tavolo: " + cartaMazzoScarti);
         super.trackEvent("È il turno di " + currentPlayer.getName() + ".");
+        
+        /* Eventuale gestione della prima carta */
+        handleCard();
     }
     
     
@@ -138,16 +149,7 @@ public class ServerMatchStatus extends MatchStatus {
         trackEvent(currentPlayer + " scarta un " + card);
         mano.remove(card);
         cartaMazzoScarti = card;
-        nextPlayer();
-        
-        /**
-         * Se la carta è di tipo "Salta Turno", il giocatore
-         * successivo salterà il proprio turno.
-         */
-        if(cartaMazzoScarti.isSkipTurn()) {
-            trackEvent(currentPlayer.getName() + " salta il proprio turno.");
-            nextPlayer();
-        }
+        handleCard();
         
         throw new StatusChangedException();
     }
@@ -235,5 +237,52 @@ public class ServerMatchStatus extends MatchStatus {
         
         currentPlayer = turns.get(currentIndex);
         trackEvent("È il turno di " + currentPlayer.getName() + ".");
+    }
+
+    /**
+     * Gestisce la carta attualmente presente sul tavolo (in cima al
+     * mazzo degli scarti).
+     */
+    private void handleCard() {
+        /**
+         * Se non si tratta di un "Cambio giro", possiamo benissimo
+         * far passare il turno.
+         */
+        if(!cartaMazzoScarti.isChangeDirection()) {
+            nextPlayer();
+        }
+        
+        /* Gestione carte speciali */
+        if(cartaMazzoScarti.isSpecialCard()) {
+            if(cartaMazzoScarti.isChangeDirection()) {
+                /**
+                 * Il giocatore ha giocato un Cambia giro.
+                 */
+                trackEvent("Il senso di marcio è cambiato!");
+                changeDirection();
+                nextPlayer();
+            } else if(cartaMazzoScarti.isJollyPescaQuattro()) {
+                /**
+                 * Il giocatore ha giocato un Jolly Pesca Quattro.
+                 */
+                cardsToPick = 4;
+            } else if(cartaMazzoScarti.isPickTwo()) {
+                /**
+                 * Il giocatore ha giocato un Pesca due.
+                 */
+                if(cardsToPick == 1) {
+                    cardsToPick = 2;
+                } else {
+                    cardsToPick += 2;
+                }
+            } else if(cartaMazzoScarti.isSkipTurn()) {
+                /**
+                 * Se la carta è di tipo "Salta Turno", il giocatore
+                 * successivo salterà il proprio turno.
+                 */
+                super.trackEvent(currentPlayer.getName() + " salta il proprio turno.");
+                nextPlayer();
+            }
+        }
     }
 }

@@ -421,9 +421,9 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             
             /* Aggiornamento interfaccia grafica */
             GameplayPanel userInterface = GiocarePartitaController.getInstance().gameplayPanel;
-            userInterface.updateTurns(status.turns, status.currentPlayer, status.turnsDirection);
-            userInterface.updateCards(mano, status.cartaMazzoScarti, status.currentPlayer);
-            userInterface.updateEvents(status.events);
+            userInterface.updateTurns(status);
+            userInterface.updateCards(mano, status);
+            userInterface.updateEvents(status);
             
         } catch(ClassCastException e) {
             Logger.getLogger(RemoteMatch.class.getName()).log(Level.SEVERE, null, e);

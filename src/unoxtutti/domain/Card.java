@@ -327,4 +327,13 @@ public class Card implements Serializable, Comparable {
     public boolean isPickTwo() {
         return tipo == CARTA_AZIONE && dettaglio == AZIONE_PESCA_DUE;
     }
+    
+    /**
+     * Indica se si tratta di una carta "speciale", ovvero non di tipo "base".
+     * @return <code>true</code> se la carta è speciale, <code>false</code>
+     *          se si tratta di una carta "base".
+     */
+    public boolean isSpecialCard() {
+        return tipo != CARTA_BASE;
+    }
 }

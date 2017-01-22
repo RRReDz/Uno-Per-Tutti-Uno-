@@ -339,13 +339,11 @@ public class P2PConnection {
     }
 
     private synchronized void notifyMessageReceived(P2PMessage msg) {
-        /* debug */
-        System.out.println("\n - notifyMessageReceived - ");
         msg.setSenderConnection(this);
         ArrayList<MessageReceiver> receivers = this.messageReceivers.get(msg.getName());
         if (receivers == null || receivers.isEmpty()) {
             /* debug */
-            System.out.println("Il messaggio " + msg + " NON verrà consegnato!\n");
+            System.out.println("Non ci sono ascoltatori: il messaggio " + msg + " NON verrà consegnato!\n");
             ArrayList<P2PMessage> queue = unreadMessages.get(msg.getName());
             if (queue == null) {
                 queue = new ArrayList<>();
