@@ -90,11 +90,27 @@ public class ServerMatchStatus extends MatchStatus {
         
         /* Carta iniziale sul tavolo, giocata dal server */
         cartaMazzoScarti = mazzoPesca.pescaCarta();
+        super.trackEvent("È il turno di " + currentPlayer + ".");
         super.trackEvent("Carta sul tavolo: " + cartaMazzoScarti);
-        super.trackEvent("È il turno di " + currentPlayer.getName() + ".");
         
         /* Eventuale gestione della prima carta */
-        handleCard();
+        if(cartaMazzoScarti.isJollyPescaQuattro()) {
+            super.trackEvent(currentPlayer + " pesca 4 carte.");
+            Collection<Card> mano = mani.get(currentPlayer);
+            for(int i = 0; i < 2; i++) {
+                mano.add(mazzoPesca.pescaCarta());
+            }
+            nextPlayer();
+        } else if(cartaMazzoScarti.isJollyPescaDue()) {
+            super.trackEvent(currentPlayer + " pesca 2 carte.");
+            Collection<Card> mano = mani.get(currentPlayer);
+            for(int i = 0; i < 4; i++) {
+                mano.add(mazzoPesca.pescaCarta());
+            }
+            nextPlayer();
+        } else if(cartaMazzoScarti.isActionCard()) {
+            handleCard();
+        }
     }
     
     
@@ -118,6 +134,13 @@ public class ServerMatchStatus extends MatchStatus {
      * @param card Carta che il giocatore desidera scartare
      */
     synchronized void handlePlayCardRequest(Player player, Card card) throws InvalidRequestException, StatusChangedException {
+        /**
+         * Indica se l'effetto della carta precedentemente
+         * scartata è stato annullato. L'effetto di una carta azione può essere
+         * annullato giocando una carta azione identica.
+         */
+        boolean previosActionCardEffectCanceled = false;
+        
         Collection<Card> mano = mani.get(player);
         
         /* Innazitutto il giocatore deve possedere la carta */
@@ -128,17 +151,49 @@ public class ServerMatchStatus extends MatchStatus {
         /* Se non è il turno del giocatore, si tratta di un interruzione di turno. */
         if(currentPlayer.equals(player)) {
             /* È il turno del giocatore */
-            // TODO: Turno del giocatore corrente
-            
+            if(cardsToPick == 1) {
+                /* Il giocatore non è afflitto da penalità */
+                if(card.isJolly() && card.getColore() == Card.COLORE_NESSUNO) {
+                    throw new InvalidRequestException("Non è stato impostato il colore del jolly.");
+                }
+                if(card.getDettaglio() != cartaMazzoScarti.getDettaglio() &&
+                        card.getColore() != cartaMazzoScarti.getColore() &&
+                        !card.isJolly()) {
+                    throw new InvalidRequestException("Non puoi scartare un " 
+                            + card + ",\n\nSul tavolo è presente un " + cartaMazzoScarti + ".");
+                }
+            } else {
+                /**
+                 * Il giocatore è afflitto da penalità:
+                 * può annullare l'effetto della carta azione e non pescare
+                 * le carte giocando una carte identica a quella sul tavolo.
+                 */
+                if(card.isJollyPescaQuattro()) {
+                    throw new InvalidRequestException("Non puoi anunllare l'effetto "
+                            + "del " + card);
+                }
+                if(!card.equals(cartaMazzoScarti)) {
+                    throw new InvalidRequestException("Non puoi annullare l'effetto "
+                            + "del " + cartaMazzoScarti + " giocando un " + card + ".");
+                }
+                
+                previosActionCardEffectCanceled = true;
+            }
         } else {
             /* Interruzione di turno */
-            if(cardsToPick != 1) {
-                throw new InvalidRequestException("Non puoi interrompere il turno "
-                        + "quando un altro giocatore deve pescare delle carte.");
+            if(cartaMazzoScarti.isJolly()) {
+                throw new InvalidRequestException("Non puoi interrompere il turno su una carta jolly.");
             }
             if(!card.equals(cartaMazzoScarti)) {
                 throw new InvalidRequestException("Non è possibile interrompere "
                         + "il turno con un " + card.toString());
+            }
+            
+            /**
+             * Se l'interruzione avviene su una carta di tipo azione
+             */
+            if(card.isActionCard()) {
+                previosActionCardEffectCanceled = true;
             }
             
             /* Il giocatore si impadrona del turno */
@@ -149,7 +204,13 @@ public class ServerMatchStatus extends MatchStatus {
         trackEvent(currentPlayer + " scarta un " + card);
         mano.remove(card);
         cartaMazzoScarti = card;
-        handleCard();
+        
+        if(!previosActionCardEffectCanceled) {
+            handleCard();
+        } else {
+            cardsToPick = 1;
+            nextPlayer();
+        }
         
         throw new StatusChangedException();
     }

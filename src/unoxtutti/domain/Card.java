@@ -249,6 +249,8 @@ public class Card implements Serializable, Comparable {
         /* Il colore non viene controllato per le carte Jolly */
         if (this.tipo == CARTA_JOLLY && this.colore != other.colore) {
             return false;
+        } else if(this.colore != other.colore) {
+            return false;
         }
         return true;
     }
@@ -335,5 +337,38 @@ public class Card implements Serializable, Comparable {
      */
     public boolean isSpecialCard() {
         return tipo != CARTA_BASE;
+    }
+
+    /**
+     * Indica se si tratta di una carta di tipo "Azione".
+     * 
+     * Nota: le carte jolly non sono carte azione.
+     * 
+     * @return <code>true</code> se si tratta di una carta "Azione",
+     *          <code>false</code> altrimenti.
+     */
+    boolean isActionCard() {
+        return tipo == CARTA_AZIONE;
+    }
+    
+    /**
+     * Indica se si tratta di una carta di tipo "Jolly".
+     * 
+     * Nota: le carte azione non sono carte jolly.
+     * 
+     * @return <code>true</code> se si tratta di una carta "Jolly",
+     *          <code>false</code> altrimenti.
+     */
+    boolean isJolly() {
+        return tipo == CARTA_JOLLY;
+    }
+
+    /**
+     * Indica se la carta è un Pesca due.
+     * @return <code>true</code> se la carta e di tipo azione "Pesca due",
+     *          <code>false</code> altrimenti.
+     */
+    boolean isJollyPescaDue() {
+        return tipo == CARTA_AZIONE && dettaglio == AZIONE_PESCA_DUE;
     }
 }
