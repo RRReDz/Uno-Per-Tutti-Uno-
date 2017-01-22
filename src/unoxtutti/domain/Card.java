@@ -368,7 +368,7 @@ public class Card implements Serializable, Comparable {
      * @return <code>true</code> se la carta e di tipo azione "Pesca due",
      *          <code>false</code> altrimenti.
      */
-    boolean isJollyPescaDue() {
+    boolean isPescaDue() {
         return tipo == CARTA_AZIONE && dettaglio == AZIONE_PESCA_DUE;
     }
 }

@@ -97,14 +97,14 @@ public class ServerMatchStatus extends MatchStatus {
         if(cartaMazzoScarti.isJollyPescaQuattro()) {
             super.trackEvent(currentPlayer + " pesca 4 carte.");
             Collection<Card> mano = mani.get(currentPlayer);
-            for(int i = 0; i < 2; i++) {
+            for(int i = 0; i < 4; i++) {
                 mano.add(mazzoPesca.pescaCarta());
             }
             nextPlayer();
-        } else if(cartaMazzoScarti.isJollyPescaDue()) {
+        } else if(cartaMazzoScarti.isPescaDue()) {
             super.trackEvent(currentPlayer + " pesca 2 carte.");
             Collection<Card> mano = mani.get(currentPlayer);
-            for(int i = 0; i < 4; i++) {
+            for(int i = 0; i < 2; i++) {
                 mano.add(mazzoPesca.pescaCarta());
             }
             nextPlayer();
