@@ -269,10 +269,18 @@ public class GameplayPanel extends MainWindowSubPanel {
      */
     public void updateEvents(Collection<String> events) {
         DefaultListModel model = (DefaultListModel) eventList.getModel();
-        
-        model.clear();
-        events.forEach((c) -> {
-            model.addElement(c);
-        });
+        if(events.getClass() != ArrayList.class) {
+            /* Refresh completo lista */
+            model.clear();
+            events.forEach((c) -> {
+                model.addElement(c);
+            });
+        } else {
+            /* Append dei nuovi elementi */
+            ArrayList<String> list = (ArrayList<String>) events;
+            for(int i = model.size(); i < list.size(); i++) {
+                model.addElement(list.get(i));
+            }
+        }
     }
 }

@@ -6,6 +6,8 @@ package unoxtutti.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import unoxtutti.utils.DebugHelper;
 import unoxtutti.utils.TimeUtils;
 
@@ -53,7 +55,12 @@ public class MatchStatus implements Serializable {
     /**
      * Descrizione degli eventi accaduti durante la partita.
      */
-    protected ArrayList<String> events;
+    protected Collection<String> events;
+    
+    /**
+     * Indica il numero di carte che il giocatore di turno dovrebbe pescare,
+     */
+    protected int cardsToPick;
     
     /**
      * Inizializza la lista di eventi
@@ -72,6 +79,10 @@ public class MatchStatus implements Serializable {
     
     /**
      * Crea una copia dell'istanza corrente.
+     * 
+     * ATTENZIONE: è molto importante copiare le liste in nuovi oggetti
+     * con new ArrayList<>( X ).
+     * 
      * @return Stato della partita
      */
     protected MatchStatus creaCopia() {
@@ -80,7 +91,7 @@ public class MatchStatus implements Serializable {
         upd.currentPlayer = currentPlayer;
         upd.turnsDirection = turnsDirection;
         upd.cartaMazzoScarti = cartaMazzoScarti;
-        upd.events = events;
+        upd.events = new ArrayList<>(events);
         return upd;
     }
     

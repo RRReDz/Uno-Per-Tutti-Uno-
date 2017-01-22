@@ -520,27 +520,12 @@ public class ServerMatch extends Match implements MessageReceiver {
                 try {
                     /* Per ogni giocatore, si costruisce un messaggio di aggiornamento apposito */
                     P2PMessage upd = new P2PMessage(MatchStatus.STATUS_UPDATE_MSG);
-                    
+
                     Object[] parameters = new Object[] {
-                        status.cartaMazzoScarti,
-                        status.currentPlayer,
-                        new ArrayList<>(status.events),
-                        new ArrayList<>(status.turns),
-                        status.turnsDirection,
+                        updatedStatus,
                         new ArrayList<>(status.getCardsOfPlayer(c.getPlayer()))
                     };
-                    
-                    /**
-                     * Creare una copia di MatchStatus non sembra funzionare.
-                     * L'oggetto viene passato correttamente ma dall'altra parte
-                     * si ricevono sempre gli stessi dati.
-                        Object[] parameters = new Object[] {
-                            updatedStatus,
-                            status.getCardsOfPlayer(c.getPlayer()),
-                            status.getCardsOfPlayer(c.getPlayer()).toArray(new Card[0])
-                        };
-                     */
-                    
+                     
                     upd.setParameters(parameters);
                     c.sendMessage(upd);
                 } catch (PartnerShutDownException ex) {

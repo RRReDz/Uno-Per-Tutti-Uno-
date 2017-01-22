@@ -6,6 +6,7 @@ package unoxtutti.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,11 +28,6 @@ public class ServerMatchStatus extends MatchStatus {
      * Mani (carte possedute) di ogni giocatore.
      */
     private final HashMap<Player, Collection<Card>> mani;
-    
-    /**
-     * Indica il numero di carte che il giocatore di turno dovrebbe pescare,
-     */
-    private int cardsToPick;
     
     /**
      * Inizializzazione dello stato di una partita
@@ -102,7 +98,7 @@ public class ServerMatchStatus extends MatchStatus {
         }
         
         /* Carte possedute dal giocatore */
-        return mani.get(player);
+        return Collections.unmodifiableCollection(mani.get(player));
     }
 
     /**
@@ -139,6 +135,7 @@ public class ServerMatchStatus extends MatchStatus {
         }
         
         /* La carta viene scartata */
+        trackEvent(currentPlayer + " scarta un " + card);
         mano.remove(card);
         cartaMazzoScarti = card;
         nextPlayer();

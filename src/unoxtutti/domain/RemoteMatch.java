@@ -4,6 +4,7 @@
  */
 package unoxtutti.domain;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
@@ -68,17 +69,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * Indica se la partita è stata avviata o meno.
      */
     private boolean isStarted = false;
-    
-    /**
-     * Ultimo stato della partita ricevuto.
-     */
-    private MatchStatus currentStatus;
-    
-    /**
-     * Carte che il giocatore ha attualmente in mano.
-     */
-    private Collection<Card> currentCards;
-
     
     /**
      * Costruttore che memorizza le informazioni più importanti.
@@ -422,21 +412,21 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     private void handleStatusUpdateMessage(P2PMessage msg) {
         try {
-            DebugHelper.log("Aggiornamento stato ricevuto.");
             if(msg.getParametersCount() != 2) {
                 throw new IllegalArgumentException("Numero errato di argomenti: " + msg.getParametersCount());
             }
+            
             MatchStatus status = (MatchStatus) msg.getParameter(0);
-            Collection<Card> mano = (Collection<Card>) msg.getParameter(1);
-            this.currentStatus = status;
-            this.currentCards = mano;
+            ArrayList<Card> mano = (ArrayList<Card>) msg.getParameter(1);
             
             /* Aggiornamento interfaccia grafica */
             GameplayPanel userInterface = GiocarePartitaController.getInstance().gameplayPanel;
             userInterface.updateTurns(status.turns, status.currentPlayer, status.turnsDirection);
             userInterface.updateCards(mano, status.cartaMazzoScarti, status.currentPlayer);
             userInterface.updateEvents(status.events);
+            
         } catch(ClassCastException e) {
+            Logger.getLogger(RemoteMatch.class.getName()).log(Level.SEVERE, null, e);
             throw new CommunicationException("Wrong parameter type in message " + msg.getName());
         }
     }

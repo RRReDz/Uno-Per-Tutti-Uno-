@@ -111,12 +111,12 @@ public class NuovaStanzaDialog extends javax.swing.JDialog {
         } catch (NumberFormatException ex) {
             ok = false;
             GUIUtils.showInformationMessage(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
-            DebugHelper.log("ERR: La porta deve essere un numero\ncompreso fra 1024 e 65535.");
+            DebugHelper.log("ERR: La porta deve essere un numero compreso fra 1024 e 65535.");
         }
         if (ok && (num < 1024 || num > 65535)) {
             ok = false;
             GUIUtils.showInformationMessage(this, "La porta deve essere un numero\ncompreso fra 1024 e 65535");
-            DebugHelper.log("ERR: La porta deve essere un numero\ncompreso fra 1024 e 65535.");
+            DebugHelper.log("ERR: La porta deve essere un numero compreso fra 1024 e 65535.");
         }
         if (ok) {
             setVisible(false);
