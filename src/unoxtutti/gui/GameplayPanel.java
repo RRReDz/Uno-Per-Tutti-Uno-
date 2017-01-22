@@ -57,6 +57,7 @@ public class GameplayPanel extends MainWindowSubPanel {
         pickCardButton = new javax.swing.JButton();
         checkBluffButton = new javax.swing.JButton();
         declareUNOButton = new javax.swing.JButton();
+        checkUnoDeclarationButton = new javax.swing.JButton();
 
         jButton2.setText("jButton2");
 
@@ -137,6 +138,14 @@ public class GameplayPanel extends MainWindowSubPanel {
         });
         footerPanel.add(declareUNOButton);
 
+        checkUnoDeclarationButton.setText("Verifica UNO!");
+        checkUnoDeclarationButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkUnoDeclarationButtonActionPerformed(evt);
+            }
+        });
+        footerPanel.add(checkUnoDeclarationButton);
+
         add(footerPanel, java.awt.BorderLayout.SOUTH);
     }// </editor-fold>//GEN-END:initComponents
     
@@ -192,10 +201,20 @@ public class GameplayPanel extends MainWindowSubPanel {
         }
     }//GEN-LAST:event_declareUNOButtonActionPerformed
 
+    private void checkUnoDeclarationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUnoDeclarationButtonActionPerformed
+        try {
+            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+            remoteMatch.checkUNODeclaration();
+        } catch(Exception e) {
+            GUIUtils.showException(e, mainWindow);
+        }
+    }//GEN-LAST:event_checkUnoDeclarationButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<Card> cardsList;
     private javax.swing.JPanel cardsPanel;
     private javax.swing.JButton checkBluffButton;
+    private javax.swing.JButton checkUnoDeclarationButton;
     private javax.swing.JButton declareUNOButton;
     private javax.swing.JList<String> eventList;
     private javax.swing.JPanel eventPanel;

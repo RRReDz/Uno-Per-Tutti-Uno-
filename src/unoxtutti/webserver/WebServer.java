@@ -185,6 +185,7 @@ public class WebServer implements Runnable {
             setStopped(true);
         } catch (IOException ex) {
             Logger.getLogger(WebServer.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(0);
         }
     }
 

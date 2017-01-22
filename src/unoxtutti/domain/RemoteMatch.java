@@ -461,6 +461,13 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     }
     
     /**
+     * Chiede al server di verificare che i giocatori abbiano dichiarato UNO!
+     */
+    public void checkUNODeclaration() {
+        sendActionMessage(MatchStatus.STATUS_CHECK_UNO_DECLARATION, null);
+    }
+    
+    /**
      * Invia un messaggio al Room Server.
      * @param messageType Tipo di messaggio da inviare
      * @param parameters Eventuali parametri da allegare al messaggio

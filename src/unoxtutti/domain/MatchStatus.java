@@ -21,6 +21,7 @@ public class MatchStatus implements Serializable {
     public static final String STATUS_PICK_CARD_MSG = "statusPickCard";
     public static final String STATUS_CHECK_BLUFF_MSG = "statusCheckBluff";
     public static final String STATUS_DECLARE_UNO_MSG = "statusDeclareUno";
+    public static final String STATUS_CHECK_UNO_DECLARATION = "statisCheckUnoDeclaration";
     public static final String STATUS_ERROR_MESSAGE = "statusErrorMessage";
     
     /**

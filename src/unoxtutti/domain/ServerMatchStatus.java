@@ -204,6 +204,15 @@ public class ServerMatchStatus extends MatchStatus {
     
     
     /**
+     * Gestisce una richiesta di tipo "Verifica dichiarazione UNO!".
+     * @param player Giocatore richiedente
+     */
+    synchronized void handleCheckUNODeclarationRequest(Player player) throws InvalidRequestException, StatusChangedException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
+    
+    /**
      * Inverte la direzionedei turni
      */
     private void changeDirection() {

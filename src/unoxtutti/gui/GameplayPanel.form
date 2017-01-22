@@ -212,6 +212,14 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="declareUNOButtonActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JButton" name="checkUnoDeclarationButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Verifica UNO!"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkUnoDeclarationButtonActionPerformed"/>
+          </Events>
+        </Component>
       </SubComponents>
     </Container>
   </SubComponents>
