@@ -151,12 +151,17 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             case MatchStatus.STATUS_ERROR_MESSAGE:
                 try {
                     String errorMessage = (String) msg.getParameter(0);
-                    DebugHelper.log("Errore ricevuto dal server: " + errorMessage);
+                    DebugHelper.log("Ricevuto errore dal server: " + errorMessage);
                     GUIUtils.showErrorMessage(UnoXTutti.mainWindow, errorMessage, "Notifica dal server");
                 } catch(ClassCastException ex) {
                     /* Messaggio di notifica errato */
                     Logger.getLogger(RemoteMatch.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                break;
+            case Match.MATCH_ENDED_MSG:
+                DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA TERMINATA");
+                handleMatchEndedMessage(msg);
+                break;
             default:
         }
     }
@@ -482,6 +487,27 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             conn.sendMessage(msg);
         } catch (PartnerShutDownException ex) {
             Logger.getLogger(RemoteMatch.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    /**
+     * Si informa il giocatore che la partita è terminata.
+     * @param msg Messaggio che comunica il vincitore.
+     */
+    private void handleMatchEndedMessage(P2PMessage msg) {
+        try {
+            if(msg.getParametersCount() != 1) {
+                throw new IllegalArgumentException("Numero errato di argomenti: " + msg.getParametersCount());
+            }
+            
+            GiocarePartitaController.getInstance().matchEnded();
+            
+            Player winner = (Player) msg.getParameter(0);
+            GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "La partita è stata vinta da " + winner + ".");
+            
+        } catch(ClassCastException e) {
+            Logger.getLogger(RemoteMatch.class.getName()).log(Level.SEVERE, null, e);
+            throw new CommunicationException("Wrong parameter type in message " + msg.getName());
         }
     }
 }

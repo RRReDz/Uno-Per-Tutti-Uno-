@@ -437,6 +437,8 @@ public class GiocarePartitaController implements MessageReceiver {
         currentRoom.getConnection().addMessageReceivedObserver(currentMatch, MatchStatus.STATUS_UPDATE_MSG);
         /* Listener per la visualizzazione di messaggi di errore inviati dal server */
         currentRoom.getConnection().addMessageReceivedObserver(currentMatch, MatchStatus.STATUS_ERROR_MESSAGE);
+        /* Listener per la ricezione di messaggi di fine partita */
+        currentRoom.getConnection().addMessageReceivedObserver(currentMatch, Match.MATCH_ENDED_MSG);
     }
     
     /**
@@ -445,5 +447,12 @@ public class GiocarePartitaController implements MessageReceiver {
     public void matchClosed() {
         playerLeftAMatch();
         wakeUpController();
+    }
+    
+    /**
+     * Richiamato quando un giocatore vince la partita.
+     */
+    public void matchEnded() {
+        playerLeftAMatch();
     }
 }

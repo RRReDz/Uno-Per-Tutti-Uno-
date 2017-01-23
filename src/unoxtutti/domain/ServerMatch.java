@@ -575,15 +575,21 @@ public class ServerMatch extends Match implements MessageReceiver {
      * @param winner Vincitore
      */
     private void notifyMatchEnded(Player winner) {
-        players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEachOrdered((c) -> {
-            try {
-                P2PMessage upd = new P2PMessage(Match.MATCH_ENDED_MSG);
-                upd.setParameters(new Object[] { winner });
-                c.sendMessage(upd);
-            } catch (PartnerShutDownException ex) {
-                /* Il giocatore se n'è andato, pazienza */
-                Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
+        synchronized(room) {
+            players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEachOrdered((c) -> {
+                try {
+                    /* Il rapporto con il giocatore è terminato */
+                    c.removeMessageReceivedObserver(this);
+                    
+                    /* Invio notifica */
+                    P2PMessage upd = new P2PMessage(Match.MATCH_ENDED_MSG);
+                    upd.setParameters(new Object[] { winner });
+                    c.sendMessage(upd);
+                } catch (PartnerShutDownException ex) {
+                    /* Il giocatore se n'è andato, pazienza */
+                    Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+        }
     }
 }
