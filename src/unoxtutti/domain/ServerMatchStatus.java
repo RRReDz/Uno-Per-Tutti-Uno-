@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import unoxtutti.connection.InvalidRequestException;
@@ -208,6 +209,14 @@ public class ServerMatchStatus extends MatchStatus {
         if(!previosActionCardEffectCanceled) {
             handleCard();
         } else {
+            trackEvent("Gli effetti delle due carte azione si annullano a vicenda.");
+            
+            /* Si ripristina il senso di marcia se necessario */
+            if(card.isChangeDirection()) {
+                changeDirection();
+                trackEvent("Il senso di marcia è stato ripristinato.");
+            }
+            
             cardsToPick = 1;
             nextPlayer();
         }
@@ -252,7 +261,60 @@ public class ServerMatchStatus extends MatchStatus {
      * @param player Giocatore richiedente
      */
     synchronized void handleCheckBluffRequest(Player player) throws InvalidRequestException, StatusChangedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        /* Solo il giocatore di turno può controllare un bluff */
+        if(!player.equals(currentPlayer)) {
+            throw new InvalidRequestException("Non è il tuo turno.");
+        }
+        
+        /* Controllo che sul tavolo ci sia un Jolly Pesca Quattro */
+        if(!cartaMazzoScarti.isJollyPescaQuattro()) {
+            throw new InvalidRequestException("La carta sul tavolo deve essere un Jolly Pesca Quattro."
+                    + "\n\nSul tavolo è presente un " + cartaMazzoScarti + ".");
+        }
+        
+        /* Controllo che la carta sia stata appena scartata */
+        if(cardsToPick == 1) {
+            throw new InvalidRequestException("L'effetto del " + cartaMazzoScarti + " è già stato applicato.");
+        }
+        
+        /**
+         * Si recupera il giocatore che ha giocato il Jolly Pesca Quattro,
+         * e al quale bisogna quindi controllare le carte perchè potrebbe
+         * aver bluffato.
+         */
+        Player bluffer = getPreviousPlayer();
+        Collection<Card> mano = mani.get(bluffer);
+        boolean hasCardOfSameColor = false;
+        for (Iterator<Card> it = mano.iterator(); it.hasNext() && !hasCardOfSameColor;) {
+            Card c = it.next();
+            if(c.hasSameColorOf(cartaMazzoScarti)) {
+                hasCardOfSameColor = true;
+            }
+        }
+        
+        trackEvent(player + " ha chiesto di controllare se " + bluffer + " ha bluffato...");
+        if(hasCardOfSameColor) {
+            /**
+             * Il giocatore precedente ha bluffato: deve pescare 4 carte.
+             * Il giocatore corrente non perde il turno.
+             */
+            Collection<Card> manoPenalita = mani.get(bluffer);
+            for(int i = 0; i < 4; i++) {
+                manoPenalita.add(mazzoPesca.pescaCarta());
+            }
+            trackEvent(bluffer + " è stato scoperto a bluffare: come penalità pesca 4 carte.");
+        } else {
+            /**
+             * Il giocatore precedente non ha bluffato: quello corrente
+             * deve pescare 6 carte e perde il turno.
+             */
+            Collection<Card> manoPenalita = mani.get(player);
+            for(int i = 0; i < 6; i++) {
+                manoPenalita.add(mazzoPesca.pescaCarta());
+            }
+            trackEvent(bluffer + " non ha bluffato: " + player + " pesca 6 carte.");
+            nextPlayer();
+        }
     }
 
     /**
@@ -292,20 +354,7 @@ public class ServerMatchStatus extends MatchStatus {
      * Assegna il turno al giocatore successivo.
      */
     private void nextPlayer() {
-        int currentIndex = turns.indexOf(currentPlayer);
-        if(turnsDirection == MatchStatus.DIRECTION_FORWARD) {
-            currentIndex += 1;
-            if(currentIndex == turns.size()) {
-                currentIndex = 0;
-            }
-        } else {
-            currentIndex -= 1;
-            if(currentIndex < 0) {
-                currentIndex = turns.size() - 1;
-            }
-        }
-        
-        currentPlayer = turns.get(currentIndex);
+        currentPlayer = getNextPlayer();
         trackEvent("È il turno di " + currentPlayer.getName() + ".");
     }
 
@@ -354,5 +403,56 @@ public class ServerMatchStatus extends MatchStatus {
                 nextPlayer();
             }
         }
+    }
+    
+    
+    /**
+     * Ritorna il giocatore a cui spetta il prossimo turno.
+     * 
+     * @return Giocatore successivo a quello corrente nell'ordine dei turni.
+     */
+    protected Player getNextPlayer() {
+        int currentIndex = turns.indexOf(currentPlayer);
+        if(turnsDirection == MatchStatus.DIRECTION_FORWARD) {
+            currentIndex += 1;
+            if(currentIndex == turns.size()) {
+                currentIndex = 0;
+            }
+        } else {
+            currentIndex -= 1;
+            if(currentIndex < 0) {
+                currentIndex = turns.size() - 1;
+            }
+        }
+        
+        return turns.get(currentIndex);
+    }
+    
+    
+    /**
+     * Ritorna il giocatore che in teoria ha effettuato il turno precedente.
+     * 
+     * Il metodo non tiene conto di casistiche speciali (ad esempio: il 
+     * giocatore precedente non ha mai effettuato un turno oppure ha saltato 
+     * quello precedente): ritorna semplicemente il giocatore precedente
+     * basandosi sull'ordine dei turni.
+     * 
+     * @return Giocatore precedente a quello corrente nell'ordine dei turni.
+     */
+    protected Player getPreviousPlayer() {
+        int currentIndex = turns.indexOf(currentPlayer);
+        if(turnsDirection == MatchStatus.DIRECTION_FORWARD) {
+            currentIndex -= 1;
+            if(currentIndex < 0) {
+                currentIndex = turns.size() - 1;
+            }
+        } else {
+            currentIndex += 1;
+            if(currentIndex == turns.size()) {
+                currentIndex = 0;
+            }
+        }
+        
+        return turns.get(currentIndex);
     }
 }

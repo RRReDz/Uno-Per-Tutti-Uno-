@@ -347,7 +347,7 @@ public class Card implements Serializable, Comparable {
      * @return <code>true</code> se si tratta di una carta "Azione",
      *          <code>false</code> altrimenti.
      */
-    boolean isActionCard() {
+    public boolean isActionCard() {
         return tipo == CARTA_AZIONE;
     }
     
@@ -359,7 +359,7 @@ public class Card implements Serializable, Comparable {
      * @return <code>true</code> se si tratta di una carta "Jolly",
      *          <code>false</code> altrimenti.
      */
-    boolean isJolly() {
+    public boolean isJolly() {
         return tipo == CARTA_JOLLY;
     }
 
@@ -368,7 +368,18 @@ public class Card implements Serializable, Comparable {
      * @return <code>true</code> se la carta e di tipo azione "Pesca due",
      *          <code>false</code> altrimenti.
      */
-    boolean isPescaDue() {
+    public boolean isPescaDue() {
         return tipo == CARTA_AZIONE && dettaglio == AZIONE_PESCA_DUE;
+    }
+    
+    
+    /**
+     * Indica se la carta ha lo stesso colore di un'altra.
+     * @param other Carta con cui effettuare il paragone.
+     * @return <code>true</code> se le due carte hanno lo stesso colore,
+     *          <code>false</code> altrimenti.
+     */
+    public boolean hasSameColorOf(Card other) {
+        return colore == other.colore;
     }
 }
