@@ -14,9 +14,9 @@ import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
 import unoxtutti.connection.PartnerShutDownException;
+import unoxtutti.connection.PlayerWonException;
 import unoxtutti.connection.StatusChangedException;
 import unoxtutti.utils.DebugHelper;
-import unoxtutti.utils.GUIUtils;
 
 /**
  * Rappresenta una partita lato server.
@@ -25,17 +25,17 @@ import unoxtutti.utils.GUIUtils;
  */
 public class ServerMatch extends Match implements MessageReceiver {
     /**
-     * Stanza di appartenenza
+     * Stanza di appartenenza.
      */
     protected final ServerRoom room;
     
     /**
-     * Proprietario della partita
+     * Proprietario della partita.
      */
     protected final Player owner;
     
     /**
-     * Giocatori della partita
+     * Giocatori della partita.
      */
     protected final List<Player> players;
     
@@ -45,9 +45,14 @@ public class ServerMatch extends Match implements MessageReceiver {
     protected final List<Player> joinRequests;
     
     /**
-     * Indica se la partita è stata avviata
+     * Indica se la partita è stata avviata.
      */
     protected boolean started;
+    
+    /**
+     * Indica se la partita è terminata.
+     */
+    protected boolean ended;
     
     /**
      * Tiene traccia dello stato della partita.
@@ -66,6 +71,7 @@ public class ServerMatch extends Match implements MessageReceiver {
         this.room = parentRoom;
         this.owner = owner;
         this.started = false;
+        this.ended = false;
         this.players = new ArrayList<>();
         this.joinRequests = new ArrayList<>();
         players.add(owner);
@@ -111,7 +117,7 @@ public class ServerMatch extends Match implements MessageReceiver {
     /**
      * Metodo per notificare a tutti i giocatori in stanza l'inzio della partita.
      */
-    void notifyMatchStart() {
+    private void notifyMatchStart() {
         P2PMessage matchStartedMsg = new P2PMessage(Match.MATCH_STARTED_MSG);
         List<P2PConnection> lostConnections = new ArrayList<>(players.size());
        
@@ -256,72 +262,87 @@ public class ServerMatch extends Match implements MessageReceiver {
      */
     @Override
     public void updateMessageReceived(P2PMessage msg) {
-        try {
+        synchronized(this) {
             Player sender = msg.getSenderConnection().getPlayer();
-            if(!players.contains(sender)) {
-                throw new InvalidRequestException("Il giocatore non appartiene alla partita.");
-            }
             
-            switch(msg.getName()) {
-                case Match.MATCH_ACCESS_REQUEST_REPLY_MSG:
-                    /* Messaggio di risposta del proprietario ad una richiesta di accesso */
-                    handleMatchAccessAnswer(msg);
-                    break;
-                case MatchStatus.STATUS_PLAY_CARD_MSG:
-                    /* Il giocatore desidera giocare una carta */
-                    
-                    /* Si verifica che come parametro sia passata una carta */
-                    boolean validRequest = true;
-                    Card card = null;
-                    try {
-                        if(msg.getParametersCount() != 1) {
-                            validRequest = false;
-                        } else {
-                            card = (Card) msg.getParameter(0);
-                        }
-                    } catch (ClassCastException e) {
-                        validRequest = false;
-                    }
-                    if (!validRequest) {
-                        throw new InvalidRequestException(
-                            "La richiesta inviata è stata ignorata in quanto "
-                                    + " contenente argomenti non validi o errati."
-                        );
-                    }
-                    
-                    /* Si gestisce la richiesta */
-                    status.handlePlayCardRequest(sender, card);
-                    break;
-                case MatchStatus.STATUS_PICK_CARD_MSG:
-                    /* Il giocatore desidera pescare una o più carte */
-                    status.handlePickCardRequest(sender);
-                    break;
-                case MatchStatus.STATUS_CHECK_BLUFF_MSG:
-                    /* Il giocatore desidera controllare un bluff */
-                    status.handleCheckBluffRequest(sender);
-                    break;
-                case MatchStatus.STATUS_DECLARE_UNO_MSG:
-                    /* Il giocatore desidera dichiarare UNO! */
-                    status.handleDeclareUNORequest(sender);
-                    break;
-                case MatchStatus.STATUS_CHECK_UNO_DECLARATION:
-                    /* Il giocatore si lamenta di un giocatore che non ha dichiarato UNO */
-                    status.handleCheckUNODeclarationRequest(sender);
-                    break;
-            }
-        } catch(InvalidRequestException | UnsupportedOperationException ex) {
-            /* Richiesta non valida */
             try {
-                /* Si notifica il giocatore dell'errore */
-                P2PMessage errorNotificationMessage = new P2PMessage(MatchStatus.STATUS_ERROR_MESSAGE);
-                errorNotificationMessage.setParameters(new Object[] { ex.getMessage() });
-                msg.getSenderConnection().sendMessage(errorNotificationMessage);
-            } catch (PartnerShutDownException psde) {
-                Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, psde);
+                if(!players.contains(sender)) {
+                    throw new InvalidRequestException("Il giocatore non appartiene alla partita.");
+                }
+
+                /* Se la partita è terminata, si ignora il messaggio */
+                if(ended) { return; }
+
+                switch(msg.getName()) {
+                    case Match.MATCH_ACCESS_REQUEST_REPLY_MSG:
+                        /* Messaggio di risposta del proprietario ad una richiesta di accesso */
+                        handleMatchAccessAnswer(msg);
+                        break;
+                    case MatchStatus.STATUS_PLAY_CARD_MSG:
+                        /**
+                         * Il giocatore desidera giocare una carta.
+                         * 
+                         * Si verifica che come parametro sia passata una carta.
+                         */
+                        boolean validRequest = true;
+                        Card card = null;
+                        try {
+                            if(msg.getParametersCount() != 1) {
+                                validRequest = false;
+                            } else {
+                                card = (Card) msg.getParameter(0);
+                            }
+                        } catch (ClassCastException e) {
+                            validRequest = false;
+                        }
+                        if (!validRequest) {
+                            throw new InvalidRequestException(
+                                "La richiesta inviata è stata ignorata in quanto "
+                                        + " contenente argomenti non validi o errati."
+                            );
+                        }
+
+                        /* Si gestisce la richiesta */
+                        status.handlePlayCardRequest(sender, card);
+                        break;
+                    case MatchStatus.STATUS_PICK_CARD_MSG:
+                        /* Il giocatore desidera pescare una o più carte */
+                        status.handlePickCardRequest(sender);
+                        break;
+                    case MatchStatus.STATUS_CHECK_BLUFF_MSG:
+                        /* Il giocatore desidera controllare un bluff */
+                        status.handleCheckBluffRequest(sender);
+                        break;
+                    case MatchStatus.STATUS_DECLARE_UNO_MSG:
+                        /* Il giocatore desidera dichiarare UNO! */
+                        status.handleDeclareUNORequest(sender);
+                        break;
+                    case MatchStatus.STATUS_CHECK_UNO_DECLARATION:
+                        /* Il giocatore si lamenta di un giocatore che non ha dichiarato UNO */
+                        status.handleCheckUNODeclarationRequest(sender);
+                        break;
+                }
+            } catch(InvalidRequestException | UnsupportedOperationException ex) {
+                /* Richiesta non valida */
+                try {
+                    /* Si notifica il giocatore dell'errore */
+                    P2PMessage errorNotificationMessage = new P2PMessage(MatchStatus.STATUS_ERROR_MESSAGE);
+                    errorNotificationMessage.setParameters(new Object[] { ex.getMessage() });
+                    msg.getSenderConnection().sendMessage(errorNotificationMessage);
+                } catch (PartnerShutDownException psde) {
+                    Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, psde);
+                }
+            } catch(StatusChangedException ex) {
+                /* Stato cambiato */
+                sendStatusUpdate();
+            } catch (PlayerWonException ex) {
+                /* Partita terminata: sender ha vinto */
+                ended = true;
+                sendStatusUpdate();
+                
+                /* Notifica di terminazione partita */
+                notifyMatchEnded(sender);
             }
-        } catch(StatusChangedException ex) {
-            /* Stato cambiato */
-            sendStatusUpdate();
         }
     }
     
@@ -494,6 +515,10 @@ public class ServerMatch extends Match implements MessageReceiver {
      * il proprietario in quanto lui lo sa già: è lui a farla iniziare.
      */
     void start() {
+        if(started) {
+            throw new IllegalStateException("La partita è già stata avviata.");
+        }
+        
         started = true;
         notifyMatchStart();
         
@@ -516,7 +541,7 @@ public class ServerMatch extends Match implements MessageReceiver {
     /**
      * Invia a tutti i giocatori lo stato aggiornato della partita.
      */
-    void sendStatusUpdate() {
+    private void sendStatusUpdate() {
         synchronized(room) {
             /* Informazioni comuni a tutti i messaggi di aggiornamento */
             MatchStatus updatedStatus = status.creaCopia();
@@ -541,5 +566,24 @@ public class ServerMatch extends Match implements MessageReceiver {
                 }
             });
         }
+    }
+
+    
+    /**
+     * Si comunica a tutti i giocatori che un giocatore ha vinto.
+     * 
+     * @param winner Vincitore
+     */
+    private void notifyMatchEnded(Player winner) {
+        players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEachOrdered((c) -> {
+            try {
+                P2PMessage upd = new P2PMessage(Match.MATCH_ENDED_MSG);
+                upd.setParameters(new Object[] { winner });
+                c.sendMessage(upd);
+            } catch (PartnerShutDownException ex) {
+                /* Il giocatore se n'è andato, pazienza */
+                Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 }

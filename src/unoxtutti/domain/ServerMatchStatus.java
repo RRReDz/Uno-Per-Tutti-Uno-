@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import unoxtutti.connection.InvalidRequestException;
+import unoxtutti.connection.PlayerWonException;
 import unoxtutti.connection.StatusChangedException;
 import unoxtutti.utils.MapUtils;
 
@@ -137,7 +138,8 @@ public class ServerMatchStatus extends MatchStatus {
      * @param player Giocatore richiedente
      * @param card Carta che il giocatore desidera scartare
      */
-    synchronized void handlePlayCardRequest(Player player, Card card) throws InvalidRequestException, StatusChangedException {
+    synchronized void handlePlayCardRequest(Player player, Card card) 
+            throws InvalidRequestException, StatusChangedException, PlayerWonException {
         /**
          * Indica se l'effetto della carta precedentemente
          * scartata è stato annullato. L'effetto di una carta azione può essere
@@ -227,6 +229,13 @@ public class ServerMatchStatus extends MatchStatus {
             
             cardsToPick = 1;
             nextPlayer();
+        }
+        
+        /**
+         * Si verifica se il giocatore ha vinto la partita.
+         */
+        if(mano.isEmpty()) {
+            throw new PlayerWonException();
         }
         
         throw new StatusChangedException();

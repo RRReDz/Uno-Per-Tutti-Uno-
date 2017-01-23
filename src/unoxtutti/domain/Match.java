@@ -35,6 +35,9 @@ public abstract class Match {
     public static final String MATCH_STARTING_REPLY_MSG = "matchStartingReply";
     public static final String MATCH_STARTED_MSG = "matchStarted"; // Per gli altri utenti in stanza
     
+    /* Notifica di fine partita */
+    public static final String MATCH_ENDED_MSG = "matchEnded";
+    
     /**
      * Nome della partita
      */
