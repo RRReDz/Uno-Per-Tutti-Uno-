@@ -31,9 +31,14 @@ public class ServerMatchStatus extends MatchStatus {
     private final HashMap<Player, Collection<Card>> mani;
     
     /**
-     * Tiene traccia dei giocatori che hanno dichiarato UNO!.
+     * Indica l'ultimo giocatore che ha scartato una carta.
      */
-    private final HashMap<Player, Boolean> declarations;
+    private Player previousPlayer;
+    
+    /**
+     * Indica se il giocatore precedente ha dichiarato UNO!.
+     */
+    private boolean previousPlayerDeclaredUno;
     
     /**
      * Inizializzazione dello stato di una partita
@@ -84,10 +89,8 @@ public class ServerMatchStatus extends MatchStatus {
         super.trackEvent("Le carte sono state distribuite.");
         
         /* Inizializzazione dichiarazioni UNO */
-        declarations = new HashMap<>();
-        players.forEach((p) -> {
-            declarations.put(p, Boolean.FALSE);
-        });
+        previousPlayer = null;
+        previousPlayerDeclaredUno = false;
         
         /* Carta iniziale sul tavolo, giocata dal server */
         cartaMazzoScarti = mazzoPesca.pescaCarta();
@@ -206,6 +209,11 @@ public class ServerMatchStatus extends MatchStatus {
         mano.remove(card);
         cartaMazzoScarti = card;
         
+        /* Reset Dichiarazione UNO e aggiornamento ultimo giocatore */
+        previousPlayer = currentPlayer;
+        previousPlayerDeclaredUno = false;
+        
+        /* Se l'effetto di una carta azione non è stato annullato, viene gestita */
         if(!previosActionCardEffectCanceled) {
             handleCard();
         } else {
@@ -282,7 +290,7 @@ public class ServerMatchStatus extends MatchStatus {
          * e al quale bisogna quindi controllare le carte perchè potrebbe
          * aver bluffato.
          */
-        Player bluffer = getPreviousPlayer();
+        Player bluffer = previousPlayer;
         Collection<Card> mano = mani.get(bluffer);
         boolean hasCardOfSameColor = false;
         for (Iterator<Card> it = mano.iterator(); it.hasNext() && !hasCardOfSameColor;) {
@@ -315,6 +323,8 @@ public class ServerMatchStatus extends MatchStatus {
             trackEvent(bluffer + " non ha bluffato: " + player + " pesca 6 carte.");
             nextPlayer();
         }
+        
+        throw new StatusChangedException();
     }
 
     /**
@@ -322,7 +332,21 @@ public class ServerMatchStatus extends MatchStatus {
      * @param player Giocatore richiedente
      */
     synchronized void handleDeclareUNORequest(Player player) throws InvalidRequestException, StatusChangedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        /* Il giocatore deve aver scartato una carta il turno precedente */
+        if(player.equals(previousPlayer)) {
+            throw new InvalidRequestException("Puoi dichiarare UNO! solo dopo aver scartato una carta.");
+        }
+        
+        /* Il giocatore deve avere soltanto una carta */
+        if(mani.get(player).size() != 1) {
+            throw new InvalidRequestException("Devi avere una carta per poter dichiarare UNO!");
+        }
+        
+        /* Dichiarazione UNO */
+        trackEvent(player + " ha dichiarato UNO!");
+        previousPlayerDeclaredUno = true;
+        
+        throw new StatusChangedException();
     }
     
     
@@ -331,7 +355,25 @@ public class ServerMatchStatus extends MatchStatus {
      * @param player Giocatore richiedente
      */
     synchronized void handleCheckUNODeclarationRequest(Player player) throws InvalidRequestException, StatusChangedException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        Collection<Card> mano = mani.get(previousPlayer);
+        if(mano.size() == 1) {
+            if(previousPlayerDeclaredUno) {
+                /* Il giocatore precedente ha dichiarato UNO! correttamente */
+                throw new InvalidRequestException(previousPlayer + " ha dichiarato UNO!");
+            }
+        } else {
+            /* Il giocatore precedente ha più di una carta */
+            throw new InvalidRequestException(previousPlayer + " ha più di una carta.");
+        }
+        
+        /* Il giocatore precedente ha una carta e non ha dichiarato UNO! */
+        trackEvent(player + " ha fatto notare che " + previousPlayer + " non ha "
+                + "dichiarato UNO: per punizione pesca 2 carte.");
+        for(int i = 0; i < 2; i++) {
+            mano.add(mazzoPesca.pescaCarta());
+        }
+        
+        throw new StatusChangedException();
     }
     
     
@@ -354,7 +396,20 @@ public class ServerMatchStatus extends MatchStatus {
      * Assegna il turno al giocatore successivo.
      */
     private void nextPlayer() {
-        currentPlayer = getNextPlayer();
+        int currentIndex = turns.indexOf(currentPlayer);
+        if(turnsDirection == MatchStatus.DIRECTION_FORWARD) {
+            currentIndex += 1;
+            if(currentIndex == turns.size()) {
+                currentIndex = 0;
+            }
+        } else {
+            currentIndex -= 1;
+            if(currentIndex < 0) {
+                currentIndex = turns.size() - 1;
+            }
+        }
+        
+        currentPlayer = turns.get(currentIndex);
         trackEvent("È il turno di " + currentPlayer.getName() + ".");
     }
 
@@ -405,54 +460,4 @@ public class ServerMatchStatus extends MatchStatus {
         }
     }
     
-    
-    /**
-     * Ritorna il giocatore a cui spetta il prossimo turno.
-     * 
-     * @return Giocatore successivo a quello corrente nell'ordine dei turni.
-     */
-    protected Player getNextPlayer() {
-        int currentIndex = turns.indexOf(currentPlayer);
-        if(turnsDirection == MatchStatus.DIRECTION_FORWARD) {
-            currentIndex += 1;
-            if(currentIndex == turns.size()) {
-                currentIndex = 0;
-            }
-        } else {
-            currentIndex -= 1;
-            if(currentIndex < 0) {
-                currentIndex = turns.size() - 1;
-            }
-        }
-        
-        return turns.get(currentIndex);
-    }
-    
-    
-    /**
-     * Ritorna il giocatore che in teoria ha effettuato il turno precedente.
-     * 
-     * Il metodo non tiene conto di casistiche speciali (ad esempio: il 
-     * giocatore precedente non ha mai effettuato un turno oppure ha saltato 
-     * quello precedente): ritorna semplicemente il giocatore precedente
-     * basandosi sull'ordine dei turni.
-     * 
-     * @return Giocatore precedente a quello corrente nell'ordine dei turni.
-     */
-    protected Player getPreviousPlayer() {
-        int currentIndex = turns.indexOf(currentPlayer);
-        if(turnsDirection == MatchStatus.DIRECTION_FORWARD) {
-            currentIndex -= 1;
-            if(currentIndex < 0) {
-                currentIndex = turns.size() - 1;
-            }
-        } else {
-            currentIndex += 1;
-            if(currentIndex == turns.size()) {
-                currentIndex = 0;
-            }
-        }
-        
-        return turns.get(currentIndex);
-    }
 }
