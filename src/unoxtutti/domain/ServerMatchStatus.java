@@ -42,6 +42,11 @@ public class ServerMatchStatus extends MatchStatus {
     private boolean previousPlayerDeclaredUno;
     
     /**
+     * Indica il colore della carta scartata prima del Jolly.
+     */
+    private int coloreCartaPrimaDiJolly;
+    
+    /**
      * Inizializzazione dello stato di una partita
      * @param players Giocatori partecipanti
      */
@@ -82,19 +87,26 @@ public class ServerMatchStatus extends MatchStatus {
         });
         
         /* Si pescano 7 carte per ogni giocatore */
+        /* DEBUG */
         for(int i = 0; i < 7; i++) {
             players.forEach((p) -> {
                 mani.get(p).add(mazzoPesca.pescaCarta());
+                //mani.get(p).add(new Card(1, 1, 1));
             });
         }
         super.trackEvent("Le carte sono state distribuite.");
         
-        /* Inizializzazione dichiarazioni UNO */
+        /* Inizializzazione variabili per dichiarazioni UNO */
         previousPlayer = null;
         previousPlayerDeclaredUno = false;
         
+        /* Inizializzazione variabili per dubito bluff */
+        coloreCartaPrimaDiJolly = Card.COLORE_NESSUNO;
+        
         /* Carta iniziale sul tavolo, giocata dal server */
+        /* DEBUG */
         cartaMazzoScarti = mazzoPesca.pescaCarta();
+        //cartaMazzoScarti = new Card(1, 1, 1);
         super.trackEvent("È il turno di " + currentPlayer + ".");
         super.trackEvent("Carta sul tavolo: " + cartaMazzoScarti);
         
@@ -207,9 +219,19 @@ public class ServerMatchStatus extends MatchStatus {
         }
         
         /* La carta viene scartata */
+        if(card.isJollyPescaQuattro()) {
+            /**
+             * Se è un Jolly Pesca Quattro, ci si segna
+             * il colore della carta precedente.
+             */
+            coloreCartaPrimaDiJolly = card.getColore();
+        } else {
+            coloreCartaPrimaDiJolly = Card.COLORE_NESSUNO;
+        }
         trackEvent(currentPlayer + " scarta un " + card);
         mano.remove(card);
         cartaMazzoScarti = card;
+        
         
         /* Reset Dichiarazione UNO e aggiornamento ultimo giocatore */
         previousPlayer = currentPlayer;
@@ -306,7 +328,7 @@ public class ServerMatchStatus extends MatchStatus {
         boolean hasCardOfSameColor = false;
         for (Iterator<Card> it = mano.iterator(); it.hasNext() && !hasCardOfSameColor;) {
             Card c = it.next();
-            if(c.hasSameColorOf(cartaMazzoScarti)) {
+            if(c.getColore() == coloreCartaPrimaDiJolly) {
                 hasCardOfSameColor = true;
             }
         }
@@ -335,6 +357,9 @@ public class ServerMatchStatus extends MatchStatus {
             nextPlayer();
         }
         
+        /* Effetto della carta completato */
+        cardsToPick = 1;
+        
         throw new StatusChangedException();
     }
 
@@ -344,7 +369,7 @@ public class ServerMatchStatus extends MatchStatus {
      */
     synchronized void handleDeclareUNORequest(Player player) throws InvalidRequestException, StatusChangedException {
         /* Il giocatore deve aver scartato una carta il turno precedente */
-        if(player.equals(previousPlayer)) {
+        if(!player.equals(previousPlayer)) {
             throw new InvalidRequestException("Puoi dichiarare UNO! solo dopo aver scartato una carta.");
         }
         
@@ -366,6 +391,11 @@ public class ServerMatchStatus extends MatchStatus {
      * @param player Giocatore richiedente
      */
     synchronized void handleCheckUNODeclarationRequest(Player player) throws InvalidRequestException, StatusChangedException {
+        if(previousPlayer == null) {
+            /* È impossibile che il giocatore abbia una carta alla prima mano. */
+            throw new InvalidRequestException("Debug in corso.");
+        }
+        
         Collection<Card> mano = mani.get(previousPlayer);
         if(mano.size() == 1) {
             if(previousPlayerDeclaredUno) {

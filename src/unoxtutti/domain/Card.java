@@ -247,9 +247,7 @@ public class Card implements Serializable, Comparable {
             return false;
         }
         /* Il colore non viene controllato per le carte Jolly */
-        if (this.tipo == CARTA_JOLLY && this.colore != other.colore) {
-            return false;
-        } else if(this.colore != other.colore) {
+        if (this.tipo != CARTA_JOLLY && this.colore != other.colore) {
             return false;
         }
         return true;
@@ -370,16 +368,5 @@ public class Card implements Serializable, Comparable {
      */
     public boolean isPescaDue() {
         return tipo == CARTA_AZIONE && dettaglio == AZIONE_PESCA_DUE;
-    }
-    
-    
-    /**
-     * Indica se la carta ha lo stesso colore di un'altra.
-     * @param other Carta con cui effettuare il paragone.
-     * @return <code>true</code> se le due carte hanno lo stesso colore,
-     *          <code>false</code> altrimenti.
-     */
-    public boolean hasSameColorOf(Card other) {
-        return colore == other.colore;
     }
 }

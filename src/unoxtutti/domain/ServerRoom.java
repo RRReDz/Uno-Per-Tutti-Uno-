@@ -349,28 +349,31 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
     }
 
     void sendRoomUpdate() {
-        P2PMessage upd = new P2PMessage(Room.ROOM_UPDATE_MSG);
-        Object[] updpar = new Object[]{this.getPlayers(), this.getAvailableMatches()};
-        upd.setParameters(updpar);
-        while (upd != null) {
-            ArrayList<P2PConnection> unresp = new ArrayList<>();
-            for (P2PConnection client : connections.values()) {
-                try {
-                    client.sendMessage(upd);
-                } catch (PartnerShutDownException ex) {
-                    unresp.add(client);
+        synchronized(this) {
+            P2PMessage upd = new P2PMessage(Room.ROOM_UPDATE_MSG);
+            Object[] updpar = new Object[]{this.getPlayers(), this.getAvailableMatches()};
+            upd.setParameters(updpar);
+            while (upd != null) {
+                ArrayList<P2PConnection> unresp = new ArrayList<>();
+                for (P2PConnection client : connections.values()) {
+                    try {
+                        client.sendMessage(upd);
+                    } catch (PartnerShutDownException ex) {
+                        unresp.add(client);
+                    }
+                }
+                for (P2PConnection p2p : unresp) {
+                    p2p.disconnect();
+                    removePlayer(p2p);
+                }
+                if (unresp.size() > 0) {
+                    upd.setParameters(new Object[]{this.getPlayers()});
+                } else {
+                    upd = null;
                 }
             }
-            for (P2PConnection p2p : unresp) {
-                p2p.disconnect();
-                removePlayer(p2p);
-            }
-            if (unresp.size() > 0) {
-                upd.setParameters(new Object[]{this.getPlayers()});
-            } else {
-                upd = null;
-            }
         }
+        
     }
     
     /**
@@ -768,6 +771,26 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 c.removeMessageReceivedObserver(matches.get(matchName));
             });
             matches.remove(matchName);
+        }
+    }
+
+    /**
+     * Richiamata da una partita quando questa termina.
+     * 
+     * @param match Elimina la partita dalla lista delle partite.
+     */
+    void matchEnded(ServerMatch match) {
+        synchronized(this) {
+            if(matches.containsValue(match)) {
+                /* Non usare operatori funzionali! */
+                for(String matchName : matches.keySet()) {
+                    if(matches.get(matchName) == match) {
+                        matches.remove(matchName);
+                        break;
+                    }
+                }
+                sendRoomUpdate();
+            }
         }
     }
 }

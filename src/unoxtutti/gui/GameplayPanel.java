@@ -161,6 +161,22 @@ public class GameplayPanel extends MainWindowSubPanel {
             return;
         }
         
+        /* Se è un jolly, si chiede il colore all'utente */
+        if(card.isJolly()) {
+            ScegliColoreJollyDialog dia = new ScegliColoreJollyDialog(mainWindow, true);
+            GUIUtils.centerDialogInsideWindow(dia, this.mainWindow);
+            dia.setVisible(true);
+            
+            if(dia.getResult() == Card.COLORE_NESSUNO) {
+                /* Azione annullata dall'utente */
+                return;
+            }
+            
+            /* Si imposta il colore del Jolly e si elimina dalla memoria la finestra */
+            card.setColore(dia.getResult());
+            dia.dispose();
+        }
+        
         try {
             remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
             remoteMatch.playCard(card);

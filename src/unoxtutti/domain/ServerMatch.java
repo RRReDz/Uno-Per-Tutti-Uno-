@@ -342,6 +342,9 @@ public class ServerMatch extends Match implements MessageReceiver {
                 
                 /* Notifica di terminazione partita */
                 notifyMatchEnded(sender);
+                
+                /* Si elimina la partita dalla stanza */
+                room.matchEnded(this);
             }
         }
     }

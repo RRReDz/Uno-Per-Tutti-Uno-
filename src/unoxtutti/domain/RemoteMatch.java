@@ -302,9 +302,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
     public boolean startMatch() {
         startingHandler = new MatchStartingDialogueHandler(conn);
         startingHandler.addStateChangeObserver(this);
-        /**
-         * TODO: Ricevere OK dal server
-         */
         return startingHandler.startDialogue(matchName);
     }
     
