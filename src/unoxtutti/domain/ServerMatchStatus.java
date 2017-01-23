@@ -32,7 +32,7 @@ public class ServerMatchStatus extends MatchStatus {
     private final HashMap<Player, Collection<Card>> mani;
     
     /**
-     * Indica l'ultimo giocatore che ha scartato una carta.
+     * Indica l'ultimo giocatore che ha scartato o pescato una carta.
      */
     private Player previousPlayer;
     
@@ -166,7 +166,7 @@ public class ServerMatchStatus extends MatchStatus {
                         card.getColore() != cartaMazzoScarti.getColore() &&
                         !card.isJolly()) {
                     throw new InvalidRequestException("Non puoi scartare un " 
-                            + card + ",\n\nSul tavolo è presente un " + cartaMazzoScarti + ".");
+                            + card + ".\n\nSul tavolo è presente un " + cartaMazzoScarti + ".");
                 }
             } else {
                 /**
@@ -256,6 +256,7 @@ public class ServerMatchStatus extends MatchStatus {
         for(int i = 0; i < cardsToPick; i++) {
             mano.add(mazzoPesca.pescaCarta());
         }
+        previousPlayer = currentPlayer;
         
         /* Messaggio di notifica */
         if(cardsToPick == 1) {
