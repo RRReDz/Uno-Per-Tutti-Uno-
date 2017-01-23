@@ -87,11 +87,9 @@ public class ServerMatchStatus extends MatchStatus {
         });
         
         /* Si pescano 7 carte per ogni giocatore */
-        /* DEBUG */
         for(int i = 0; i < 7; i++) {
             players.forEach((p) -> {
                 mani.get(p).add(mazzoPesca.pescaCarta());
-                //mani.get(p).add(new Card(1, 1, 1));
             });
         }
         super.trackEvent("Le carte sono state distribuite.");
@@ -104,9 +102,7 @@ public class ServerMatchStatus extends MatchStatus {
         coloreCartaPrimaDiJolly = Card.COLORE_NESSUNO;
         
         /* Carta iniziale sul tavolo, giocata dal server */
-        /* DEBUG */
         cartaMazzoScarti = mazzoPesca.pescaCarta();
-        //cartaMazzoScarti = new Card(1, 1, 1);
         super.trackEvent("È il turno di " + currentPlayer + ".");
         super.trackEvent("Carta sul tavolo: " + cartaMazzoScarti);
         

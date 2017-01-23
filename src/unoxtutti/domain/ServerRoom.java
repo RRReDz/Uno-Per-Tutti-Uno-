@@ -791,6 +791,9 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
                 }
                 sendRoomUpdate();
             }
+            
+            /* Reset listeners */
+            playerJoinedTheRoom(connections.get(match.owner));
         }
     }
 }
