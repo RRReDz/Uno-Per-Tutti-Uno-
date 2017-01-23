@@ -257,6 +257,7 @@ public class ServerMatchStatus extends MatchStatus {
             mano.add(mazzoPesca.pescaCarta());
         }
         previousPlayer = currentPlayer;
+        previousPlayerDeclaredUno = false;
         
         /* Messaggio di notifica */
         if(cardsToPick == 1) {
