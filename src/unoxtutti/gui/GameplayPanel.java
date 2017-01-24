@@ -6,7 +6,11 @@ package unoxtutti.gui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.swing.DefaultListModel;
+import unoxtutti.AutenticarsiController;
 import unoxtutti.GiocarePartitaController;
 import unoxtutti.UnoXTutti;
 import unoxtutti.domain.Card;
@@ -22,6 +26,10 @@ import unoxtutti.utils.GUIUtils;
 public class GameplayPanel extends MainWindowSubPanel {
 
     private RemoteMatch remoteMatch;
+    
+    private Player currentPlayer;
+    
+    private ScheduledExecutorService currentService = Executors.newSingleThreadScheduledExecutor();
     
     /**
      * Creates new form GameplayPanel
@@ -40,6 +48,9 @@ public class GameplayPanel extends MainWindowSubPanel {
     private void initComponents() {
 
         jButton2 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        timeRemainingLabel = new javax.swing.JLabel();
+        timeRemaining = new javax.swing.JLabel();
         jSplitPane1 = new javax.swing.JSplitPane();
         turnsListPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -62,6 +73,12 @@ public class GameplayPanel extends MainWindowSubPanel {
         jButton2.setText("jButton2");
 
         setLayout(new java.awt.BorderLayout());
+
+        timeRemainingLabel.setText("Tempo rimanente:");
+        jPanel1.add(timeRemainingLabel);
+        jPanel1.add(timeRemaining);
+
+        add(jPanel1, java.awt.BorderLayout.PAGE_START);
 
         jSplitPane1.setDividerLocation(150);
 
@@ -236,6 +253,7 @@ public class GameplayPanel extends MainWindowSubPanel {
     private javax.swing.JPanel eventPanel;
     private javax.swing.JPanel footerPanel;
     private javax.swing.JButton jButton2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane4;
@@ -244,10 +262,53 @@ public class GameplayPanel extends MainWindowSubPanel {
     private javax.swing.JPanel mainPanel;
     private javax.swing.JButton pickCardButton;
     private javax.swing.JButton playCardButton;
+    private javax.swing.JLabel timeRemaining;
+    private javax.swing.JLabel timeRemainingLabel;
     private javax.swing.JList<String> turnsList;
     private javax.swing.JPanel turnsListPanel;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Aggiorna il timer
+     * @param status 
+     */
+    public void updateTimer(MatchStatus status) {
+        currentPlayer = AutenticarsiController.getInstance().getPlayer();
+        
+        /* Se si tratta del turno del giocatore */
+        if(status.getCurrentPlayer().equals(currentPlayer)) {
+            if(!currentService.isTerminated()) {
+                currentService.shutdown();
+                currentService = Executors.newSingleThreadScheduledExecutor();
+            }
+            
+            /* Timer del turno */
+            currentService.scheduleWithFixedDelay(
+                new Runnable() {
+                    int secondsForTurn = 30;
+                    @Override
+                    public void run() {
+                        if(secondsForTurn == 0) {
+                            /* Tempo scaduto */
+                            /* Termino il timer */
+                            currentService.shutdown();
+                            
+                            /* Invio al server la fine del turno */
+                            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
+                            remoteMatch.endTurn();
+                        }
+                        
+                        timeRemaining.setText(Integer.toString(secondsForTurn -= 1));
+                    }
+                }, 0, 1, TimeUnit.SECONDS);
+            
+        } else {
+            /* Termino il timer */
+            if(currentService != null)
+                currentService.shutdown();
+            timeRemaining.setText("-");
+        }
+    }
     
     /**
      * Aggiorna la lista dei turni.

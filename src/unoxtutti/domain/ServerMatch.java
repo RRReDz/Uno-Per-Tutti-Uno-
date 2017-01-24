@@ -321,6 +321,10 @@ public class ServerMatch extends Match implements MessageReceiver {
                         /* Il giocatore si lamenta di un giocatore che non ha dichiarato UNO */
                         status.handleCheckUNODeclarationRequest(sender);
                         break;
+                    case MatchStatus.STATUS_END_TURN:
+                        /* Il giocatore si lamenta di un giocatore che non ha dichiarato UNO */
+                        status.handleEndTurnRequest(sender);
+                        break;
                 }
             } catch(InvalidRequestException | UnsupportedOperationException ex) {
                 /* Richiesta non valida */
@@ -535,6 +539,7 @@ public class ServerMatch extends Match implements MessageReceiver {
             conn.addMessageReceivedObserver(this, MatchStatus.STATUS_CHECK_BLUFF_MSG);
             conn.addMessageReceivedObserver(this, MatchStatus.STATUS_DECLARE_UNO_MSG);
             conn.addMessageReceivedObserver(this, MatchStatus.STATUS_CHECK_UNO_DECLARATION);
+            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_END_TURN);
         }
         
         status = new ServerMatchStatus(players);

@@ -23,6 +23,7 @@ public class MatchStatus implements Serializable {
     public static final String STATUS_DECLARE_UNO_MSG = "statusDeclareUno";
     public static final String STATUS_CHECK_UNO_DECLARATION = "statisCheckUnoDeclaration";
     public static final String STATUS_ERROR_MESSAGE = "statusErrorMessage";
+    public static final String STATUS_END_TURN = "statusEndTurn";
     
     /**
      * Possibili direzioni di turno
@@ -61,6 +62,11 @@ public class MatchStatus implements Serializable {
     protected int cardsToPick;
     
     /**
+     * Utilizzato per capire quando stoppare il time del giocatore
+     */
+    protected boolean stopTimer;
+    
+    /**
      * Inizializza la lista di eventi
      */
     protected MatchStatus() {
@@ -92,6 +98,7 @@ public class MatchStatus implements Serializable {
         upd.cartaMazzoScarti = cartaMazzoScarti;
         upd.events = new ArrayList<>(events);
         upd.cardsToPick = cardsToPick;
+        upd.stopTimer = stopTimer;
         return upd;
     }
     
@@ -152,5 +159,13 @@ public class MatchStatus implements Serializable {
      */
     public int getCardsToPick() {
         return cardsToPick;
+    }
+    
+    /**
+     * Indica il numero di carte da pescare.
+     * @return Numero di carte da pescare.
+     */
+    public boolean getTurnHasToEnd() {
+        return stopTimer;
     }
 }
