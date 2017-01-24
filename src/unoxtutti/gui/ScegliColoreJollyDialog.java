@@ -4,9 +4,7 @@
  */
 package unoxtutti.gui;
 
-import javax.swing.JOptionPane;
 import unoxtutti.domain.Card;
-import unoxtutti.utils.GUIUtils;
 
 public class ScegliColoreJollyDialog extends javax.swing.JDialog {
     /**

@@ -5,7 +5,6 @@
 package unoxtutti.domain;
 
 import java.util.TimerTask;
-import unoxtutti.utils.DebugHelper;
 
 /**
  * Task che controlla se il giocatore ha terminato il proprio turno.
@@ -48,7 +47,7 @@ public class TimeoutChecker extends TimerTask {
     @Override
     public void run() {
         synchronized(match) {
-            if(match.updateId == UPDATE_ID) {
+            if(match.updateId == UPDATE_ID && !match.ended) {
                 match.currentPlayerTimedOut();
             }
         }

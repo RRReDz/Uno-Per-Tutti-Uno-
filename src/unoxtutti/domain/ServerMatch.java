@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import unoxtutti.configuration.GameConfig;
@@ -617,8 +616,11 @@ public class ServerMatch extends Match implements MessageReceiver {
             /* Informazioni comuni a tutti i messaggi di aggiornamento */
             MatchStatus updatedStatus = status.creaCopia();
             
-            players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEachOrdered((c) -> {
+            int numberOfFailures = 0;
+            for(Player p : players) {
                 try {
+                     P2PConnection c = room.getConnectionWithPlayer(p);
+                     
                     /* Per ogni giocatore, si costruisce un messaggio di aggiornamento apposito */
                     P2PMessage upd = new P2PMessage(MatchStatus.STATUS_UPDATE_MSG);
 
@@ -634,14 +636,20 @@ public class ServerMatch extends Match implements MessageReceiver {
                      * Si ignora il fatto che il giocatore abbia
                      * perso la connessione, per ora
                      */
+                    numberOfFailures++;
                 }
-            });
+            }
             
             /* Incremento contatore */
             updateId++;
             
             /* Reset timer */
-            if(!ended) {
+            if(!ended && numberOfFailures < players.size()) {
+                /**
+                 * Se numberOfFailures = players.size() significa che
+                 * tutti i giocatori sono disconnessi: non ha senso
+                 * creare un nuovo timer.
+                 */
                 timeoutChecker.schedule(new TimeoutChecker(this), GameConfig.TURN_MAXIMUM_LENGTH);
             }
         }
