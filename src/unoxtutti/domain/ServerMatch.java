@@ -641,7 +641,9 @@ public class ServerMatch extends Match implements MessageReceiver {
             updateId++;
             
             /* Reset timer */
-            timeoutChecker.schedule(new TimeoutChecker(this), GameConfig.TURN_MAXIMUM_LENGTH);
+            if(!ended) {
+                timeoutChecker.schedule(new TimeoutChecker(this), GameConfig.TURN_MAXIMUM_LENGTH);
+            }
         }
     }
 
