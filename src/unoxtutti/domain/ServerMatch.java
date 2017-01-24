@@ -1,4 +1,4 @@
-/*
+/* 
  * Progetto UnoXTutto per l'esame di Sviluppo Applicazione Software.
  * Rossi Riccardo, Giacobino Davide, Sguotti Leonardo
  */
@@ -616,6 +616,7 @@ public class ServerMatch extends Match implements MessageReceiver {
             /* Informazioni comuni a tutti i messaggi di aggiornamento */
             MatchStatus updatedStatus = status.creaCopia();
             
+            /* Non usare operatori funzionali: è necessario aggiornare numberOfFailures */
             int numberOfFailures = 0;
             for(Player p : players) {
                 try {
