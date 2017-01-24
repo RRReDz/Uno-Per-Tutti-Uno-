@@ -10,7 +10,10 @@ package unoxtutti.configuration;
  * @author Riccardo Rossi
  */
 public class ApplicationConfig {
-    public static final String APP_NAME = "UnoPerTutti";
+    /**
+     * Nome dell'applicazione.
+     */
+    public static final String APP_NAME = "UnoXTutti";
     
     /**
      * L'indirizzo del Web Server simulato, modificare se gira su un'altra

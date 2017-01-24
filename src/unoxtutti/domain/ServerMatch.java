@@ -5,9 +5,13 @@
 package unoxtutti.domain;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import unoxtutti.configuration.GameConfig;
 import unoxtutti.connection.CommunicationException;
 import unoxtutti.connection.InvalidRequestException;
 import unoxtutti.connection.MessageReceiver;
@@ -60,6 +64,26 @@ public class ServerMatch extends Match implements MessageReceiver {
     protected ServerMatchStatus status;
     
     /**
+     * Tiene traccia del numero di timeout effettuati da ogni giocatore.
+     */
+    protected HashMap<Player, Integer> timeouts;
+    
+    /**
+     * Timer per la terminazione forzata dei turni.
+     */
+    protected Timer timeoutChecker;
+    
+    /**
+     * Conta il numero di turni.
+     */
+    protected int turnId;
+    
+    /**
+     * Contatore degli aggiornamenti inviati.
+     */
+    protected int updateId;
+    
+    /**
      * Inizializza una partita
      * @param parentRoom Stanza di appartenenza
      * @param owner Proprietario della partita
@@ -67,13 +91,28 @@ public class ServerMatch extends Match implements MessageReceiver {
      * @param options Opzioni
      */
     public ServerMatch(ServerRoom parentRoom, Player owner, String name, Object options) {
+        /* Informazioni generali */
         super(name, options);
         this.room = parentRoom;
         this.owner = owner;
+        
+        /* Stato della partita */
         this.started = false;
         this.ended = false;
+        
+        /* Giocatori presenti e richieste di ingresso */
         this.players = new ArrayList<>();
         this.joinRequests = new ArrayList<>();
+        
+        /* Timer per la terminazione forzata dei turni */
+        this.timeouts = new HashMap<>();
+        this.timeoutChecker = new Timer();
+        
+        /* Contatori di turno ed aggiornamento */
+        this.turnId = 1;
+        this.updateId = 1;
+        
+        /* Il proprietario è già presente nella partita */
         players.add(owner);
     }
     
@@ -264,6 +303,11 @@ public class ServerMatch extends Match implements MessageReceiver {
     public void updateMessageReceived(P2PMessage msg) {
         synchronized(this) {
             Player sender = msg.getSenderConnection().getPlayer();
+            Player playerAtTheStartOfTheTurn = null;
+            
+            if(started) {
+                playerAtTheStartOfTheTurn = status.currentPlayer;
+            }
             
             try {
                 if(!players.contains(sender)) {
@@ -322,7 +366,7 @@ public class ServerMatch extends Match implements MessageReceiver {
                         status.handleCheckUNODeclarationRequest(sender);
                         break;
                 }
-            } catch(InvalidRequestException | UnsupportedOperationException ex) {
+            } catch(InvalidRequestException ex) {
                 /* Richiesta non valida */
                 try {
                     /* Si notifica il giocatore dell'errore */
@@ -333,6 +377,25 @@ public class ServerMatch extends Match implements MessageReceiver {
                     Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, psde);
                 }
             } catch(StatusChangedException ex) {
+                /* Incremento turno, se non tocca più allo stesso giocatore */
+                String msgType = msg.getName();
+                if(msgType.equals(MatchStatus.STATUS_PLAY_CARD_MSG) ||
+                        msgType.equals(MatchStatus.STATUS_PICK_CARD_MSG)) {
+                    /* Se un giocatore gioca una carta o pesca, di sicuro il turno è finito */
+                    turnId++;
+                } else if(msgType.equals(MatchStatus.STATUS_CHECK_BLUFF_MSG) &&
+                        !status.currentPlayer.equals(playerAtTheStartOfTheTurn)) {
+                    /**
+                     * Un altro modo per far finire il turno è richiamare
+                     * un bluff, senza però avere successo.
+                     * 
+                     * Se il giocatore è cambiato dall'inizio del turno,
+                     * significa che chi ha voluto controllare il bluff
+                     * ha pescato 6 carte e perso il turno.
+                     */
+                    turnId++;
+                }
+                
                 /* Stato cambiato */
                 sendStatusUpdate();
             } catch (PlayerWonException ex) {
@@ -518,31 +581,36 @@ public class ServerMatch extends Match implements MessageReceiver {
      * il proprietario in quanto lui lo sa già: è lui a farla iniziare.
      */
     void start() {
-        if(started) {
-            throw new IllegalStateException("La partita è già stata avviata.");
+        synchronized(this) {
+            if(started) {
+                throw new IllegalStateException("La partita è già stata avviata.");
+            }
+
+            started = true;
+            notifyMatchStart();
+
+            players.forEach((p) -> {
+                /* Aggiornamento listeners */
+                P2PConnection conn = room.getConnectionWithPlayer(p);
+                conn.addMessageReceivedObserver(this, MatchStatus.STATUS_PLAY_CARD_MSG);
+                conn.addMessageReceivedObserver(this, MatchStatus.STATUS_PICK_CARD_MSG);
+                conn.addMessageReceivedObserver(this, MatchStatus.STATUS_CHECK_BLUFF_MSG);
+                conn.addMessageReceivedObserver(this, MatchStatus.STATUS_DECLARE_UNO_MSG);
+                conn.addMessageReceivedObserver(this, MatchStatus.STATUS_CHECK_UNO_DECLARATION);
+
+                /* Inizializzazione contatore timeouts */
+                timeouts.put(p, 0);
+            });
+
+            status = new ServerMatchStatus(players);
+            sendStatusUpdate();
         }
-        
-        started = true;
-        notifyMatchStart();
-        
-        /**
-         * Si aggiornano i listener al fine di poter ricevere messaggi dai giocatori.
-         */
-        for(Player p : players) {
-            P2PConnection conn = room.getConnectionWithPlayer(p);
-            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_PLAY_CARD_MSG);
-            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_PICK_CARD_MSG);
-            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_CHECK_BLUFF_MSG);
-            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_DECLARE_UNO_MSG);
-            conn.addMessageReceivedObserver(this, MatchStatus.STATUS_CHECK_UNO_DECLARATION);
-        }
-        
-        status = new ServerMatchStatus(players);
-        sendStatusUpdate();
     }
     
     /**
      * Invia a tutti i giocatori lo stato aggiornato della partita.
+     * 
+     * Ad ogni aggiornamento si resetta il timer di durata massima di un turno.
      */
     private void sendStatusUpdate() {
         synchronized(room) {
@@ -568,6 +636,12 @@ public class ServerMatch extends Match implements MessageReceiver {
                      */
                 }
             });
+            
+            /* Incremento contatore */
+            updateId++;
+            
+            /* Reset timer */
+            timeoutChecker.schedule(new TimeoutChecker(this), GameConfig.TURN_MAXIMUM_LENGTH);
         }
     }
 
@@ -593,6 +667,51 @@ public class ServerMatch extends Match implements MessageReceiver {
                     Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
+        }
+    }
+    
+    
+    /**
+     * Richiamata da un task quando il giocatore corrente va in timeout.
+     */
+    void currentPlayerTimedOut() {
+        try {
+            Player timedoutPlayer = status.currentPlayer;
+            
+            /* Incremento contatore timeouts */
+            int timeoutCounter = timeouts.get(timedoutPlayer) + 1;
+            timeouts.put(timedoutPlayer, timeoutCounter);
+            
+            switch(timeoutCounter) {
+                case 1:
+                    status.trackEvent(timedoutPlayer + " è andato in timeout per la prima volta.");
+                    break;
+                case 2:
+                    status.trackEvent(timedoutPlayer + " è andato in timeout per la seconda volta.");
+                    break;
+                case 3:
+                    status.trackEvent(timedoutPlayer + " è andato in timeout per la terza volta.");
+                    break;
+                default:
+                    status.trackEvent(timedoutPlayer + " è andato in timeout (contatore: " + timeoutCounter + ").");
+            }
+            
+            /* Dopo 3 timeouts, il giocatore viene buttato fuori dalla partita. */
+            if(timeoutCounter == GameConfig.MAXIMUM_TIMEOUTS) {
+                // TODO: Buttare fuori il giocatore dalla partita
+            }
+            
+            /* Il giocatore pesca una o più carte. */
+            status.handlePickCardRequest(status.currentPlayer);
+        } catch (InvalidRequestException ex) {
+            /* È sempre possibile per un giocatore pescare una o più carte */
+            Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (StatusChangedException ex) {
+            /**
+             * Corretto: il turno corrente è terminato perchè
+             * il giocatore ha pescato una o più carte.
+             */
+            sendStatusUpdate();
         }
     }
 }

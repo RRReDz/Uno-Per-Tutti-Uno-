@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import unoxtutti.configuration.GameConfig;
 import unoxtutti.connection.InvalidRequestException;
 import unoxtutti.connection.PlayerWonException;
 import unoxtutti.connection.StatusChangedException;
@@ -87,7 +88,7 @@ public class ServerMatchStatus extends MatchStatus {
         });
         
         /* Si pescano 7 carte per ogni giocatore */
-        for(int i = 0; i < 7; i++) {
+        for(int i = 0; i < GameConfig.STARTING_CARDS; i++) {
             players.forEach((p) -> {
                 mani.get(p).add(mazzoPesca.pescaCarta());
             });
