@@ -422,7 +422,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
             
             /* Aggiornamento interfaccia grafica */
             GameplayPanel userInterface = GiocarePartitaController.getInstance().gameplayPanel;
-            userInterface.updateTimer(status);
             userInterface.updateTurns(status);
             userInterface.updateCards(mano, status);
             userInterface.updateEvents(status);
@@ -467,11 +466,6 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      */
     public void checkUNODeclaration() {
         sendActionMessage(MatchStatus.STATUS_CHECK_UNO_DECLARATION, null);
-    }
-    
-    /* Informa il server che il turno del giocatore è terminato */
-    public void endTurn() {
-        sendActionMessage(MatchStatus.STATUS_END_TURN, null);
     }
     
     /**

@@ -228,6 +228,7 @@ public class ServerMatchStatus extends MatchStatus {
         mano.remove(card);
         cartaMazzoScarti = card;
         
+        
         /* Reset Dichiarazione UNO e aggiornamento ultimo giocatore */
         previousPlayer = currentPlayer;
         previousPlayerDeclaredUno = false;
@@ -409,20 +410,6 @@ public class ServerMatchStatus extends MatchStatus {
             mano.add(mazzoPesca.pescaCarta());
         }
         
-        throw new StatusChangedException();
-    }
-    
-    void handleEndTurnRequest(Player player) throws InvalidRequestException, StatusChangedException {
-        
-        /* Controllo che sia il turno del giocatore */
-        if(!player.equals(currentPlayer)) {
-            throw new InvalidRequestException("Non puoi terminare il turno di un altro giocatore");
-        }
-        
-        /* Prossimo turno */
-        nextPlayer();
-        
-        /* Aggiornamento clients */
         throw new StatusChangedException();
     }
     
