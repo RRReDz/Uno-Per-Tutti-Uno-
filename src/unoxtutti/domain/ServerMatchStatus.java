@@ -146,6 +146,11 @@ public class ServerMatchStatus extends MatchStatus {
      * Gestisce una richiesta di scarto carta.
      * @param player Giocatore richiedente
      * @param card Carta che il giocatore desidera scartare
+     * @throws InvalidRequestException quando la richiesta non è valida e
+     *              bisogna comunicare l'errore al giocatore richiedente.
+     * @throws StatusChangedException quando lo stato della partita cambia.
+     * @throws PlayerWonException quando un giocatore (il richiedente)
+     *              vince la partita.
      */
     synchronized void handlePlayCardRequest(Player player, Card card) 
             throws InvalidRequestException, StatusChangedException, PlayerWonException {
@@ -254,7 +259,7 @@ public class ServerMatchStatus extends MatchStatus {
          * Si verifica se il giocatore ha vinto la partita.
          */
         if(mano.isEmpty()) {
-            throw new PlayerWonException();
+            throw new PlayerWonException(previousPlayer);
         }
         
         throw new StatusChangedException();
@@ -263,6 +268,9 @@ public class ServerMatchStatus extends MatchStatus {
     /**
      * Gestisce una richiesta di tipo "Pesca carta/e".
      * @param player Giocatore richiedente
+     * @throws InvalidRequestException quando la richiesta non è valida e
+     *              bisogna comunicare l'errore al giocatore richiedente.
+     * @throws StatusChangedException quando lo stato della partita cambia.
      */
     synchronized void handlePickCardRequest(Player player) throws InvalidRequestException, StatusChangedException {
         /* Il giocatore può pescare carte soltanto durante il proprio turno. */
@@ -296,7 +304,12 @@ public class ServerMatchStatus extends MatchStatus {
 
     /**
      * Gestisce una richiesta di tipo "Dubita bluff".
+     * 
      * @param player Giocatore richiedente
+     * 
+     * @throws InvalidRequestException quando la richiesta non è valida e
+     *              bisogna comunicare l'errore al giocatore richiedente.
+     * @throws StatusChangedException quando lo stato della partita cambia.
      */
     synchronized void handleCheckBluffRequest(Player player) throws InvalidRequestException, StatusChangedException {
         /* Solo il giocatore di turno può controllare un bluff */
@@ -363,6 +376,9 @@ public class ServerMatchStatus extends MatchStatus {
     /**
      * Gestisce una richiesta di tipo "Dichiara UNO!".
      * @param player Giocatore richiedente
+     * @throws InvalidRequestException quando la richiesta non è valida e
+     *              bisogna comunicare l'errore al giocatore richiedente.
+     * @throws StatusChangedException quando lo stato della partita cambia.
      */
     synchronized void handleDeclareUNORequest(Player player) throws InvalidRequestException, StatusChangedException {
         /* Il giocatore deve aver scartato una carta il turno precedente */
@@ -386,11 +402,18 @@ public class ServerMatchStatus extends MatchStatus {
     /**
      * Gestisce una richiesta di tipo "Verifica dichiarazione UNO!".
      * @param player Giocatore richiedente
+     * @throws InvalidRequestException quando la richiesta non è valida e
+     *              bisogna comunicare l'errore al giocatore richiedente.
+     * @throws StatusChangedException quando lo stato della partita cambia.
      */
     synchronized void handleCheckUNODeclarationRequest(Player player) throws InvalidRequestException, StatusChangedException {
         if(previousPlayer == null) {
-            /* È impossibile che il giocatore abbia una carta alla prima mano. */
-            throw new InvalidRequestException("Debug in corso.");
+            /**
+             * È impossibile che il giocatore abbia una carta alla prima mano.
+             * 
+             * O magari il giocatore è stato buttato fuori dalla partita.
+             */
+            throw new InvalidRequestException("Il giocatore è stato buttato fuori dalla partita.");
         }
         
         Collection<Card> mano = mani.get(previousPlayer);
@@ -495,6 +518,37 @@ public class ServerMatchStatus extends MatchStatus {
                 super.trackEvent(currentPlayer.getName() + " salta il proprio turno.");
                 nextPlayer();
             }
+        }
+    }
+    
+    
+    /**
+     * Rimuove un giocatore dalla partita.
+     * @param player Giocatore da rimuovere.
+     * @throws StatusChangedException quando lo stato della partita cambia.
+     * @throws PlayerWonException quando un giocatore vince la partita.
+     */
+    void removePlayer(Player player) throws StatusChangedException, PlayerWonException {
+        if(!turns.contains(player)) {
+            throw new IllegalStateException(player + " non appartiene alla partita.");
+        }
+        
+        /* Espulsione del giocatore */
+        trackEvent(player + " è stato rimosso dalla partita.");
+        
+        /* Reset carte da pescare */
+        cardsToPick = 1;
+        
+        /* Si passa al giocatore successivo e poi si rimuovere il giocatore */
+        nextPlayer();
+        turns.remove(player);
+        if(previousPlayer == player) {
+            previousPlayer = null;
+        }
+        
+        /* Se un giocatore rimane da solo, ha vinto */
+        if(turns.size() == 1) {
+            throw new PlayerWonException(currentPlayer);
         }
     }
     

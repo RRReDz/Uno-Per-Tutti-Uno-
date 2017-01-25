@@ -17,11 +17,15 @@ import unoxtutti.utils.TimeUtils;
 public class MatchStatus implements Serializable {
     /* Messaggio di aggiornamento */
     public static final String STATUS_UPDATE_MSG = "statusUpdate";
+    
+    /* Azioni effettuabili dai giocatori */
     public static final String STATUS_PLAY_CARD_MSG = "statusPlayCard";
     public static final String STATUS_PICK_CARD_MSG = "statusPickCard";
     public static final String STATUS_CHECK_BLUFF_MSG = "statusCheckBluff";
     public static final String STATUS_DECLARE_UNO_MSG = "statusDeclareUno";
     public static final String STATUS_CHECK_UNO_DECLARATION = "statisCheckUnoDeclaration";
+    
+    /* Comunicazione di errori da parte del server */
     public static final String STATUS_ERROR_MESSAGE = "statusErrorMessage";
     
     /**

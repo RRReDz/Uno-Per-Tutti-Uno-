@@ -48,6 +48,12 @@ public class ServerMatch extends Match implements MessageReceiver {
     protected final List<Player> joinRequests;
     
     /**
+     * Lista dei giocatori che hanno abbandonato la partita oppure sono stati
+     * buttati fuori.
+     */
+    protected final List<Player> kickedPlayers;
+    
+    /**
      * Indica se la partita è stata avviata.
      */
     protected boolean started;
@@ -102,6 +108,7 @@ public class ServerMatch extends Match implements MessageReceiver {
         /* Giocatori presenti e richieste di ingresso */
         this.players = new ArrayList<>();
         this.joinRequests = new ArrayList<>();
+        this.kickedPlayers = new ArrayList<>();
         
         /* Timer per la terminazione forzata dei turni */
         this.timeouts = new HashMap<>();
@@ -143,17 +150,19 @@ public class ServerMatch extends Match implements MessageReceiver {
     }
     
     /**
-     * Utilizzato per sapere se il giocatore
-     * è il proprietario della partita o meno.
-     * @param player
-     * @return 
+     * Indica se il giocatore è il proprietario della partita o meno.
+     * 
+     * @param player Giocatore da verificare.
+     * 
+     * @return <code>true</code> se il giocatore è il proprietario della partita,
+     *          <code>false</code> altrimenti.
      */
     public boolean isThisPlayerTheOwner(Player player) {
         return owner.equals(player);
     }
     
     /**
-     * Metodo per notificare a tutti i giocatori in stanza l'inzio della partita.
+     * Metodo per notificare a tutti i giocatori l'inzio della partita.
      */
     private void notifyMatchStart() {
         P2PMessage matchStartedMsg = new P2PMessage(Match.MATCH_STARTED_MSG);
@@ -216,15 +225,6 @@ public class ServerMatch extends Match implements MessageReceiver {
                             lostConnections.add(playerConnection);
                         }
                     });
-            /*players.stream().map((p) -> room.getConnectionWithPlayer(p)).forEach((playerConnection) -> {
-                try {
-                    playerConnection.sendMessage(matchClosedMsg);
-                } catch (PartnerShutDownException ex) {
-                    Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
-                    DebugHelper.log("ERR: Il giocatore '" + playerConnection.getPlayer() + "' non è disponibile.");
-                    lostConnections.add(playerConnection);
-                }
-            });*/
             
             /* Chiusura connessioni morte */
             lostConnections.stream().map((c) -> {
@@ -403,7 +403,7 @@ public class ServerMatch extends Match implements MessageReceiver {
                 sendStatusUpdate();
                 
                 /* Notifica di terminazione partita */
-                notifyMatchEnded(sender);
+                notifyMatchEnded(ex.getWinner());
                 
                 /* Si elimina la partita dalla stanza */
                 room.matchEnded(this);
@@ -473,12 +473,19 @@ public class ServerMatch extends Match implements MessageReceiver {
     
     
     /**
-     * Rimuove un giocatore dalla partita
+     * Rimuove un giocatore dalla partita.
+     * 
+     * La partita non deve essere in corso.
+     * 
      * @param player Giocatore da rimuovere
      */
     protected void removePlayer(Player player) {
         if(!players.contains(player)) {
             throw new IllegalStateException("Il giocatore non è presente nella parita.");
+        }
+        if(started) {
+            throw new IllegalStateException("La partita è già stata avviata: per "
+                    + "rimuovere un giocatore utilizzare kickPlayer(p).");
         }
         players.remove(player);
         sendMatchUpdate();
@@ -486,7 +493,10 @@ public class ServerMatch extends Match implements MessageReceiver {
     
     
     /**
-     * Manda un messaggio di aggiornamento a tutti i giocatori
+     * Manda un messaggio di aggiornamento a tutti i giocatori.
+     * 
+     * Il messaggio contiene la lista di tutti i giocatori
+     * presenti nella partita.
      */
     void sendMatchUpdate() {
         synchronized(room) {
@@ -686,9 +696,10 @@ public class ServerMatch extends Match implements MessageReceiver {
      * Richiamata da un task quando il giocatore corrente va in timeout.
      */
     void currentPlayerTimedOut() {
+        boolean kicked = false;
+        Player timedoutPlayer = status.currentPlayer;
+        
         try {
-            Player timedoutPlayer = status.currentPlayer;
-            
             /* Incremento contatore timeouts */
             int timeoutCounter = timeouts.get(timedoutPlayer) + 1;
             timeouts.put(timedoutPlayer, timeoutCounter);
@@ -709,20 +720,69 @@ public class ServerMatch extends Match implements MessageReceiver {
             
             /* Dopo 3 timeouts, il giocatore viene buttato fuori dalla partita. */
             if(timeoutCounter == GameConfig.MAXIMUM_TIMEOUTS) {
-                // TODO: Buttare fuori il giocatore dalla partita
+                kicked = true;
+                kickPlayer(timedoutPlayer);
+            } else {
+                /* Il giocatore pesca una o più carte. */
+                status.handlePickCardRequest(status.currentPlayer);
             }
-            
-            /* Il giocatore pesca una o più carte. */
-            status.handlePickCardRequest(status.currentPlayer);
         } catch (InvalidRequestException ex) {
             /* È sempre possibile per un giocatore pescare una o più carte */
             Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
         } catch (StatusChangedException ex) {
             /**
              * Corretto: il turno corrente è terminato perchè
-             * il giocatore ha pescato una o più carte.
+             * il giocatore ha pescato una o più carte oppure
+             * perchè è stato buttato fuori.
              */
             sendStatusUpdate();
+        } catch (PlayerWonException ex) {
+            /**
+             * Partita terminata: un giocatore ha vinto
+             * perchè è l'ultimo rimasto nella partita.
+             */
+            ended = true;
+            sendStatusUpdate();
+
+            /* Notifica di terminazione partita */
+            notifyMatchEnded(ex.getWinner());
+
+            /* Si elimina la partita dalla stanza */
+            room.matchEnded(this);
+        } finally {
+            if(kicked) {
+                try {
+                    /* Invio notifica di espulsione */
+                    P2PConnection c = room.getConnectionWithPlayer(timedoutPlayer);
+                    P2PMessage notification = new P2PMessage(Match.MATCH_KICKED_OUT);
+                    c.sendMessage(notification);
+                    
+                    /* Aggiornamento listener stanza */
+                    room.playerJoinedTheRoom(c);
+                } catch (PartnerShutDownException ex) {
+                    Logger.getLogger(ServerMatch.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
+    }
+    
+    
+    /**
+     * Rimuove un giocatore da una partita in corso.
+     * @param player Giocatore da rimuovere/espellere.
+     * @throws StatusChangedException quando lo stato della partita cambia.
+     * @throws PlayerWonException quando un giocatore vince la partita.
+     */
+    private void kickPlayer(Player player) throws StatusChangedException, PlayerWonException {
+        if(!players.contains(player)) {
+            throw new IllegalStateException("Il giocatore non è presente nella parita.");
+        }
+        
+        /* Rimozione del giocatore */
+        players.remove(player);
+        kickedPlayers.add(player);
+        
+        /* Aggiornamento dello stato di gioco */
+        status.removePlayer(player);
     }
 }

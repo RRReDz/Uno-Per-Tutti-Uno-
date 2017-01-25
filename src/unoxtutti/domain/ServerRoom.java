@@ -683,7 +683,7 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
      * la stanza.
      * @param playerConnection 
      */
-    private void playerJoinedTheRoom(P2PConnection playerConnection) {
+    void playerJoinedTheRoom(P2PConnection playerConnection) {
         playerConnection.addMessageReceivedObserver(this, Room.ROOM_EXIT_MSG);
         playerConnection.addMessageReceivedObserver(this, Match.MATCH_CREATION_REQUEST_MSG);
         playerConnection.addMessageReceivedObserver(this, Match.MATCH_ACCESS_REQUEST_MSG);
@@ -793,7 +793,9 @@ public class ServerRoom extends Room implements Runnable, MessageReceiver {
             }
             
             /* Reset listeners */
-            playerJoinedTheRoom(connections.get(match.owner));
+            match.players.forEach((p) -> {
+                playerJoinedTheRoom(connections.get(p));
+            });
         }
     }
 }

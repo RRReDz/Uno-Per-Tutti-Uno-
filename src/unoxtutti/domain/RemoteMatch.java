@@ -162,6 +162,10 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 DebugHelper.log("Ricevuto aggiornamento dal server: PARTITA TERMINATA");
                 handleMatchEndedMessage(msg);
                 break;
+            case Match.MATCH_KICKED_OUT:
+                DebugHelper.log("Ricevuto aggiornamento dal server: KICK");
+                handleKickMessage(msg);
+                break;
             default:
         }
     }
@@ -497,14 +501,25 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
                 throw new IllegalArgumentException("Numero errato di argomenti: " + msg.getParametersCount());
             }
             
-            GiocarePartitaController.getInstance().matchEnded();
-            
             Player winner = (Player) msg.getParameter(0);
             GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "La partita è stata vinta da " + winner + ".");
+            
+            GiocarePartitaController.getInstance().matchEnded();
             
         } catch(ClassCastException e) {
             Logger.getLogger(RemoteMatch.class.getName()).log(Level.SEVERE, null, e);
             throw new CommunicationException("Wrong parameter type in message " + msg.getName());
         }
+    }
+    
+    /**
+     * Si informa il giocatore che è stato buttato fuori dalla partita
+     * per inattività.
+     * @param msg Messaggio di notifica
+     */
+    private void handleKickMessage(P2PMessage msg) {
+        GUIUtils.showInformationMessage(UnoXTutti.mainWindow, "Sei stato espulso dalla partita per inattività.");
+        
+        GiocarePartitaController.getInstance().matchEnded();
     }
 }

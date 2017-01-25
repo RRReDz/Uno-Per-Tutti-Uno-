@@ -38,6 +38,9 @@ public abstract class Match {
     /* Notifica di fine partita */
     public static final String MATCH_ENDED_MSG = "matchEnded";
     
+    /* Notifica di espulsione */
+    public static final String MATCH_KICKED_OUT = "matchKickedOut";
+    
     /**
      * Nome della partita
      */

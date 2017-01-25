@@ -439,6 +439,8 @@ public class GiocarePartitaController implements MessageReceiver {
         currentRoom.getConnection().addMessageReceivedObserver(currentMatch, MatchStatus.STATUS_ERROR_MESSAGE);
         /* Listener per la ricezione di messaggi di fine partita */
         currentRoom.getConnection().addMessageReceivedObserver(currentMatch, Match.MATCH_ENDED_MSG);
+        /* Listener per notifiche di espulsione */
+        currentRoom.getConnection().addMessageReceivedObserver(currentMatch, Match.MATCH_KICKED_OUT);
     }
     
     /**
