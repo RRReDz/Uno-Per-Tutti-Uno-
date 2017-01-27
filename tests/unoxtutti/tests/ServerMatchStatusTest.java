@@ -151,6 +151,7 @@ public class ServerMatchStatusTest {
         fail("Metodo \"" + methodName + "\" non trovato.");
     }
     
+    
     /**
      * Verifica la corretta inizializzazione dello stato della partita.
      */
@@ -174,6 +175,7 @@ public class ServerMatchStatusTest {
         /* Si verifica che ci sia una carta sul tavolo */
         assertNotNull(status.getCartaMazzoScarti());
     }
+    
     
     /**
      * Verifica il corretto cambio di senso di marcia.
@@ -206,6 +208,34 @@ public class ServerMatchStatusTest {
     
     
     /**
+     * Verifica che solo il giocatore di turno sia in grado di pescare carte.
+     * 
+     * @throws PlayerWonException quando la partita termina.
+     */
+    @Test(expected = PlayerWonException.class)
+    public void testPickCard() throws PlayerWonException {
+        /**
+         * Fino al termine della partita, verifica che venga
+         * pescato il numero corretto di carte ad ogni turno.
+         */
+        while(true) {
+            /* Verifica che solo il giocatore di turno possa pescare le carte */
+            players.stream().filter((p) -> (p != status.getCurrentPlayer())).forEachOrdered((p) -> {
+                try {
+                    callMethod(status, "handlePickCardRequest", p);
+                } catch(InvalidRequestException ex) {
+                    /* Come previsto, il giocatore non può pescare */
+                } catch(Exception ex) {
+                    fail("Eccezione inaspettata: " + ex.getClass().getSimpleName());
+                }
+            });
+            
+            playCardElsePick(status);
+        }
+    }
+    
+    
+    /**
      * Verifica l'impossibile di controllare bluffs al primo turno.
      */
     @Test
@@ -232,12 +262,99 @@ public class ServerMatchStatusTest {
      * Ad ogni turno, il giocatore di turno prova a scartare una delle
      * sue carte, se non ci riesce, pesca una o più carte.
      * 
+     * Durante il corso della partita vengono effettuati i controlli
+     * all'interno dei metodi playCard e pickCard. Vengono dunque
+     * verificate molte cose: per esempio che ad ogni turno venga pescato
+     * il numero corretto di carte.
+     * 
      * @throws PlayerWonException quando la partita termina.
      */
     @Test(expected = PlayerWonException.class)
     public void testEnd() throws PlayerWonException {
         while(true) {
             playCardElsePick(status);
+        }
+    }
+    
+    
+    /**
+     * Prova a far scartare una carta al giocatore corrente.
+     * 
+     * Se la carta viene scartata con successo, si verifica che nel mazzo
+     * ci sia una carta in meno.
+     * 
+     * Se il giocatore vince la partita, si verifica che non abbia più carte.
+     * 
+     * @param status Stato della partita.
+     * 
+     * @return <code>true</code> se l'operazione è andata a buon fine,
+     *          <code>false</code> altrimenti.
+     * 
+     * @throws PlayerWonException Quando il giocatore vince la partita.
+     */
+    protected boolean playCard(ServerMatchStatus status) throws PlayerWonException {
+        Player currentPlayer = status.getCurrentPlayer();
+        Collection<Card> mano = status.getCardsOfPlayer(currentPlayer);
+        int colore = getColorePiuFrequente(mano);
+        
+        Card cms = status.getCartaMazzoScarti();
+        int direction = status.getDirection();
+        
+        for(Card c : mano) {
+            if(c.isJolly()) c.setColore(colore);
+            try {
+                callMethod(status, "handlePlayCardRequest", currentPlayer, c);
+            } catch(InvalidRequestException ex) {
+                /* Carta non valida */
+            } catch(StatusChangedException ex) {
+                /**
+                 * Se si scarta un "Cambia giro" si verifica che il senso
+                 * di marcia venga cambiato correttamente.
+                 */
+                if(!cms.equals(c) && c.isChangeDirection()) {
+                    assertNotEquals(direction, status.getDirection());
+                }
+                
+                /* Carta scartata con successo */
+                assertEquals(c, status.getCartaMazzoScarti());
+                assertEquals(mano.size() - 1, status.getCardsOfPlayer(currentPlayer).size());
+                return true;
+            } catch(PlayerWonException ex) {
+                /* Il giocatore ha vinto */
+                assertTrue(
+                        "Il vincitore ha più di una carta in mano.",
+                        status.getCardsOfPlayer(currentPlayer).isEmpty()
+                );
+                throw ex;
+            } catch (Exception ex) {
+                fail("Eccezione inaspettata: " + ex.getClass().getSimpleName());
+            }
+        }
+        
+        /* Non è possibile scartare una carta */
+        return false;
+    }
+    
+    
+    /**
+     * Fa pescare una o più carte al giocatore corrente.
+     * 
+     * Si verifica che sia pescato il numero corretto di carte.
+     * 
+     * @param status Stato della partita.
+     */
+    protected void pickCard(ServerMatchStatus status) {
+        Player currentPlayer = status.getCurrentPlayer();
+        int cards = status.getCardsOfPlayer(currentPlayer).size();
+        int cardsToPick = status.getCardsToPick();
+        
+        try {
+            callMethod(status, "handlePickCardRequest", currentPlayer);
+        } catch(StatusChangedException ex) {
+            /* Pescato una o più carte con successo */
+            assertEquals(cards + cardsToPick, status.getCardsOfPlayer(currentPlayer).size());
+        } catch(Exception ex) {
+            fail("Eccezione inaspettata: " + ex.getClass().getSimpleName());
         }
     }
     
@@ -252,37 +369,13 @@ public class ServerMatchStatusTest {
      * @throws PlayerWonException quando il giocatore vince la partita.
      */
     protected void playCardElsePick(ServerMatchStatus status) throws PlayerWonException {
-        Player currentPlayer = status.getCurrentPlayer();
-        Collection<Card> mano = status.getCardsOfPlayer(currentPlayer);
-        
-        int colore = getColorePiuFrequente(mano);
-        
-        for(Card c : mano) {
-            if(c.isJolly()) c.setColore(colore);
-            try {
-                callMethod(status, "handlePlayCardRequest", currentPlayer, c);
-            } catch(InvalidRequestException ex) {
-                /* Carta non valida */
-            } catch(StatusChangedException ex) {
-                /* Carta scartata con successo */
-                return;
-            } catch(PlayerWonException ex) {
-                /* Il giocatore ha vinto */
-                throw ex;
-            } catch (Exception ex) {
-                fail("Eccezione inaspettata: " + ex.getClass().getSimpleName());
-            }
-        }
+        /* Prova a scartare una carta */
+        if(playCard(status)) return;
         
         /* Non è stata scartata alcuna carta, eseguo "Pesco carta" */
-        try {
-            callMethod(status, "handlePickCardRequest", currentPlayer);
-        } catch(StatusChangedException ex) {
-            /* Pescato una o più carte con successo */
-        } catch(Exception ex) {
-            fail("Eccezione inaspettata: " + ex.getClass().getSimpleName());
-        }
+        pickCard(status);
     }
+    
     
     /**
      * Ritorna il colore più frequente in una mano.
@@ -312,4 +405,5 @@ public class ServerMatchStatusTest {
         if(piuFrequente == Card.COLORE_NESSUNO) piuFrequente = Card.COLORE_ROSSO;
         return piuFrequente;
     }
+    
 }
