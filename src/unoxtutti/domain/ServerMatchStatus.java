@@ -139,7 +139,7 @@ public class ServerMatchStatus extends MatchStatus {
         }
         
         /* Carte possedute dal giocatore */
-        return Collections.unmodifiableCollection(mani.get(player));
+        return new ArrayList<>(mani.get(player));
     }
 
     /**

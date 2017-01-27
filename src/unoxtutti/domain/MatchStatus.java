@@ -31,8 +31,8 @@ public class MatchStatus implements Serializable {
     /**
      * Possibili direzioni di turno
      */
-    protected static final int DIRECTION_FORWARD = 1;
-    protected static final int DIRECTION_BACKWARD = 0;
+    public static final int DIRECTION_FORWARD = 1;
+    public static final int DIRECTION_BACKWARD = 0;
     
     /**
      * Lista dei giocatori in ordine di turno.
