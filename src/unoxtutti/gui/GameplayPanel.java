@@ -23,6 +23,8 @@ public class GameplayPanel extends MainWindowSubPanel {
 
     private RemoteMatch remoteMatch;
     
+    private GiocarePartitaController partitaController;
+    
     /**
      * Creates new form GameplayPanel
      */
@@ -192,8 +194,8 @@ public class GameplayPanel extends MainWindowSubPanel {
      */
     private void pickCardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pickCardButtonActionPerformed
         try {
-            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
-            remoteMatch.pickCard();
+            partitaController = GiocarePartitaController.getInstance();
+            partitaController.pescaCarta();
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         }
@@ -338,6 +340,13 @@ public class GameplayPanel extends MainWindowSubPanel {
             for(int i = model.size(); i < list.size(); i++) {
                 model.addElement(list.get(i));
             }
+        }
+    }
+
+    /* Utilizzato per pulire la lista degli eventi dalla partita partita precedente */
+    public void clearEvents() {
+        if(eventList != null) {
+            ((DefaultListModel) eventList.getModel()).clear();
         }
     }
 }

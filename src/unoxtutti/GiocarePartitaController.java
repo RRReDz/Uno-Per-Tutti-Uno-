@@ -342,6 +342,21 @@ public class GiocarePartitaController implements MessageReceiver {
     }
     
     /**
+     * Metodo dei contratti delle operazioni utilizzato per pescare una carta.
+     */
+    public void pescaCarta() {
+        if (currentMatch == null) {
+            /* Partita inesistente */
+            throw new IllegalStateException("Errore: non esiste alcuna partita associata.");
+        } else if (!currentMatch.isStarted()) {
+            /* Il match non è iniziato */
+            throw new IllegalStateException("Errore: la partita non è stata avviata.");
+        }
+        
+        currentMatch.pickCard();
+    }
+    
+    /**
      * Receiver dei messaggi
      * @param msg Messaggio
      */
@@ -431,6 +446,7 @@ public class GiocarePartitaController implements MessageReceiver {
         /* Ci si sposta nell'interfaccia della partita */
         GUIState guiState = UnoXTuttiGUI.GUIState.GAMEPLAY;
         gameplayPanel = (GameplayPanel) guiState.getPanel();
+        gameplayPanel.clearEvents();
         UnoXTutti.mainWindow.setGuiState(guiState);
         
         /* Listener per messaggio di aggiornamento da parte del server */

@@ -396,6 +396,7 @@ public class RemoteMatch extends Match implements MessageReceiver, DialogueObser
      * @param msg 
      */
     private void handleMatchStartedMessage(P2PMessage msg) {
+        isStarted = true;
         GiocarePartitaController.getInstance().matchStarted();
         /* Avvio della partita... fine iterazione 4 */
     }
