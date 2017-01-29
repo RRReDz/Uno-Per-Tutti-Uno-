@@ -212,8 +212,8 @@ public class GameplayPanel extends MainWindowSubPanel {
 
     private void declareUNOButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_declareUNOButtonActionPerformed
         try {
-            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
-            remoteMatch.declareUNO();
+            partitaController = GiocarePartitaController.getInstance();
+            partitaController.dichiaraUNO();
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         }
@@ -221,8 +221,8 @@ public class GameplayPanel extends MainWindowSubPanel {
 
     private void checkUnoDeclarationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkUnoDeclarationButtonActionPerformed
         try {
-            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
-            remoteMatch.checkUNODeclaration();
+            partitaController = GiocarePartitaController.getInstance();
+            partitaController.verificaUNO();
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         }

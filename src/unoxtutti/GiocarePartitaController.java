@@ -389,6 +389,36 @@ public class GiocarePartitaController implements MessageReceiver {
     }
     
     /**
+     * Metodo dei contratti delle operazioni utilizzato per dichiarare UNO.
+     */
+    public void dichiaraUNO() {
+        if (currentMatch == null) {
+            /* Partita inesistente */
+            throw new IllegalStateException("Errore: non esiste alcuna partita associata.");
+        } else if (!currentMatch.isStarted()) {
+            /* Il match non è iniziato */
+            throw new IllegalStateException("Errore: la partita non è stata avviata.");
+        }
+        
+        currentMatch.declareUNO();
+    }
+    
+    /**
+     * Metodo dei contratti delle operazioni utilizzato per verificare UNO.
+     */
+    public void verificaUNO() {
+        if (currentMatch == null) {
+            /* Partita inesistente */
+            throw new IllegalStateException("Errore: non esiste alcuna partita associata.");
+        } else if (!currentMatch.isStarted()) {
+            /* Il match non è iniziato */
+            throw new IllegalStateException("Errore: la partita non è stata avviata.");
+        }
+        
+        currentMatch.checkUNODeclaration();
+    }
+    
+    /**
      * Receiver dei messaggi
      * @param msg Messaggio
      */
