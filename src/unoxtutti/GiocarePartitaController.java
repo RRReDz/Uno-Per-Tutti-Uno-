@@ -374,6 +374,21 @@ public class GiocarePartitaController implements MessageReceiver {
     }
     
     /**
+     * Metodo dei contratti delle operazioni utilizzato per dubitare un bluff.
+     */
+    public void dubitaBluff() {
+        if (currentMatch == null) {
+            /* Partita inesistente */
+            throw new IllegalStateException("Errore: non esiste alcuna partita associata.");
+        } else if (!currentMatch.isStarted()) {
+            /* Il match non è iniziato */
+            throw new IllegalStateException("Errore: la partita non è stata avviata.");
+        }
+        
+        currentMatch.checkBluff();
+    }
+    
+    /**
      * Receiver dei messaggi
      * @param msg Messaggio
      */

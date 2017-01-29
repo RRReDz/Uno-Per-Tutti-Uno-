@@ -203,8 +203,8 @@ public class GameplayPanel extends MainWindowSubPanel {
 
     private void checkBluffButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBluffButtonActionPerformed
         try {
-            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
-            remoteMatch.checkBluff();
+            partitaController = GiocarePartitaController.getInstance();
+            partitaController.dubitaBluff();
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         }

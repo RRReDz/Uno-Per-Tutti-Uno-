@@ -87,7 +87,7 @@ public class ScegliColoreJollyDialog extends javax.swing.JDialog {
         getContentPane().add(yellowButton, gridBagConstraints);
 
         blueButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/unoxtutti/resources/icons/square-blue.png"))); // NOI18N
-        blueButton.setText("Blue");
+        blueButton.setText("Blu");
         blueButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 blueButtonActionPerformed(evt);

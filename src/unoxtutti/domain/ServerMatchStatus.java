@@ -220,16 +220,17 @@ public class ServerMatchStatus extends MatchStatus {
         }
         
         /* La carta viene scartata */
-        if(card.isJollyPescaQuattro()) {
+        if(card.isJolly()) {
             /**
-             * Se è un Jolly Pesca Quattro, ci si segna
+             * Se è un Jolly, ci si segna
              * il colore della carta precedente.
              */
             coloreCartaPrimaDiJolly = card.getColore();
+            trackEvent(currentPlayer + " scarta un " + card + " - Colore scelto: " + Card.getColorName(card.getColore()));
         } else {
             coloreCartaPrimaDiJolly = Card.COLORE_NESSUNO;
+            trackEvent(currentPlayer + " scarta un " + card);
         }
-        trackEvent(currentPlayer + " scarta un " + card);
         mano.remove(card);
         cartaMazzoScarti = card;
         
