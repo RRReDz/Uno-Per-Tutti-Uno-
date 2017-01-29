@@ -157,14 +157,14 @@ public class GameplayPanel extends MainWindowSubPanel {
      * @param evt 
      */
     private void playCardButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playCardButtonActionPerformed
-        Card card = (Card) cardsList.getSelectedValue();
-        if (card == null) {
+        Card laCarta = (Card) cardsList.getSelectedValue();
+        if (laCarta == null) {
             GUIUtils.showErrorMessage(mainWindow, "Non è stata selezionata alcuna carta!");
             return;
         }
         
         /* Se è un jolly, si chiede il colore all'utente */
-        if(card.isJolly()) {
+        if(laCarta.isJolly()) {
             ScegliColoreJollyDialog dia = new ScegliColoreJollyDialog(mainWindow, true);
             GUIUtils.centerDialogInsideWindow(dia, this.mainWindow);
             dia.setVisible(true);
@@ -175,13 +175,13 @@ public class GameplayPanel extends MainWindowSubPanel {
             }
             
             /* Si imposta il colore del Jolly e si elimina dalla memoria la finestra */
-            card.setColore(dia.getResult());
+            laCarta.setColore(dia.getResult());
             dia.dispose();
         }
         
         try {
-            remoteMatch = GiocarePartitaController.getInstance().getCurrentMatch();
-            remoteMatch.playCard(card);
+            partitaController = GiocarePartitaController.getInstance();
+            partitaController.scartaCarta(laCarta);
         } catch(Exception e) {
             GUIUtils.showException(e, mainWindow);
         }

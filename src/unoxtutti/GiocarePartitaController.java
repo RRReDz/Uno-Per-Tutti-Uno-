@@ -10,6 +10,7 @@ import unoxtutti.connection.CommunicationException;
 import unoxtutti.connection.MessageReceiver;
 import unoxtutti.connection.P2PConnection;
 import unoxtutti.connection.P2PMessage;
+import unoxtutti.domain.Card;
 import unoxtutti.domain.Match;
 import unoxtutti.domain.MatchAccessRequest;
 import unoxtutti.domain.MatchStatus;
@@ -357,6 +358,22 @@ public class GiocarePartitaController implements MessageReceiver {
     }
     
     /**
+     * Metodo dei contratti delle operazioni utilizzato per scartare una carta.
+     * @param card da scartare
+     */
+    public void scartaCarta(Card card) {
+        if (currentMatch == null) {
+            /* Partita inesistente */
+            throw new IllegalStateException("Errore: non esiste alcuna partita associata.");
+        } else if (!currentMatch.isStarted()) {
+            /* Il match non è iniziato */
+            throw new IllegalStateException("Errore: la partita non è stata avviata.");
+        }
+        
+        currentMatch.playCard(card);
+    }
+    
+    /**
      * Receiver dei messaggi
      * @param msg Messaggio
      */
@@ -472,5 +489,5 @@ public class GiocarePartitaController implements MessageReceiver {
      */
     public void matchEnded() {
         playerLeftAMatch();
-    }
+    } 
 }
