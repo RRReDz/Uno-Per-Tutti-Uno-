@@ -201,7 +201,11 @@ public class ServerMatchStatus extends MatchStatus {
         } else {
             /* Interruzione di turno */
             if(cartaMazzoScarti.isJolly()) {
-                throw new InvalidRequestException("Non puoi interrompere il turno su una carta jolly.");
+                /**
+                 * Commentata perchè è stato deciso che
+                 * anche i Jolly possono essere interrotti.
+                 */
+                //throw new InvalidRequestException("Non puoi interrompere il turno su una carta jolly.");
             }
             if(!card.equals(cartaMazzoScarti)) {
                 throw new InvalidRequestException("Non è possibile interrompere "
