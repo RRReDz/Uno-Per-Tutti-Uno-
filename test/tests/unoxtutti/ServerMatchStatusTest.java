@@ -278,8 +278,8 @@ public class ServerMatchStatusTest {
     /**
      * Prova a far scartare una carta al giocatore corrente.
      * 
-     * Se la carta viene scartata con successo, si verifica che nel mazzo
-     * ci sia una carta in meno.
+     * Se la carta viene scartata con successo, si verifica che
+     * nella mano del giocatore ci sia una carta in meno.
      * 
      * Se il giocatore vince la partita, si verifica che non abbia più carte.
      * 
@@ -320,7 +320,7 @@ public class ServerMatchStatusTest {
             } catch(PlayerWonException ex) {
                 /* Il giocatore ha vinto */
                 assertTrue(
-                        "Il vincitore ha più di una carta in mano.",
+                        "Il vincitore NON ha più di una carta in mano.",
                         status.getCardsOfPlayer(currentPlayer).isEmpty()
                 );
                 throw ex;
